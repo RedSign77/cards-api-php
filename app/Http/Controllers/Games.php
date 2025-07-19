@@ -15,7 +15,7 @@ class Games extends Controller
      */
     public function index()
     {
-        $games = Game::where('creator_id', request()->input('game_id'))
+        $games = Game::where('creator_id', request()->input('game_id', 1))
             ->orderBy(request()->input('order', 'name'))
             ->get();
 
@@ -29,11 +29,11 @@ class Games extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'creator_id' => 'required|integer|exists:games,id',
+            'creator_id' => 'required|integer',
         ]);
 
         $game = new Game();
-        $game->creator_id = $request->input('creator_id');
+        $game->creator_id = $request->input('creator_id', 1);
         $game->name = $request->input('name');
         $game->save();
 
@@ -55,9 +55,14 @@ class Games extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'creator_id' => 'required|integer',
+        ]);
+
         $game = Game::findOrFail($id);
-        $game->creator_id = $request->input('creator_id', $game->creator_id);
         $game->name = $request->input('name', $game->name);
+        $game->creator_id = $request->input('creator_id', $game->creator_id);
         $game->save();
 
         return response()->json($game);

@@ -35,6 +35,8 @@ class CardTypes extends Controller
         $cardType = new CardType();
         $cardType->game_id = $request->input('game_id');
         $cardType->name = $request->input('name');
+        $cardType->typetext = $request->input('typetext');
+        $cardType->description = $request->input('description');
         $cardType->save();
 
         return response()->json($cardType, 201);
@@ -58,6 +60,8 @@ class CardTypes extends Controller
         $cardType = CardType::findOrFail($id);
         $cardType->game_id = $request->input('game_id', $cardType->game_id);
         $cardType->name = $request->input('name', $cardType->name);
+        $cardType->typetext = $request->input('typetext', $cardType->typetext);
+        $cardType->description = $request->input('description', $cardType->description);
         $cardType->save();
 
         return response()->json($cardType);
