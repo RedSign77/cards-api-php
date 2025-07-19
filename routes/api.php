@@ -2,10 +2,11 @@
 /**
  * Webtech-solutions 2025, All rights reserved.
  */
-use App\Http\Controllers\Cards;
-use App\Http\Controllers\CardTypes;
-use App\Http\Controllers\Decks;
-use App\Http\Controllers\Games;
+
+use App\Http\Controllers\Api\v1\Cards;
+use App\Http\Controllers\Api\v1\CardTypes;
+use App\Http\Controllers\Api\v1\Decks;
+use App\Http\Controllers\Api\v1\Games;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('cards', Cards::class);

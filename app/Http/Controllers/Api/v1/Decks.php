@@ -3,8 +3,9 @@
  * Webtech-solutions 2025, All rights reserved.
  */
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
+use App\Http\Controllers\Controller;
 use App\Models\Deck;
 use Illuminate\Http\Request;
 
