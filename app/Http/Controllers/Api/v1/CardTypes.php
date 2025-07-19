@@ -16,7 +16,7 @@ class CardTypes extends Controller
      */
     public function index()
     {
-        $cardType = CardType::where('game_id', request()->input('game_id'))
+        $cardType = CardType::where('game_id', request()->input('game_id', 1))
             ->orderBy(request()->input('order', 'name'))
             ->get();
 
@@ -31,6 +31,7 @@ class CardTypes extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'game_id' => 'required|integer|exists:games,id',
+            'typetext' => 'required|string|max:255',
         ]);
 
         $cardType = new CardType();
@@ -58,6 +59,12 @@ class CardTypes extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'game_id' => 'required|integer|exists:games,id',
+            'typetext' => 'required|string|max:255',
+        ]);
+
         $cardType = CardType::findOrFail($id);
         $cardType->game_id = $request->input('game_id', $cardType->game_id);
         $cardType->name = $request->input('name', $cardType->name);

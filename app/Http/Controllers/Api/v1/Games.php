@@ -30,7 +30,7 @@ class Games extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'creator_id' => 'required|integer',
+            'creator_id' => 'required|integer|exists:users,id',
         ]);
 
         $game = new Game();
@@ -58,7 +58,7 @@ class Games extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'creator_id' => 'required|integer',
+            'creator_id' => 'required|integer|exists:users,id',
         ]);
 
         $game = Game::findOrFail($id);

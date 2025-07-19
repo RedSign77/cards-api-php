@@ -16,8 +16,8 @@ class Decks extends Controller
      */
     public function index()
     {
-        $decks = Deck::where('game_id', request()->input('game_id', 0))
-            ->orderBy('name')
+        $decks = Deck::where('game_id', request()->input('game_id', 1))
+            ->orderBy(request()->input('order', 'deck_name'))
             ->get()
             ->each(function ($deck) {
                 $deck->deck_data = json_decode($deck->card_data, true);
@@ -31,6 +31,14 @@ class Decks extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'creator_id' => 'required|integer|exists:users,id',
+            'game_id' => 'required|integer|exists:games,id',
+            'deck_name' => 'required|string|max:255',
+            'deck_description' => 'nullable|string|max:1000',
+            'deck_data' => 'nullable|array',
+        ]);
+
         $deck = new Deck();
         $deck->creator_id = $request->input('creator_id');
         $deck->game_id = $request->input('game_id');
@@ -58,6 +66,14 @@ class Decks extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'creator_id' => 'required|integer|exists:users,id',
+            'game_id' => 'required|integer|exists:games,id',
+            'deck_name' => 'required|string|max:255',
+            'deck_description' => 'nullable|string|max:1000',
+            'deck_data' => 'nullable|array',
+        ]);
+
         $deck = Deck::findOrFail($id);
         $deck->creator_id = $request->input('creator_id', $deck->creator_id);
         $deck->game_id = $request->input('game_id', $deck->game_id);
