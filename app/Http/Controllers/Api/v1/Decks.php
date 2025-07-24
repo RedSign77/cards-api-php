@@ -32,15 +32,14 @@ class Decks extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'creator_id' => 'required|integer|exists:users,id',
             'game_id' => 'required|integer|exists:games,id',
             'deck_name' => 'required|string|max:255',
             'deck_description' => 'nullable|string|max:1000',
             'deck_data' => 'nullable|array',
         ]);
-
+        $user = auth()->user();
         $deck = new Deck();
-        $deck->creator_id = $request->input('creator_id');
+        $deck->creator_id = $user['id'];
         $deck->game_id = $request->input('game_id');
         $deck->deck_name = $request->input('deck_name');
         $deck->deck_description = $request->input('deck_description');
@@ -67,15 +66,14 @@ class Decks extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'creator_id' => 'required|integer|exists:users,id',
             'game_id' => 'required|integer|exists:games,id',
             'deck_name' => 'required|string|max:255',
             'deck_description' => 'nullable|string|max:1000',
             'deck_data' => 'nullable|array',
         ]);
-
+        $user = auth()->user();
         $deck = Deck::findOrFail($id);
-        $deck->creator_id = $request->input('creator_id', $deck->creator_id);
+        $deck->creator_id = $user['id'];
         $deck->game_id = $request->input('game_id', $deck->game_id);
         $deck->deck_name = $request->input('deck_name', $deck->deck_name);
         $deck->deck_description = $request->input('deck_description', $deck->deck_description);

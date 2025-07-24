@@ -17,13 +17,10 @@ class Games extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'creator_id' => 'required|integer|exists:users,id',
             'order' => 'sometimes|string|in:name,created_at,updated_at',
         ]);
-
-        $games = Game::where('creator_id', request()->input('creator_id'))
-            ->orderBy(request()->input('order', 'name'))
-            ->get();
+        $user = auth()->user();
+        $games = Game::where('creator_id', $user['id'])->get();
 
         return response()->json($games);
     }
