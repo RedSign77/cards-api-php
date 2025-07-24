@@ -14,10 +14,10 @@ class Decks extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $decks = Deck::where('game_id', request()->input('game_id', 1))
-            ->orderBy(request()->input('order', 'deck_name'))
+        $decks = Deck::where('game_id', $request->input('game_id', 1))
+            ->orderBy($request->input('order', 'deck_name'))
             ->get()
             ->each(function ($deck) {
                 $deck->deck_data = json_decode($deck->card_data, true);
