@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->integer('creator_id')->index();
             $table->integer('game_id')->index();
-            $table->string('name');
-            $table->mediumText('description')->nullable();
-            $table->longText('data')->nullable();
+            $table->string('deck_name');
+            $table->mediumText('deck_description')->nullable();
+            $table->longText('deck_data')->nullable();
             $table->timestamps();
         });
     }
