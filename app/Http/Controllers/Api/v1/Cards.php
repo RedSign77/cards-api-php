@@ -16,12 +16,10 @@ class Cards extends Controller
      */
     public function index()
     {
-        $cards = Card::where('game_id', request()->input('game_id', 0))
-            ->where('type_id', request()->input('type_id', 0))
-            ->orderBy('name')
-            ->get()
-            ->each(function ($card) {
+        $cards = Card::all()
+            ->map(function ($card) {
                 $card->card_data = json_decode($card->card_data, true);
+                return $card;
             });
 
         return response()->json($cards);
@@ -32,6 +30,15 @@ class Cards extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'game_id' => 'required|integer',
+            'type_id' => 'required|integer',
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|string|max:255',
+            'card_text' => 'nullable|string',
+            'card_data' => 'nullable|array',
+        ]);
+
         $card = new Card();
         $card->game_id = $request->input('game_id');
         $card->type_id = $request->input('type_id');

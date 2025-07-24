@@ -14,9 +14,14 @@ class Games extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $games = Game::where('creator_id', request()->input('game_id', 1))
+        $request->validate([
+            'creator_id' => 'required|integer|exists:users,id',
+            'order' => 'sometimes|string|in:name,created_at,updated_at',
+        ]);
+
+        $games = Game::where('creator_id', request()->input('creator_id'))
             ->orderBy(request()->input('order', 'name'))
             ->get();
 

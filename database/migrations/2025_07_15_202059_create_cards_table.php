@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('game_id')->index();
             $table->integer('type_id')->index();
             $table->string('name');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->mediumText('card_text')->nullable();
             $table->longText('card_data')->nullable();
             $table->timestamps();
