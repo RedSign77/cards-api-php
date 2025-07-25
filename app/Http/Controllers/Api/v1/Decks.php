@@ -16,7 +16,8 @@ class Decks extends Controller
      */
     public function index(Request $request)
     {
-        $decks = Deck::where('game_id', $request->input('game_id', 1))
+        $user = auth()->user();
+        $decks = Deck::where('creator_id', $user['id'])
             ->orderBy($request->input('order', 'deck_name'))
             ->get()
             ->each(function ($deck) {

@@ -1,4 +1,7 @@
 <?php
+/**
+ * Webtech-solutions 2025, All rights reserved.
+ */
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

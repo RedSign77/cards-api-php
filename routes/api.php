@@ -9,13 +9,16 @@ use App\Http\Controllers\Api\v1\Decks;
 use App\Http\Controllers\Api\v1\Games;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\Api\SupervisorController;
 
 Route::post('/user/register', [ApiController::class, 'register']);
 Route::post('/user/login', [ApiController::class, 'login']);
+Route::post('/supervisor/login', [SupervisorController::class, 'login']);
 
 Route::group(['middleware' => 'auth:sanctum'], static function () {
     Route::get('/user/profile', [ApiController::class, 'profile']);
     Route::get('/user/logout', [ApiController::class, 'logout']);
+    Route::get('/supervisor/logout', [ApiController::class, 'logout']);
 
     Route::group(['prefix' => 'v1'], static function () {
         Route::apiResource('cards', Cards::class);
