@@ -19,6 +19,16 @@ class GameResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationLabel = 'Games';
+
+    protected static ?string $modelLabel = 'Game';
+
+    protected static ?string $pluralModelLabel = 'Games';
+
+    protected static ?string $navigationGroup = 'Game Content';
+
+    protected static ?int $navigationSort = 0;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -36,25 +46,32 @@ class GameResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('creator_id')
+                Tables\Columns\TextColumn::make('creator.name')
+                    ->label('Creator')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('creator_id')
+                    ->label('Creator')
+                    ->relationship('creator', 'name')
+                    ->preload(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -77,5 +94,10 @@ class GameResource extends Resource
             'create' => Pages\CreateGame::route('/create'),
             'edit' => Pages\EditGame::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

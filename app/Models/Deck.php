@@ -23,4 +23,14 @@ class Deck extends Model
         'deck_description',
         'deck_data',
     ];
+
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
+    }
+
+    public function creator()
+    {
+        return $this->hasMany(User::class, 'id');
+    }
 }

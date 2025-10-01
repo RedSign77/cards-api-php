@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CardResource\Pages;
 use App\Filament\Resources\CardResource\RelationManagers;
 use App\Models\Card;
+use App\Models\CardType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use App\Models\Game;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -19,25 +21,113 @@ class CardResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Game Content';
+
+    protected static ?string $navigationLabel = 'Cards';
+
+    protected static ?string $modelLabel = 'Cards';
+
+    protected static ?string $pluralModelLabel = 'Cards';
+
+    protected static ?int $navigationSort = 30;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('game_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('type_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\FileUpload::make('image')
-                    ->image(),
-                Forms\Components\Textarea::make('card_text')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('card_data')
-                    ->columnSpanFull(),
+                Forms\Components\Section::make('Base Data')
+                    ->schema([
+                        Forms\Components\Select::make('game_id')
+                            ->label('Game')
+                            ->options(Game::pluck('name', 'id'))
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->live(),
+                        Forms\Components\Select::make('type_id')
+                            ->label('Type')
+                            ->options(CardType::pluck('name', 'id'))
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->live(),
+                        Forms\Components\TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->columnSpanFull()
+                            ->maxLength(255),
+                        Forms\Components\FileUpload::make('image')
+                            ->label('Image')
+                            ->image()
+                            ->directory('images')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->imageEditor()
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('card_text')
+                            ->label('Text')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ])
+                ->columns(2),
+                Forms\Components\Section::make('Card Fields')
+                    ->description('Dynamic fields on the card')
+                    ->schema([
+                        Forms\Components\Repeater::make('card_data')
+                            ->label('Fields')
+                            ->schema([
+                                Forms\Components\TextInput::make('fieldname')
+                                    ->label('Name')
+                                    ->required()
+                                    ->placeholder('Samples: Strength, Health, etc.')
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('fieldtype')
+                                    ->label('Type')
+                                    ->required()
+                                    ->placeholder('Samples: stat, ability, text')
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('fieldvalue')
+                                    ->label('Value')
+                                    ->required()
+                                    ->placeholder('Samples: 5, +2, Damage reduction')
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('fieldstyle')
+                                    ->label('Style')
+                                    ->placeholder('Samples: color:red; font-weight:bold;')
+                                    ->maxLength(500),
+
+                                Forms\Components\Select::make('position')
+                                    ->label('Position')
+                                    ->options([
+                                        'hidden' => 'Hidden',
+                                        'left-bottom' => 'Bottom left',
+                                        'center-bottom' => 'Bottom center',
+                                        'right-bottom' => 'Bottom right',
+                                        'left-center' => 'Center left',
+                                        'center' => 'Center',
+                                        'right-center' => 'Center right',
+                                        'left-top' => 'Top left',
+                                        'center-top' => 'Top center',
+                                        'right-top' => 'Top right',
+                                    ])
+                                    ->default('center')
+                                    ->required(),
+                            ])
+                            ->columns(3)
+                            ->defaultItems(0)
+                            ->addActionLabel('Add new field')
+                            ->reorderable()
+                            ->collapsible()
+                            ->cloneable()
+                            ->itemLabel(fn (array $state): ?string =>
+                                ($state['fieldname'] ?? 'New field') .
+                                ' (' . ($state['position'] ?? 'hidden') . ')'
+                            )
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -45,29 +135,54 @@ class CardResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('game_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('type_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Image')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
+                    ->label('Name')
+                    ->sortable()
+                    ->searchable()
+                    ->weight('bold'),
+                Tables\Columns\TextColumn::make('game.name')
+                    ->label('Game')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('CardType.name')
+                    ->label('Type')
+                    ->sortable()
+                    ->color('primary')
+                    ->badge(),
+                Tables\Columns\TextColumn::make('card_data')
+                    ->label('Number of fields')
+                    ->formatStateUsing(fn ($state) => is_array($state) ? count($state) : 0)
+                    ->badge()
+                    ->color('success'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Created at')
+                    ->dateTime('Y-m-d H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Updated at')
+                    ->dateTime('Y-m-d H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('game_id')
+                    ->label('Game')
+                    ->relationship('game', 'name')
+                    ->preload(),
+
+                Tables\Filters\SelectFilter::make('type_id')
+                    ->label('Type')
+                    ->relationship('cardType', 'name')
+                    ->preload(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -90,5 +205,10 @@ class CardResource extends Resource
             'create' => Pages\CreateCard::route('/create'),
             'edit' => Pages\EditCard::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }
