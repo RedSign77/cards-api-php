@@ -18,4 +18,14 @@ class CardType extends Model
         'typetext',
         'description',
     ];
+
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
+    }
+
+    public function cards()
+    {
+        return $this->hasMany(Card::class, 'type_id');
+    }
 }

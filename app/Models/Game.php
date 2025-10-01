@@ -16,4 +16,9 @@ class Game extends Model
         'creator_id',
         'name',
     ];
+
+    public function creator()
+    {
+        return $this->hasMany(User::class, 'id');
+    }
 }

@@ -24,4 +24,14 @@ class Card extends Model
         'card_text',
         'card_data',
     ];
+
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
+    }
+
+    public function cardType()
+    {
+        return $this->belongsTo(CardType::class, 'type_id');
+    }
 }
