@@ -1,4 +1,7 @@
 <?php
+/**
+ * Webtech-solutions 2025, All rights reserved.
+ */
 
 namespace App\Providers\Filament;
 
@@ -11,6 +14,8 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use App\Filament\Widgets as AppWidgets;
+use App\Filament\Pages as AppPages;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -37,8 +42,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                AppWidgets\WelcomeWidget::class,
+                AppWidgets\StatsOverview::class,
+                AppWidgets\LatestCardsWidget::class,
+                AppWidgets\QuickActionsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
