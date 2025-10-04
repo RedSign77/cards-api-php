@@ -53,7 +53,14 @@
         }
     </style>
 </head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QW8J5RJQ9C"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
+    gtag('config', 'G-QW8J5RJQ9C');
+</script>
 <body class="min-h-screen gradient-bg text-white font-sans antialiased">
 <!-- Navigation Header -->
 <nav class="bg-slate-900/50 backdrop-blur-sm border-b border-slate-700/50">
@@ -98,6 +105,15 @@
                 <a href="/api/documentation" class="bg-slate-700 hover:bg-slate-600 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 transform hover:scale-105">
                     Explore API
                 </a>
+            </div>
+            <!-- Notice Message -->
+            <div class="mt-6 bg-amber-600/90 backdrop-blur-sm rounded-xl p-4 max-w-2xl mx-auto text-center border border-amber-500/50 card-hover">
+                <p class="text-lg text-white font-medium">
+                    <span class="font-bold">Pre-release mode:</span> Registration is currently disabled. To join, please email us at
+                    <a href="mailto:info@webtech-solutions.hu" class="underline hover:text-amber-200 transition-colors">
+                        info@webtech-solutions.hu
+                    </a>.
+                </p>
             </div>
         </div>
 
@@ -292,10 +308,10 @@
                     </svg>
                 </div>
                 <h3 class="text-2xl font-semibold text-white mb-4 text-center">Get Started</h3>
-                <p class="text-slate-300 mb-6 text-center">Register now and start building your custom card collection.</p>
+                <p class="text-slate-300 mb-6 text-center">Registration is currently disabled. Email us to join the pre-release!</p>
                 <div class="text-center">
-                    <a href="/register" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
-                        Register
+                    <a href="mailto:info@webtech-solutions.hu" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
+                        Contact Us
                     </a>
                 </div>
             </div>
