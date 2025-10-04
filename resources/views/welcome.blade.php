@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QW8J5RJQ9C"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QW8J5RJQ9C', {
+            cookie_expires: 63072000,
+            cookie_update: true,
+            session_cookie_expires: 1800
+        });
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Cards Forge - Your Customizable Digital Card Collection Hub. Create custom cards, decks, games, and access everything via REST API.">
@@ -53,14 +64,6 @@
         }
     </style>
 </head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QW8J5RJQ9C"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-QW8J5RJQ9C');
-</script>
 <body class="min-h-screen gradient-bg text-white font-sans antialiased">
 <!-- Navigation Header -->
 <nav class="bg-slate-900/50 backdrop-blur-sm border-b border-slate-700/50">
