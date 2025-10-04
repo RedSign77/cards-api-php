@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="a8ac992a-016f-41db-8929-c9d4c51dc9a9" data-blockingmode="auto" type="text/javascript"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QW8J5RJQ9C"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
