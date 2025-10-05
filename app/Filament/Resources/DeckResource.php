@@ -31,6 +31,11 @@ class DeckResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('creator_id', auth()->id());
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,42 +43,12 @@ class DeckResource extends Resource
                 Forms\Components\Section::make('Basic Data')
                     ->description('Card Types basic configuration data')
                     ->schema([
-                        Forms\Components\Select::make('creator_id')
-                            ->label('Creator')
-                            ->relationship('creator', 'name')
-                            ->required()
-                            ->disabled()
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('creator.name')
-                                    ->label('Creator Name')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('creator_id')
-                                    ->label('Creator ID')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(fn() => auth()->id()),
-                            ])
-                            ->columnSpanFull(),
                         Forms\Components\Select::make('game_id')
                             ->label('Game')
-                            ->relationship('game', 'name')
+                            ->options(fn () => Game::where('creator_id', auth()->id())->pluck('name', 'id'))
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('name')
-                                    ->label('Game name')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('creator_id')
-                                    ->label('Author ID')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(fn() => auth()->id()),
-                            ])
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('deck_name')
                             ->label('Name')
@@ -112,7 +87,7 @@ class DeckResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('card_id')
                                     ->label('Card')
-                                    ->options(Card::query()->pluck('name', 'id'))
+                                    ->options(fn () => Card::where('user_id', auth()->id())->pluck('name', 'id'))
                                     ->searchable()
                                     ->required(),
 
@@ -164,10 +139,6 @@ class DeckResource extends Resource
                     ->label('Game')
                     ->relationship('game', 'name')
                     ->preload(),
-                Tables\Filters\SelectFilter::make('creator_id')
-                    ->label('Creator')
-                    ->relationship('creator', 'name')
-                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -199,6 +170,6 @@ class DeckResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('creator_id', auth()->id())->count();
     }
 }

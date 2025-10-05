@@ -29,13 +29,15 @@ class GameResource extends Resource
 
     protected static ?int $navigationSort = 0;
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('creator_id', auth()->id());
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('creator_id')
-                    ->required()
-                    ->numeric(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -63,10 +65,7 @@ class GameResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('creator_id')
-                    ->label('Creator')
-                    ->relationship('creator', 'name')
-                    ->preload(),
+                //
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -98,6 +97,6 @@ class GameResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('creator_id', auth()->id())->count();
     }
 }

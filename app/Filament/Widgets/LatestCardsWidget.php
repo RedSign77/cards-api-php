@@ -26,9 +26,10 @@ class LatestCardsWidget extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Latest Cards')
+            ->heading('My Latest Cards')
             ->query(
                 Card::query()
+                    ->where('user_id', auth()->id())
                     ->with(['game', 'cardType'])
                     ->latest()
                     ->limit(5)

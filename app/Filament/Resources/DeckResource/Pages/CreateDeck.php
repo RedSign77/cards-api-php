@@ -9,4 +9,10 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateDeck extends CreateRecord
 {
     protected static string $resource = DeckResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['creator_id'] = auth()->id();
+        return $data;
+    }
 }

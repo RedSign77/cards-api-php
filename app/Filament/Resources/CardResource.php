@@ -34,6 +34,11 @@ class CardResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('user_id', auth()->id());
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -42,14 +47,14 @@ class CardResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('game_id')
                             ->label('Game')
-                            ->options(Game::pluck('name', 'id'))
+                            ->options(fn () => Game::where('creator_id', auth()->id())->pluck('name', 'id'))
                             ->required()
                             ->searchable()
                             ->preload()
                             ->live(),
                         Forms\Components\Select::make('type_id')
                             ->label('Type')
-                            ->options(CardType::pluck('name', 'id'))
+                            ->options(fn () => CardType::where('user_id', auth()->id())->pluck('name', 'id'))
                             ->required()
                             ->searchable()
                             ->preload()
@@ -212,6 +217,6 @@ class CardResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('user_id', auth()->id())->count();
     }
 }
