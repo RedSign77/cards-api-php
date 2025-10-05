@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="100" fill="#e5e7eb"/>
+
+  <!-- User Icon -->
+  <g transform="translate(100, 100)">
+    <!-- Head -->
+    <circle cx="0" cy="-20" r="30" fill="#9ca3af"/>
+
+    <!-- Body -->
+    <ellipse cx="0" cy="50" rx="45" ry="55" fill="#9ca3af"/>
+  </g>
+</svg>
