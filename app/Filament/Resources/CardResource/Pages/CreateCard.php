@@ -9,4 +9,10 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateCard extends CreateRecord
 {
     protected static string $resource = CardResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['user_id'] = auth()->id();
+        return $data;
+    }
 }

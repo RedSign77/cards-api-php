@@ -28,6 +28,11 @@ class CardTypeResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('user_id', auth()->id());
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -37,21 +42,10 @@ class CardTypeResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('game_id')
                             ->label('Game')
-                            ->relationship('game', 'name')
+                            ->options(fn () => Game::where('creator_id', auth()->id())->pluck('name', 'id'))
                             ->required()
                             ->searchable()
                             ->preload()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('name')
-                                    ->label('Game name')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('creator_id')
-                                    ->label('Author ID')
-                                    ->required()
-                                    ->numeric()
-                                    ->default(fn () => auth()->id()),
-                            ])
                             ->columnSpanFull(),
 
                         Forms\Components\TextInput::make('name')
@@ -224,12 +218,12 @@ class CardTypeResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('user_id', auth()->id())->count();
     }
 
     public static function getNavigationBadgeColor(): ?string
     {
-        $count = static::getModel()::count();
+        $count = static::getModel()::where('user_id', auth()->id())->count();
         return match (true) {
             $count === 0 => 'gray',
             $count < 5 => 'warning',

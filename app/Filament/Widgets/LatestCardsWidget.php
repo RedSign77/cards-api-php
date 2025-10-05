@@ -16,19 +16,20 @@ class LatestCardsWidget extends BaseWidget
     protected static ?int $sort = 2;
 
     protected int | string | array $columnSpan = [
-        'default' => 3,
-        'sm' => 1,
+        'default' => 2,
+        'sm' => 2,
         'md' => 2,
-        'lg' => 3,
-        'xl' => 3,
+        'lg' => 2,
+        'xl' => 2,
     ];
 
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Latest Cards')
+            ->heading('My Latest Cards')
             ->query(
                 Card::query()
+                    ->where('user_id', auth()->id())
                     ->with(['game', 'cardType'])
                     ->latest()
                     ->limit(5)

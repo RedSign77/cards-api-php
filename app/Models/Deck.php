@@ -31,6 +31,6 @@ class Deck extends Model
 
     public function creator()
     {
-        return $this->hasMany(User::class, 'id');
+        return $this->belongsTo(User::class, 'creator_id');
     }
 }

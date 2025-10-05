@@ -19,6 +19,16 @@ class Game extends Model
 
     public function creator()
     {
-        return $this->hasMany(User::class, 'id');
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function cardTypes()
+    {
+        return $this->hasMany(CardType::class);
+    }
+
+    public function decks()
+    {
+        return $this->hasMany(Deck::class);
     }
 }

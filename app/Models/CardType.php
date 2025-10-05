@@ -13,11 +13,17 @@ class CardType extends Model
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $fillable = [
+        'user_id',
         'game_id',
         'name',
         'typetext',
         'description',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function game()
     {
