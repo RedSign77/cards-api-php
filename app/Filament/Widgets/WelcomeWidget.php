@@ -14,11 +14,11 @@ class WelcomeWidget extends Widget
     protected static string $view = 'filament.widgets.welcome-widget';
 
     protected int | string | array $columnSpan = [
-        'default' => 3,
-        'sm' => 1,
+        'default' => 2,
+        'sm' => 2,
         'md' => 2,
-        'lg' => 3,
-        'xl' => 3,
+        'lg' => 2,
+        'xl' => 2,
     ];
 
     public function getViewData(): array

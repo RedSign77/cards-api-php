@@ -47,10 +47,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                AppWidgets\WelcomeWidget::class,
-                AppWidgets\StatsOverview::class,
-                AppWidgets\LatestCardsWidget::class,
                 AppWidgets\QuickActionsWidget::class,
+                AppWidgets\WelcomeWidget::class,
+                AppWidgets\LatestCardsWidget::class,
+                AppWidgets\SystemInfoWidget::class,
+                AppWidgets\StatsOverview::class,
             ])
             ->plugins([
                 FilamentEditProfilePlugin::make()

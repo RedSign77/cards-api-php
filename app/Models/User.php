@@ -77,4 +77,36 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
         return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
     }
+
+    /**
+     * Get all cards created by this user
+     */
+    public function cards()
+    {
+        return $this->hasMany(Card::class);
+    }
+
+    /**
+     * Get all card types created by this user
+     */
+    public function cardTypes()
+    {
+        return $this->hasMany(CardType::class);
+    }
+
+    /**
+     * Get all games created by this user
+     */
+    public function games()
+    {
+        return $this->hasMany(Game::class, 'creator_id');
+    }
+
+    /**
+     * Get all decks created by this user
+     */
+    public function decks()
+    {
+        return $this->hasMany(Deck::class, 'creator_id');
+    }
 }

@@ -17,6 +17,7 @@ class Card extends Model
     ];
 
     protected $fillable = [
+        'user_id',
         'game_id',
         'type_id',
         'name',
@@ -24,6 +25,11 @@ class Card extends Model
         'card_text',
         'card_data',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function game()
     {
