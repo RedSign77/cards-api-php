@@ -6,6 +6,7 @@ use App\Filament\Resources\DeckResource\Pages;
 use App\Filament\Resources\DeckResource\RelationManagers;
 use App\Models\Card;
 use App\Models\Deck;
+use App\Models\Game;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
