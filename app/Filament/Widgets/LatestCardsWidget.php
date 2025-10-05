@@ -39,7 +39,7 @@ class LatestCardsWidget extends BaseWidget
                     ->label('Kép')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(url('/images/placeholder-card.png')),
+                    ->defaultImageUrl(url('/images/placeholder-card.svg')),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')

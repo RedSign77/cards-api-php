@@ -32,25 +32,55 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255)
-                    ->dehydrateStateUsing(fn ($state) => bcrypt($state))
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $context): bool => $context === 'create'),
-                Forms\Components\Toggle::make('supervisor')
-                    ->label('Supervisor')
-                    ->helperText('Supervisors can access the Administration section')
-                    ->default(false),
+                Forms\Components\Section::make('Profile Information')
+                    ->schema([
+                        Forms\Components\FileUpload::make('avatar_url')
+                            ->label('Profile Picture')
+                            ->image()
+                            ->avatar()
+                            ->imageEditor()
+                            ->circleCropper()
+                            ->directory('avatars')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->maxSize(2048)
+                            ->helperText('Upload a profile picture (max 2MB)')
+                            ->columnSpanFull(),
+
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\DateTimePicker::make('email_verified_at')
+                            ->label('Email Verified At')
+                            ->displayFormat('Y-m-d H:i:s'),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Security')
+                    ->schema([
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->maxLength(255)
+                            ->dehydrateStateUsing(fn ($state) => filled($state) ? bcrypt($state) : null)
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $context): bool => $context === 'create')
+                            ->helperText(fn (string $context): string =>
+                                $context === 'edit' ? 'Leave blank to keep current password' : 'Set a strong password'
+                            ),
+
+                        Forms\Components\Toggle::make('supervisor')
+                            ->label('Supervisor')
+                            ->helperText('Supervisors can access the Administration section')
+                            ->default(false)
+                            ->inline(false),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -58,30 +88,54 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('avatar_url')
+                    ->label('Avatar')
+                    ->circular()
+                    ->disk('public')
+                    ->defaultImageUrl(url('/images/default-avatar.svg')),
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('bold'),
+
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
                     ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->label('Email verified at')
-                    ->sortable()
-                    ->dateTime('Y-m-d H:i:s')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->searchable()
+                    ->copyable()
+                    ->icon('heroicon-m-envelope'),
+
                 Tables\Columns\IconColumn::make('supervisor')
                     ->label('Supervisor')
-                    ->boolean(),
+                    ->boolean()
+                    ->trueIcon('heroicon-o-shield-check')
+                    ->falseIcon('heroicon-o-user')
+                    ->trueColor('success')
+                    ->falseColor('gray'),
+
+                Tables\Columns\TextColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->dateTime('Y-m-d H:i:s')
+                    ->sortable()
+                    ->toggleable()
+                    ->badge()
+                    ->color(fn ($state) => $state ? 'success' : 'danger')
+                    ->formatStateUsing(fn ($state) => $state ? 'Verified' : 'Not Verified'),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created')
+                    ->dateTime('Y-m-d H:i:s')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Updated')
+                    ->dateTime('Y-m-d H:i:s')
+                    ->sortable()
+                    ->since()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

@@ -145,7 +145,9 @@ class CardResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
-                    ->circular(),
+                    ->circular()
+                    ->disk('public')
+                    ->defaultImageUrl(url('/images/placeholder-card.svg')),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
                     ->sortable()
