@@ -17,11 +17,16 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $navigationGroup = 'Administration';
 
     protected static ?int $navigationSort = 10;
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->isSupervisor() ?? false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -38,9 +43,14 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->dehydrateStateUsing(fn ($state) => bcrypt($state))
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\Toggle::make('supervisor')
-                    ->required(),
+                    ->label('Supervisor')
+                    ->helperText('Supervisors can access the Administration section')
+                    ->default(false),
             ]);
     }
 

@@ -31,6 +31,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'email',
         'password',
         'avatar_url',
+        'supervisor',
     ];
 
     /**
@@ -53,6 +54,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'supervisor' => 'boolean',
         ];
     }
 
@@ -108,5 +110,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function decks()
     {
         return $this->hasMany(Deck::class, 'creator_id');
+    }
+
+    /**
+     * Check if user is a supervisor
+     */
+    public function isSupervisor(): bool
+    {
+        return $this->supervisor === true;
     }
 }
