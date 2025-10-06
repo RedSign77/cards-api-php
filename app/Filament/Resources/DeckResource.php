@@ -14,6 +14,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Columns\Column;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class DeckResource extends Resource
 {
@@ -146,9 +150,31 @@ class DeckResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exports([
+                        ExcelExport::make()
+                            ->fromTable()
+                            ->withFilename(fn () => 'decks-' . date('Y-m-d'))
+                            ->withColumns([
+                                Column::make('deck_name')->heading('Name'),
+                                Column::make('game.name')->heading('Game'),
+                                Column::make('deck_description')->heading('Description'),
+                                Column::make('deck_data')->formatStateUsing(fn ($state) => json_encode($state)),
+                                Column::make('created_at'),
+                                Column::make('updated_at'),
+                            ])
+                    ]),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exports([
+                            ExcelExport::make()
+                                ->fromTable()
+                                ->withFilename(fn () => 'decks-' . date('Y-m-d'))
+                        ]),
                 ]),
             ]);
     }
