@@ -6,6 +6,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewGameAdded;
 
 class Game extends Model
 {
@@ -30,5 +32,17 @@ class Game extends Model
     public function decks()
     {
         return $this->hasMany(Deck::class);
+    }
+
+    /**
+     * Boot method to register model events
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Game $game) {
+            // Send notification to admin email about new game
+            Notification::route('mail', 'info@webtech-solutions.hu')
+                ->notify(new NewGameAdded($game));
+        });
     }
 }

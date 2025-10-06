@@ -15,6 +15,8 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewUserRegistered;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
@@ -56,6 +58,18 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             'password' => 'hashed',
             'supervisor' => 'boolean',
         ];
+    }
+
+    /**
+     * Boot method to register model events
+     */
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            // Send notification to admin email about new user registration
+            Notification::route('mail', 'info@webtech-solutions.hu')
+                ->notify(new NewUserRegistered($user));
+        });
     }
 
     /**
