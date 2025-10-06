@@ -17,6 +17,10 @@ use Filament\Tables\Table;
 use App\Models\Game;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Columns\Column;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class CardResource extends Resource
 {
@@ -90,49 +94,20 @@ class CardResource extends Resource
                                     ->placeholder('Samples: Strength, Health, etc.')
                                     ->maxLength(255),
 
-                                Forms\Components\TextInput::make('fieldtype')
-                                    ->label('Type')
-                                    ->required()
-                                    ->placeholder('Samples: stat, ability, text')
-                                    ->maxLength(255),
-
                                 Forms\Components\TextInput::make('fieldvalue')
                                     ->label('Value')
                                     ->required()
                                     ->placeholder('Samples: 5, +2, Damage reduction')
                                     ->maxLength(255),
-
-                                Forms\Components\TextInput::make('fieldstyle')
-                                    ->label('Style')
-                                    ->placeholder('Samples: color:red; font-weight:bold;')
-                                    ->maxLength(500),
-
-                                Forms\Components\Select::make('position')
-                                    ->label('Position')
-                                    ->options([
-                                        'hidden' => 'Hidden',
-                                        'left-bottom' => 'Bottom left',
-                                        'center-bottom' => 'Bottom center',
-                                        'right-bottom' => 'Bottom right',
-                                        'left-center' => 'Center left',
-                                        'center' => 'Center',
-                                        'right-center' => 'Center right',
-                                        'left-top' => 'Top left',
-                                        'center-top' => 'Top center',
-                                        'right-top' => 'Top right',
-                                    ])
-                                    ->default('center')
-                                    ->required(),
                             ])
-                            ->columns(3)
+                            ->columns(2)
                             ->defaultItems(0)
                             ->addActionLabel('Add new field')
                             ->reorderable()
                             ->collapsible()
                             ->cloneable()
                             ->itemLabel(fn (array $state): ?string =>
-                                ($state['fieldname'] ?? 'New field') .
-                                ' (' . ($state['position'] ?? 'hidden') . ')'
+                                ($state['fieldname'] ?? 'New field')
                             )
                             ->columnSpanFull(),
                     ]),
@@ -190,13 +165,41 @@ class CardResource extends Resource
                     ->preload(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn ($record) => $record->name)
+                    ->modalContent(fn ($record) => view('filament.resources.card-view', ['record' => $record]))
+                    ->modalWidth('xl')
+                    ->slideOver(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exports([
+                        ExcelExport::make()
+                            ->fromTable()
+                            ->withFilename(fn () => 'cards-' . date('Y-m-d'))
+                            ->withColumns([
+                                Column::make('id'),
+                                Column::make('name'),
+                                Column::make('game.name')->heading('Game'),
+                                Column::make('CardType.name')->heading('Type'),
+                                Column::make('card_text')->heading('Text'),
+                                Column::make('card_data')->formatStateUsing(fn ($state) => json_encode($state)),
+                                Column::make('created_at'),
+                                Column::make('updated_at'),
+                            ])
+                    ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exports([
+                            ExcelExport::make()
+                                ->fromTable()
+                                ->withFilename(fn () => 'cards-' . date('Y-m-d'))
+                        ]),
                 ]),
             ]);
     }
