@@ -15,7 +15,10 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\MenuItem;
-use App\Filament\Widgets as AppWidgets;
+use App\Filament\Pages\Dashboard;
+use App\Filament\Widgets\CustomAccountWidget;
+use App\Filament\Widgets\SystemStatsWidget;
+use App\Filament\Widgets\QuickLinksWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -43,15 +46,12 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                AppWidgets\QuickActionsWidget::class,
-                AppWidgets\WelcomeWidget::class,
-                AppWidgets\LatestCardsWidget::class,
-                AppWidgets\SystemInfoWidget::class,
-                AppWidgets\StatsOverview::class,
+                CustomAccountWidget::class,
+                QuickLinksWidget::class,
+                SystemStatsWidget::class,
             ])
             ->plugins([
                 FilamentEditProfilePlugin::make()
