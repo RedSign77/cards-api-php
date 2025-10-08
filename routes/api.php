@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\SupervisorController;
 Route::post('/user/register', [ApiController::class, 'register']);
 Route::post('/user/login', [ApiController::class, 'login']);
 Route::post('/supervisor/login', [SupervisorController::class, 'login']);
+Route::post('/email/verify', [ApiController::class, 'verifyEmail']);
+Route::post('/email/resend', [ApiController::class, 'resendVerification']);
 
 Route::group(['middleware' => 'auth:sanctum'], static function () {
     Route::get('/user/profile', [ApiController::class, 'profile']);
