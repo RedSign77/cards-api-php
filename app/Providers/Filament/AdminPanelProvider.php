@@ -19,6 +19,7 @@ use App\Filament\Pages\Dashboard;
 use App\Filament\Widgets\CustomAccountWidget;
 use App\Filament\Widgets\SystemStatsWidget;
 use App\Filament\Widgets\QuickLinksWidget;
+use App\Filament\Widgets\StatsOverview;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -40,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->registration()
             ->passwordReset()
             ->emailVerification()
+            ->brandName('Cards Forge')
             ->colors([
                 'primary' => Color::Amber,
             ])

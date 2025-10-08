@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Hexagon Background -->
+  <polygon points="100,10 170,50 170,130 100,170 30,130 30,50" fill="#f3f4f6" stroke="#d1d5db" stroke-width="3"/>
+
+  <!-- Inner Hexagon -->
+  <polygon points="100,30 155,60 155,120 100,150 45,120 45,60" fill="#e5e7eb"/>
+
+  <!-- Center Icon - Hexagon -->
+  <polygon points="100,70 125,85 125,105 100,120 75,105 75,85" fill="#9ca3af"/>
+
+  <!-- Decorative Elements -->
+  <circle cx="100" cy="95" r="15" fill="none" stroke="#6b7280" stroke-width="2"/>
+
+  <!-- Text -->
+  <text x="100" y="100" font-family="Arial, sans-serif" font-size="12" fill="#6b7280" text-anchor="middle" opacity="0.6">Hexa</text>
+</svg>

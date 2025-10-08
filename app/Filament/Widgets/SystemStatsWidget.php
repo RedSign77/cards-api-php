@@ -12,6 +12,8 @@ use App\Models\Game;
 use App\Models\Deck;
 use App\Models\CardType;
 use App\Models\Card;
+use App\Models\Hexa;
+use App\Models\Figure;
 
 class SystemStatsWidget extends BaseWidget
 {
@@ -44,6 +46,16 @@ class SystemStatsWidget extends BaseWidget
                 ->description('Created cards')
                 ->descriptionIcon('heroicon-m-rectangle-group')
                 ->color('danger'),
+
+            Stat::make('Total Hexas', Hexa::count())
+                ->description('Created hexas')
+                ->descriptionIcon('heroicon-m-cube')
+                ->color('indigo'),
+
+            Stat::make('Total Figures', Figure::count())
+                ->description('Created figures')
+                ->descriptionIcon('heroicon-m-user')
+                ->color('purple'),
         ];
     }
 }

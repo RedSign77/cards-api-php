@@ -57,8 +57,10 @@
                 <span class="ml-2">
                     <span class="font-bold text-primary-600 dark:text-primary-400">{{ $stats['games'] }}</span> Games,
                     <span class="font-bold text-primary-600 dark:text-primary-400">{{ $stats['decks'] }}</span> Decks,
-                    <span class="font-bold text-primary-600 dark:text-primary-400">{{ $stats['cardTypes'] }}</span> Card Types and
-                    <span class="font-bold text-primary-600 dark:text-primary-400">{{ $stats['cards'] }}</span> Cards
+                    <span class="font-bold text-primary-600 dark:text-primary-400">{{ $stats['cardTypes'] }}</span> Card Types,
+                    <span class="font-bold text-primary-600 dark:text-primary-400">{{ $stats['cards'] }}</span> Cards,
+                    <span class="font-bold text-primary-600 dark:text-primary-400">{{ $stats['hexas'] }}</span> Hexas and
+                    <span class="font-bold text-primary-600 dark:text-primary-400">{{ $stats['figures'] }}</span> Figures
                 </span>
             </div>
         </div>
