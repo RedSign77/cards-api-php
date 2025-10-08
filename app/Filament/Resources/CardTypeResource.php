@@ -197,6 +197,13 @@ class CardTypeResource extends Resource
                             ->fromTable()
                             ->withFilename(fn () => 'card-types-' . date('Y-m-d') . '.csv')
                             ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
+                            ->withColumns([
+                                \pxlrbt\FilamentExcel\Columns\Column::make('name'),
+                                \pxlrbt\FilamentExcel\Columns\Column::make('typetext'),
+                                \pxlrbt\FilamentExcel\Columns\Column::make('game_id'),
+                                \pxlrbt\FilamentExcel\Columns\Column::make('game.name')->heading('Game Name'),
+                                \pxlrbt\FilamentExcel\Columns\Column::make('description'),
+                            ])
                     ]),
             ])
             ->bulkActions([
@@ -209,6 +216,13 @@ class CardTypeResource extends Resource
                                 ->fromTable()
                                 ->withFilename(fn () => 'card-types-' . date('Y-m-d') . '.csv')
                                 ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
+                                ->withColumns([
+                                    \pxlrbt\FilamentExcel\Columns\Column::make('name'),
+                                    \pxlrbt\FilamentExcel\Columns\Column::make('typetext'),
+                                    \pxlrbt\FilamentExcel\Columns\Column::make('game_id'),
+                                    \pxlrbt\FilamentExcel\Columns\Column::make('game.name')->heading('Game Name'),
+                                    \pxlrbt\FilamentExcel\Columns\Column::make('description'),
+                                ])
                         ]),
                 ]),
             ])

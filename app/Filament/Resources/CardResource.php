@@ -181,14 +181,14 @@ class CardResource extends Resource
                             ->withFilename(fn () => 'cards-' . date('Y-m-d') . '.csv')
                             ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                             ->withColumns([
-                                Column::make('id'),
                                 Column::make('name'),
-                                Column::make('game.name')->heading('Game'),
-                                Column::make('CardType.name')->heading('Type'),
-                                Column::make('card_text')->heading('Text'),
+                                Column::make('game_id'),
+                                Column::make('type_id'),
+                                Column::make('game.name')->heading('Game Name'),
+                                Column::make('CardType.name')->heading('Type Name'),
+                                Column::make('card_text'),
+                                Column::make('image'),
                                 Column::make('card_data')->formatStateUsing(fn ($state) => json_encode($state)),
-                                Column::make('created_at'),
-                                Column::make('updated_at'),
                             ])
                     ]),
             ])
@@ -233,6 +233,16 @@ class CardResource extends Resource
                                 ->fromTable()
                                 ->withFilename(fn () => 'cards-' . date('Y-m-d') . '.csv')
                                 ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
+                                ->withColumns([
+                                    Column::make('name'),
+                                    Column::make('game_id'),
+                                    Column::make('type_id'),
+                                    Column::make('game.name')->heading('Game Name'),
+                                    Column::make('CardType.name')->heading('Type Name'),
+                                    Column::make('card_text'),
+                                    Column::make('image'),
+                                    Column::make('card_data')->formatStateUsing(fn ($state) => json_encode($state)),
+                                ])
                         ]),
                 ]),
             ]);

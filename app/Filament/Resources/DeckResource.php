@@ -183,12 +183,11 @@ class DeckResource extends Resource
                             ->withFilename(fn () => 'decks-' . date('Y-m-d') . '.csv')
                             ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                             ->withColumns([
-                                Column::make('deck_name')->heading('Name'),
-                                Column::make('game.name')->heading('Game'),
-                                Column::make('deck_description')->heading('Description'),
+                                Column::make('deck_name'),
+                                Column::make('game_id'),
+                                Column::make('game.name')->heading('Game Name'),
+                                Column::make('deck_description'),
                                 Column::make('deck_data')->formatStateUsing(fn ($state) => json_encode($state)),
-                                Column::make('created_at'),
-                                Column::make('updated_at'),
                             ])
                     ]),
             ])
@@ -201,6 +200,13 @@ class DeckResource extends Resource
                                 ->fromTable()
                                 ->withFilename(fn () => 'decks-' . date('Y-m-d') . '.csv')
                                 ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
+                                ->withColumns([
+                                    Column::make('deck_name'),
+                                    Column::make('game_id'),
+                                    Column::make('game.name')->heading('Game Name'),
+                                    Column::make('deck_description'),
+                                    Column::make('deck_data')->formatStateUsing(fn ($state) => json_encode($state)),
+                                ])
                         ]),
                 ]),
             ]);
