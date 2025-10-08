@@ -15,7 +15,9 @@ class ListDecks extends ListRecords
     {
         return [
             Actions\ImportAction::make()
-                ->importer(DeckImporter::class),
+                ->importer(DeckImporter::class)
+                ->label('Import Decks')
+                ->maxRows(10000),
             Actions\CreateAction::make(),
         ];
     }

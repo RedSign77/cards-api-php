@@ -145,7 +145,8 @@ class HexaResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(fn () => 'hexas-' . date('Y-m-d'))
+                            ->withFilename(fn () => 'hexas-' . date('Y-m-d') . '.csv')
+                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                     ]),
             ])
             ->bulkActions([
@@ -155,7 +156,8 @@ class HexaResource extends Resource
                         ->exports([
                             ExcelExport::make()
                                 ->fromTable()
-                                ->withFilename(fn () => 'hexas-' . date('Y-m-d'))
+                                ->withFilename(fn () => 'hexas-' . date('Y-m-d') . '.csv')
+                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                         ]),
                 ]),
             ])

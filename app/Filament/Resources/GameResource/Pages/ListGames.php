@@ -15,7 +15,9 @@ class ListGames extends ListRecords
     {
         return [
             Actions\ImportAction::make()
-                ->importer(GameImporter::class),
+                ->importer(GameImporter::class)
+                ->label('Import Games')
+                ->maxRows(10000),
             Actions\CreateAction::make(),
         ];
     }

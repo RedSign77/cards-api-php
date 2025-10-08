@@ -195,7 +195,8 @@ class CardTypeResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(fn () => 'card-types-' . date('Y-m-d'))
+                            ->withFilename(fn () => 'card-types-' . date('Y-m-d') . '.csv')
+                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                     ]),
             ])
             ->bulkActions([
@@ -206,7 +207,8 @@ class CardTypeResource extends Resource
                         ->exports([
                             ExcelExport::make()
                                 ->fromTable()
-                                ->withFilename(fn () => 'card-types-' . date('Y-m-d'))
+                                ->withFilename(fn () => 'card-types-' . date('Y-m-d') . '.csv')
+                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                         ]),
                 ]),
             ])

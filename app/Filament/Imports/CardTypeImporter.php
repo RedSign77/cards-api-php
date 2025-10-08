@@ -31,10 +31,19 @@ class CardTypeImporter extends Importer
 
     public function resolveRecord(): ?CardType
     {
+        // Ensure user_id is always set
+        $this->data['user_id'] = auth()->id();
+
         return CardType::firstOrNew([
             'typetext' => $this->data['typetext'],
             'user_id' => auth()->id(),
         ]);
+    }
+
+    protected function beforeFill(): void
+    {
+        // Ensure user_id is set before filling the model
+        $this->data['user_id'] = auth()->id();
     }
 
     public static function getCompletedNotificationBody(Import $import): string

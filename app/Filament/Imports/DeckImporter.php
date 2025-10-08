@@ -36,10 +36,19 @@ class DeckImporter extends Importer
 
     public function resolveRecord(): ?Deck
     {
+        // Ensure creator_id is always set
+        $this->data['creator_id'] = auth()->id();
+
         return Deck::firstOrNew([
             'deck_name' => $this->data['deck_name'],
             'creator_id' => auth()->id(),
         ]);
+    }
+
+    protected function beforeFill(): void
+    {
+        // Ensure creator_id is set before filling the model
+        $this->data['creator_id'] = auth()->id();
     }
 
     public static function getCompletedNotificationBody(Import $import): string

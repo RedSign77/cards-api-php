@@ -15,7 +15,9 @@ class ListUsers extends ListRecords
     {
         return [
             Actions\ImportAction::make()
-                ->importer(UserImporter::class),
+                ->importer(UserImporter::class)
+                ->label('Import Users')
+                ->maxRows(10000),
             Actions\CreateAction::make(),
         ];
     }

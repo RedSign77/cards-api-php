@@ -145,7 +145,8 @@ class FigureResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(fn () => 'figures-' . date('Y-m-d'))
+                            ->withFilename(fn () => 'figures-' . date('Y-m-d') . '.csv')
+                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                     ]),
             ])
             ->bulkActions([
@@ -155,7 +156,8 @@ class FigureResource extends Resource
                         ->exports([
                             ExcelExport::make()
                                 ->fromTable()
-                                ->withFilename(fn () => 'figures-' . date('Y-m-d'))
+                                ->withFilename(fn () => 'figures-' . date('Y-m-d') . '.csv')
+                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                         ]),
                 ]),
             ])

@@ -22,10 +22,19 @@ class GameImporter extends Importer
 
     public function resolveRecord(): ?Game
     {
+        // Ensure creator_id is always set
+        $this->data['creator_id'] = auth()->id();
+
         return Game::firstOrNew([
             'name' => $this->data['name'],
             'creator_id' => auth()->id(),
         ]);
+    }
+
+    protected function beforeFill(): void
+    {
+        // Ensure creator_id is set before filling the model
+        $this->data['creator_id'] = auth()->id();
     }
 
     public static function getCompletedNotificationBody(Import $import): string

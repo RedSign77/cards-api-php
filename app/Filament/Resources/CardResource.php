@@ -178,7 +178,8 @@ class CardResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(fn () => 'cards-' . date('Y-m-d'))
+                            ->withFilename(fn () => 'cards-' . date('Y-m-d') . '.csv')
+                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                             ->withColumns([
                                 Column::make('id'),
                                 Column::make('name'),
@@ -230,7 +231,8 @@ class CardResource extends Resource
                         ->exports([
                             ExcelExport::make()
                                 ->fromTable()
-                                ->withFilename(fn () => 'cards-' . date('Y-m-d'))
+                                ->withFilename(fn () => 'cards-' . date('Y-m-d') . '.csv')
+                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                         ]),
                 ]),
             ]);
