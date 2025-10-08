@@ -16,11 +16,16 @@ class CardTypes extends Controller
      */
     public function index()
     {
-        $cardType = CardType::where('game_id', request()->input('game_id', 1))
-            ->orderBy(request()->input('order', 'name'))
-            ->get();
+        $user = auth()->user();
+        $query = CardType::where('user_id', $user->id);
 
-        return response()->json($cardType);
+        if (request()->has('game_id')) {
+            $query->where('game_id', request()->input('game_id'));
+        }
+
+        $cardTypes = $query->orderBy(request()->input('order', 'name'))->get();
+
+        return response()->json($cardTypes);
     }
 
     /**
@@ -32,9 +37,12 @@ class CardTypes extends Controller
             'name' => 'required|string|max:255',
             'game_id' => 'required|integer|exists:games,id',
             'typetext' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
+        $user = auth()->user();
         $cardType = new CardType();
+        $cardType->user_id = $user->id;
         $cardType->game_id = $request->input('game_id');
         $cardType->name = $request->input('name');
         $cardType->typetext = $request->input('typetext');
@@ -49,7 +57,8 @@ class CardTypes extends Controller
      */
     public function show(string $id)
     {
-        $cardType = CardType::findOrFail($id);
+        $user = auth()->user();
+        $cardType = CardType::where('user_id', $user->id)->findOrFail($id);
 
         return response()->json($cardType);
     }
@@ -60,12 +69,14 @@ class CardTypes extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'game_id' => 'required|integer|exists:games,id',
-            'typetext' => 'required|string|max:255',
+            'name' => 'sometimes|string|max:255',
+            'game_id' => 'sometimes|integer|exists:games,id',
+            'typetext' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
         ]);
 
-        $cardType = CardType::findOrFail($id);
+        $user = auth()->user();
+        $cardType = CardType::where('user_id', $user->id)->findOrFail($id);
         $cardType->game_id = $request->input('game_id', $cardType->game_id);
         $cardType->name = $request->input('name', $cardType->name);
         $cardType->typetext = $request->input('typetext', $cardType->typetext);
@@ -80,9 +91,10 @@ class CardTypes extends Controller
      */
     public function destroy(string $id)
     {
-        $cardType = CardType::findOrFail($id);
+        $user = auth()->user();
+        $cardType = CardType::where('user_id', $user->id)->findOrFail($id);
         $cardType->delete();
 
-        return response()->json(['message' => 'Card type deleted successfully'], 204);
+        return response()->json(['message' => 'Card type deleted successfully'], 200);
     }
 }

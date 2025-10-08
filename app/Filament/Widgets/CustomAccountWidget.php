@@ -5,8 +5,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Hexa;
-use App\Models\Figure;
 use Filament\Widgets\Widget;
 
 class CustomAccountWidget extends Widget

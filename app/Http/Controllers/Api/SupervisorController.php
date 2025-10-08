@@ -28,22 +28,18 @@ class SupervisorController extends Controller
 
         $user = User::where('email', $request->email)
             ->where('supervisor', true)
-            ->firstOrFail();
+            ->first();
 
-        if (!empty($user)) {
-            if (Hash::check($request->input('password'), $user->password)) {
-                $token = $user->createToken('auth_token')->plainTextToken;
-
-                return response()->json([
-                    'message' => 'Supervisor login successful',
-                    'token' => $token,
-                    'user' => $user,
-                ], 200);
-            }
-
-            return response()->json(['message' => 'Supervisor invalid credentials.'], 401);
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Invalid credentials.'], 401);
         }
 
-        return response()->json(['message' => 'Supervisor email is invalid.'], 404);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Supervisor login successful',
+            'token' => $token,
+            'user' => $user,
+        ], 200);
     }
 }

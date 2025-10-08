@@ -27,7 +27,11 @@ class ApiController extends Controller
             'password' => 'required|confirmed|min:12',
         ]);
 
-        User::create($request->all());
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
         return response()->json(['message' => 'User registered successfully.'], 201);
     }
@@ -45,22 +49,19 @@ class ApiController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->firstOrFail();
-        if (!empty($user)) {
-            if (Hash::check($request->input('password'), $user->password)) {
-                $token = $user->createToken('auth_token')->plainTextToken;
+        $user = User::where('email', $request->email)->first();
 
-                return response()->json([
-                    'message' => 'Login successful',
-                    'token' => $token,
-                    'user' => $user,
-                ], 200);
-            }
-
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid credentials.'], 401);
         }
 
-        return response()->json(['message' => 'Email is invalid.'], 404);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login successful',
+            'token' => $token,
+            'user' => $user,
+        ], 200);
     }
 
     /**

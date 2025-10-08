@@ -17,11 +17,11 @@ class Decks extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $decks = Deck::where('creator_id', $user['id'])
+        $decks = Deck::where('creator_id', $user->id)
             ->orderBy($request->input('order', 'deck_name'))
             ->get()
             ->each(function ($deck) {
-                $deck->deck_data = json_decode($deck->card_data, true);
+                $deck->deck_data = json_decode($deck->deck_data, true);
             });
 
         return response()->json($decks);
@@ -40,14 +40,14 @@ class Decks extends Controller
         ]);
         $user = auth()->user();
         $deck = new Deck();
-        $deck->creator_id = $user['id'];
+        $deck->creator_id = $user->id;
         $deck->game_id = $request->input('game_id');
         $deck->deck_name = $request->input('deck_name');
         $deck->deck_description = $request->input('deck_description');
         $deck->deck_data = json_encode($request->input('deck_data'));
         $deck->save();
 
-        return response()->json($deck->id);
+        return response()->json(['id' => $deck->id], 201);
     }
 
     /**
@@ -55,7 +55,8 @@ class Decks extends Controller
      */
     public function show(string $id)
     {
-        $deck = Deck::findOrFail($id);
+        $user = auth()->user();
+        $deck = Deck::where('creator_id', $user->id)->findOrFail($id);
         $deck->deck_data = json_decode($deck->deck_data, true);
 
         return response()->json($deck);
@@ -67,14 +68,13 @@ class Decks extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'game_id' => 'required|integer|exists:games,id',
-            'deck_name' => 'required|string|max:255',
+            'game_id' => 'sometimes|integer|exists:games,id',
+            'deck_name' => 'sometimes|string|max:255',
             'deck_description' => 'nullable|string|max:1000',
             'deck_data' => 'nullable|array',
         ]);
         $user = auth()->user();
-        $deck = Deck::findOrFail($id);
-        $deck->creator_id = $user['id'];
+        $deck = Deck::where('creator_id', $user->id)->findOrFail($id);
         $deck->game_id = $request->input('game_id', $deck->game_id);
         $deck->deck_name = $request->input('deck_name', $deck->deck_name);
         $deck->deck_description = $request->input('deck_description', $deck->deck_description);
@@ -89,7 +89,8 @@ class Decks extends Controller
      */
     public function destroy(string $id)
     {
-        $deck = Deck::findOrFail($id);
+        $user = auth()->user();
+        $deck = Deck::where('creator_id', $user->id)->findOrFail($id);
         $deck->delete();
 
         return response()->json(['message' => 'Deck deleted successfully']);
