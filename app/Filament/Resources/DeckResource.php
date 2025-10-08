@@ -14,10 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
-use pxlrbt\FilamentExcel\Columns\Column;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class DeckResource extends Resource
 {
@@ -175,39 +171,9 @@ class DeckResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->headerActions([
-                ExportAction::make()
-                    ->exports([
-                        ExcelExport::make()
-                            ->fromTable()
-                            ->withFilename(fn () => 'decks-' . date('Y-m-d') . '.csv')
-                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
-                            ->withColumns([
-                                Column::make('deck_name'),
-                                Column::make('game_id'),
-                                Column::make('game.name')->heading('Game Name'),
-                                Column::make('deck_description'),
-                                Column::make('deck_data')->formatStateUsing(fn ($state) => json_encode($state)),
-                            ])
-                    ]),
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make()
-                        ->exports([
-                            ExcelExport::make()
-                                ->fromTable()
-                                ->withFilename(fn () => 'decks-' . date('Y-m-d') . '.csv')
-                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
-                                ->withColumns([
-                                    Column::make('deck_name'),
-                                    Column::make('game_id'),
-                                    Column::make('game.name')->heading('Game Name'),
-                                    Column::make('deck_description'),
-                                    Column::make('deck_data')->formatStateUsing(fn ($state) => json_encode($state)),
-                                ])
-                        ]),
                 ]),
             ]);
     }

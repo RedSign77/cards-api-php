@@ -17,10 +17,6 @@ use Filament\Tables\Table;
 use App\Models\Game;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
-use pxlrbt\FilamentExcel\Columns\Column;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class CardResource extends Resource
 {
@@ -173,25 +169,6 @@ class CardResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->headerActions([
-                ExportAction::make()
-                    ->exports([
-                        ExcelExport::make()
-                            ->fromTable()
-                            ->withFilename(fn () => 'cards-' . date('Y-m-d') . '.csv')
-                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
-                            ->withColumns([
-                                Column::make('name'),
-                                Column::make('game_id'),
-                                Column::make('type_id'),
-                                Column::make('game.name')->heading('Game Name'),
-                                Column::make('CardType.name')->heading('Type Name'),
-                                Column::make('card_text'),
-                                Column::make('image'),
-                                Column::make('card_data')->formatStateUsing(fn ($state) => json_encode($state)),
-                            ])
-                    ]),
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('addToDeck')
@@ -227,23 +204,6 @@ class CardResource extends Resource
                         ->deselectRecordsAfterCompletion(),
 
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make()
-                        ->exports([
-                            ExcelExport::make()
-                                ->fromTable()
-                                ->withFilename(fn () => 'cards-' . date('Y-m-d') . '.csv')
-                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
-                                ->withColumns([
-                                    Column::make('name'),
-                                    Column::make('game_id'),
-                                    Column::make('type_id'),
-                                    Column::make('game.name')->heading('Game Name'),
-                                    Column::make('CardType.name')->heading('Type Name'),
-                                    Column::make('card_text'),
-                                    Column::make('image'),
-                                    Column::make('card_data')->formatStateUsing(fn ($state) => json_encode($state)),
-                                ])
-                        ]),
                 ]),
             ]);
     }

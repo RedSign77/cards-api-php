@@ -11,9 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class CardTypeResource extends Resource
 {
@@ -190,40 +187,10 @@ class CardTypeResource extends Resource
                     )
                     ->visible(fn (CardType $record): bool => $record->cards_count > 0),
             ])
-            ->headerActions([
-                ExportAction::make()
-                    ->exports([
-                        ExcelExport::make()
-                            ->fromTable()
-                            ->withFilename(fn () => 'card-types-' . date('Y-m-d') . '.csv')
-                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
-                            ->withColumns([
-                                \pxlrbt\FilamentExcel\Columns\Column::make('name'),
-                                \pxlrbt\FilamentExcel\Columns\Column::make('typetext'),
-                                \pxlrbt\FilamentExcel\Columns\Column::make('game_id'),
-                                \pxlrbt\FilamentExcel\Columns\Column::make('game.name')->heading('Game Name'),
-                                \pxlrbt\FilamentExcel\Columns\Column::make('description'),
-                            ])
-                    ]),
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
                         ->requiresConfirmation(),
-                    ExportBulkAction::make()
-                        ->exports([
-                            ExcelExport::make()
-                                ->fromTable()
-                                ->withFilename(fn () => 'card-types-' . date('Y-m-d') . '.csv')
-                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
-                                ->withColumns([
-                                    \pxlrbt\FilamentExcel\Columns\Column::make('name'),
-                                    \pxlrbt\FilamentExcel\Columns\Column::make('typetext'),
-                                    \pxlrbt\FilamentExcel\Columns\Column::make('game_id'),
-                                    \pxlrbt\FilamentExcel\Columns\Column::make('game.name')->heading('Game Name'),
-                                    \pxlrbt\FilamentExcel\Columns\Column::make('description'),
-                                ])
-                        ]),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
