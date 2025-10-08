@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\DeckResource\Pages;
 
 use App\Filament\Resources\DeckResource;
-use App\Filament\Imports\DeckImporter;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,10 +13,6 @@ class ListDecks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ImportAction::make()
-                ->importer(DeckImporter::class)
-                ->label('Import Decks')
-                ->maxRows(10000),
             Actions\CreateAction::make(),
         ];
     }
