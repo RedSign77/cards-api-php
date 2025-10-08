@@ -34,6 +34,16 @@ class Game extends Model
         return $this->hasMany(Deck::class);
     }
 
+    public function hexas()
+    {
+        return $this->hasMany(Hexa::class);
+    }
+
+    public function figures()
+    {
+        return $this->hasMany(Figure::class);
+    }
+
     /**
      * Boot method to register model events
      */

@@ -5,6 +5,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Hexa;
+use App\Models\Figure;
 use Filament\Widgets\Widget;
 
 class CustomAccountWidget extends Widget
@@ -29,6 +31,8 @@ class CustomAccountWidget extends Widget
             'decks' => $user->decks()->count(),
             'cardTypes' => $user->cardTypes()->count(),
             'cards' => $user->cards()->count(),
+            'hexas' => $user->hexas()->count(),
+            'figures' => $user->figures()->count(),
         ];
     }
 }

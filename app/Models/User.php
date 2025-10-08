@@ -127,6 +127,26 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     }
 
     /**
+     * Get all hexas created by this user (through games)
+     */
+    public function hexas()
+    {
+        return Hexa::whereHas('game', function ($query) {
+            $query->where('creator_id', $this->id);
+        });
+    }
+
+    /**
+     * Get all figures created by this user (through games)
+     */
+    public function figures()
+    {
+        return Figure::whereHas('game', function ($query) {
+            $query->where('creator_id', $this->id);
+        });
+    }
+
+    /**
      * Check if user is a supervisor
      */
     public function isSupervisor(): bool
