@@ -33,4 +33,40 @@ class Deck extends Model
     {
         return $this->belongsTo(User::class, 'creator_id');
     }
+
+    /**
+     * Add cards to the deck, avoiding duplicates and incrementing quantity
+     *
+     * @param array $cardIds Array of card IDs to add
+     * @return void
+     */
+    public function addCards(array $cardIds): void
+    {
+        $deckData = $this->deck_data ?? [];
+
+        foreach ($cardIds as $cardId) {
+            $found = false;
+
+            // Check if card already exists in deck
+            foreach ($deckData as &$item) {
+                if (isset($item['card_id']) && $item['card_id'] == $cardId) {
+                    // Card exists, increment quantity
+                    $item['quantity'] = ($item['quantity'] ?? 1) + 1;
+                    $found = true;
+                    break;
+                }
+            }
+
+            // If card not found, add it with quantity 1
+            if (!$found) {
+                $deckData[] = [
+                    'card_id' => $cardId,
+                    'quantity' => 1,
+                ];
+            }
+        }
+
+        $this->deck_data = $deckData;
+        $this->save();
+    }
 }

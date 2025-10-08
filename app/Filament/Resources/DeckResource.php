@@ -128,6 +128,31 @@ class DeckResource extends Resource
                     ->label('Name')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('total_cards')
+                    ->label('Total Cards')
+                    ->getStateUsing(function ($record) {
+                        $deckData = $record->deck_data;
+
+                        // Decode if it's a JSON string
+                        if (is_string($deckData)) {
+                            $deckData = json_decode($deckData, true);
+                        }
+
+                        if (!$deckData || !is_array($deckData) || empty($deckData)) {
+                            return 0;
+                        }
+
+                        $total = 0;
+                        foreach ($deckData as $item) {
+                            if (is_array($item) && isset($item['quantity'])) {
+                                $total += (int) $item['quantity'];
+                            }
+                        }
+
+                        return $total;
+                    })
+                    ->badge()
+                    ->color('success'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')
                     ->datetime('Y-m-d H:i:s')

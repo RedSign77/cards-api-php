@@ -193,6 +193,38 @@ class CardResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('addToDeck')
+                        ->label('Add to Deck')
+                        ->icon('heroicon-o-rectangle-stack')
+                        ->color('primary')
+                        ->form([
+                            Forms\Components\Select::make('deck_id')
+                                ->label('Select Deck')
+                                ->options(function () {
+                                    return \App\Models\Deck::where('creator_id', auth()->id())
+                                        ->get()
+                                        ->mapWithKeys(function ($deck) {
+                                            return [$deck->id => $deck->deck_name . ' (' . $deck->game->name . ')'];
+                                        });
+                                })
+                                ->required()
+                                ->searchable()
+                                ->preload(),
+                        ])
+                        ->action(function (array $data, $records) {
+                            $deck = \App\Models\Deck::find($data['deck_id']);
+                            $cardIds = $records->pluck('id')->toArray();
+
+                            $deck->addCards($cardIds);
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Cards added to deck')
+                                ->success()
+                                ->body(count($cardIds) . ' card(s) added to "' . $deck->deck_name . '"')
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->exports([
