@@ -23,7 +23,20 @@ class CardTypeImporter extends Importer
             ImportColumn::make('game_id')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'exists:games,id']),
+                ->rules([
+                    'required',
+                    'integer',
+                    function (string $attribute, mixed $value, \Closure $fail) {
+                        // Check if game exists and belongs to the authenticated user
+                        $gameExists = \App\Models\Game::where('id', $value)
+                            ->where('creator_id', auth()->id())
+                            ->exists();
+
+                        if (!$gameExists) {
+                            $fail("The selected game (ID: {$value}) either doesn't exist or doesn't belong to you.");
+                        }
+                    },
+                ]),
             ImportColumn::make('description')
                 ->rules(['max:65535']),
         ];
