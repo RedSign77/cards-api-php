@@ -151,7 +151,8 @@ class UserResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(fn () => 'users-' . date('Y-m-d'))
+                            ->withFilename(fn () => 'users-' . date('Y-m-d') . '.csv')
+                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                     ]),
             ])
             ->bulkActions([
@@ -161,7 +162,8 @@ class UserResource extends Resource
                         ->exports([
                             ExcelExport::make()
                                 ->fromTable()
-                                ->withFilename(fn () => 'users-' . date('Y-m-d'))
+                                ->withFilename(fn () => 'users-' . date('Y-m-d') . '.csv')
+                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                         ]),
                 ]),
             ]);

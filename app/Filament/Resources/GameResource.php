@@ -80,7 +80,8 @@ class GameResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(fn () => 'games-' . date('Y-m-d'))
+                            ->withFilename(fn () => 'games-' . date('Y-m-d') . '.csv')
+                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                     ]),
             ])
             ->bulkActions([
@@ -90,7 +91,8 @@ class GameResource extends Resource
                         ->exports([
                             ExcelExport::make()
                                 ->fromTable()
-                                ->withFilename(fn () => 'games-' . date('Y-m-d'))
+                                ->withFilename(fn () => 'games-' . date('Y-m-d') . '.csv')
+                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                         ]),
                 ]),
             ]);

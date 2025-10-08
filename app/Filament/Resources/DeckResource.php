@@ -180,7 +180,8 @@ class DeckResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(fn () => 'decks-' . date('Y-m-d'))
+                            ->withFilename(fn () => 'decks-' . date('Y-m-d') . '.csv')
+                            ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                             ->withColumns([
                                 Column::make('deck_name')->heading('Name'),
                                 Column::make('game.name')->heading('Game'),
@@ -198,7 +199,8 @@ class DeckResource extends Resource
                         ->exports([
                             ExcelExport::make()
                                 ->fromTable()
-                                ->withFilename(fn () => 'decks-' . date('Y-m-d'))
+                                ->withFilename(fn () => 'decks-' . date('Y-m-d') . '.csv')
+                                ->withWriterType(\Maatwebsite\Excel\Excel::CSV)
                         ]),
                 ]),
             ]);

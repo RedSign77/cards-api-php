@@ -15,7 +15,9 @@ class ListCards extends ListRecords
     {
         return [
             Actions\ImportAction::make()
-                ->importer(CardImporter::class),
+                ->importer(CardImporter::class)
+                ->label('Import Cards')
+                ->maxRows(10000),
             Actions\CreateAction::make(),
         ];
     }

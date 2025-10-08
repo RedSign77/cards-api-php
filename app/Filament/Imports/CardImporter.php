@@ -42,10 +42,19 @@ class CardImporter extends Importer
 
     public function resolveRecord(): ?Card
     {
+        // Ensure user_id is always set
+        $this->data['user_id'] = auth()->id();
+
         return Card::firstOrNew([
             'name' => $this->data['name'],
             'user_id' => auth()->id(),
         ]);
+    }
+
+    protected function beforeFill(): void
+    {
+        // Ensure user_id is set before filling the model
+        $this->data['user_id'] = auth()->id();
     }
 
     public static function getCompletedNotificationBody(Import $import): string
