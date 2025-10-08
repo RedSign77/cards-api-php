@@ -139,7 +139,7 @@ class CardResource extends Resource
                     ->badge(),
                 Tables\Columns\TextColumn::make('card_data')
                     ->label('Number of fields')
-                    ->formatStateUsing(fn ($state) => is_array($state) ? count($state) : 0)
+                    ->getStateUsing(fn ($record) => is_array($record->card_data) ? count($record->card_data) : 0)
                     ->badge()
                     ->color('success'),
                 Tables\Columns\TextColumn::make('created_at')
