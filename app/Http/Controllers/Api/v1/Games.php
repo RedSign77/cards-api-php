@@ -32,15 +32,15 @@ class Games extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'creator_id' => 'required|integer|exists:users,id',
         ]);
 
+        $user = auth()->user();
         $game = new Game();
-        $game->creator_id = $request->input('creator_id', 1);
+        $game->creator_id = $user->id;
         $game->name = $request->input('name');
         $game->save();
 
-        return response()->json($game->id, 201);
+        return response()->json(['id' => $game->id], 201);
     }
 
     /**
@@ -48,7 +48,8 @@ class Games extends Controller
      */
     public function show(string $id)
     {
-        $game = Game::findOrFail($id);
+        $user = auth()->user();
+        $game = Game::where('creator_id', $user->id)->findOrFail($id);
 
         return response()->json($game);
     }
@@ -59,13 +60,12 @@ class Games extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'creator_id' => 'required|integer|exists:users,id',
+            'name' => 'sometimes|string|max:255',
         ]);
 
-        $game = Game::findOrFail($id);
+        $user = auth()->user();
+        $game = Game::where('creator_id', $user->id)->findOrFail($id);
         $game->name = $request->input('name', $game->name);
-        $game->creator_id = $request->input('creator_id', $game->creator_id);
         $game->save();
 
         return response()->json($game);
@@ -76,7 +76,8 @@ class Games extends Controller
      */
     public function destroy(string $id)
     {
-        $game = Game::findOrFail($id);
+        $user = auth()->user();
+        $game = Game::where('creator_id', $user->id)->findOrFail($id);
         $game->delete();
 
         return response()->json(['message' => 'Game deleted successfully']);
