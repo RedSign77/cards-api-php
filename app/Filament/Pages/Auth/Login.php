@@ -26,7 +26,7 @@ class Login extends BaseLogin
                         Hidden::make('g-recaptcha-response')
                             ->default('')
                             ->reactive()
-                            ->rules([new Recaptcha()])
+                            ->rules([new Recaptcha('login')])
                             ->validationAttribute('reCAPTCHA'),
                     ])
                     ->statePath('data'),

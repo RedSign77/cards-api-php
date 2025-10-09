@@ -26,7 +26,7 @@ class Register extends BaseRegister
                         Hidden::make('g-recaptcha-response')
                             ->default('')
                             ->reactive()
-                            ->rules([new Recaptcha()])
+                            ->rules([new Recaptcha('register')])
                             ->validationAttribute('reCAPTCHA'),
                     ])
                     ->statePath('data'),
