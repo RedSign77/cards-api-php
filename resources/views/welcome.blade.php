@@ -110,15 +110,6 @@
                     Explore API
                 </a>
             </div>
-            <!-- Notice Message -->
-            <div class="mt-6 bg-amber-600/90 backdrop-blur-sm rounded-xl p-4 max-w-2xl mx-auto text-center border border-amber-500/50 card-hover">
-                <p class="text-lg text-white font-medium">
-                    <span class="font-bold">Pre-release mode:</span> Registration is currently disabled. To join, please email us at
-                    <a href="mailto:info@webtech-solutions.hu" class="underline hover:text-amber-200 transition-colors">
-                        info@webtech-solutions.hu
-                    </a>.
-                </p>
-            </div>
         </div>
 
         <!-- Floating Card Elements -->
@@ -312,10 +303,10 @@
                     </svg>
                 </div>
                 <h3 class="text-2xl font-semibold text-white mb-4 text-center">Get Started</h3>
-                <p class="text-slate-300 mb-6 text-center">Registration is currently disabled. Email us to join the pre-release!</p>
+                <p class="text-slate-300 mb-6 text-center">Start building your card collection today!</p>
                 <div class="text-center">
-                    <a href="mailto:info@webtech-solutions.hu" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
-                        Contact Us
+                    <a href="/admin/register" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
+                        Sign Up Now
                     </a>
                 </div>
             </div>
