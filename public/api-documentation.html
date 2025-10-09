@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cards Forge API Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #1e293b;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dc2626;
+        }
+        h3 {
+            color: #334155;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .endpoint {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .method {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 0.85em;
+        }
+        .method.get { background: #10b981; color: white; }
+        .method.post { background: #3b82f6; color: white; }
+        .method.put { background: #f59e0b; color: white; }
+        .method.patch { background: #8b5cf6; color: white; }
+        .method.delete { background: #ef4444; color: white; }
+        .route {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .description {
+            margin: 15px 0;
+            color: #475569;
+        }
+        .params, .response {
+            margin-top: 15px;
+        }
+        .params h4, .response h4 {
+            color: #334155;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        code {
+            background: #1e293b;
+            color: #10b981;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        .auth-required {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+        .note {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        nav {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        nav ul {
+            list-style: none;
+        }
+        nav ul li {
+            margin-bottom: 10px;
+        }
+        nav ul li a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>♠ Cards Forge API Documentation</h1>
+            <p>RESTful API for managing cards, decks, games, and more</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav>
+            <h3>Quick Navigation</h3>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#authentication">Authentication</a></li>
+                <li><a href="#auth-endpoints">Authentication Endpoints</a></li>
+                <li><a href="#cards">Cards</a></li>
+                <li><a href="#cardtypes">Card Types</a></li>
+                <li><a href="#decks">Decks</a></li>
+                <li><a href="#games">Games</a></li>
+                <li><a href="#hexas">Hexas</a></li>
+                <li><a href="#figures">Figures</a></li>
+                <li><a href="#user-activity">User Activity Logs</a></li>
+                <li><a href="#errors">Error Handling</a></li>
+            </ul>
+        </nav>
+
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>Welcome to the Cards Forge API documentation. This API allows you to create and manage trading cards, card types, decks, and games programmatically.</p>
+
+            <div class="note">
+                <strong>Base URL:</strong> <code>https://your-domain.com/api</code><br>
+                <strong>API Version:</strong> v1<br>
+                <strong>Content-Type:</strong> <code>application/json</code>
+            </div>
+        </section>
+
+        <section id="authentication">
+            <h2>Authentication</h2>
+            <p>The Cards Forge API uses Laravel Sanctum for authentication. After registering and logging in, you'll receive a bearer token that must be included in the <code>Authorization</code> header for all protected endpoints.</p>
+
+            <div class="warning">
+                <strong>Security Note:</strong> All passwords must be at least 12 characters long. Email verification is required before you can access protected endpoints.
+            </div>
+
+            <h3>Using the Token</h3>
+            <p>Include the token in your requests:</p>
+            <pre>Authorization: Bearer YOUR_ACCESS_TOKEN</pre>
+        </section>
+
+        <section id="auth-endpoints">
+            <h2>Authentication Endpoints</h2>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/user/register</span>
+                </div>
+                <p class="description">Register a new user account.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>User's full name (max 255 characters)</td>
+                            </tr>
+                            <tr>
+                                <td><code>email</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>Valid email address (must be unique)</td>
+                            </tr>
+                            <tr>
+                                <td><code>password</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>Password (minimum 12 characters)</td>
+                            </tr>
+                            <tr>
+                                <td><code>password_confirmation</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>Must match password</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="response">
+                    <h4>Response (201 Created)</h4>
+                    <pre>{
+  "message": "User registered successfully. Please check your email to verify your account."
+}</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/user/login</span>
+                </div>
+                <p class="description">Login and receive an authentication token.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>email</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>User's email address</td>
+                            </tr>
+                            <tr>
+                                <td><code>password</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>User's password</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="response">
+                    <h4>Response (200 OK)</h4>
+                    <pre>{
+  "message": "Login successful",
+  "token": "1|abc123def456...",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "email_verified_at": "2025-10-09T10:00:00.000000Z",
+    "supervisor": false,
+    "created_at": "2025-10-09T10:00:00.000000Z",
+    "updated_at": "2025-10-09T10:00:00.000000Z"
+  }
+}</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/supervisor/login</span>
+                </div>
+                <p class="description">Login as a supervisor user.</p>
+                <p class="description">Same request/response format as regular login, but for users with supervisor privileges.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/email/verify</span>
+                </div>
+                <p class="description">Verify user email address.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>id</code></td>
+                                <td>integer</td>
+                                <td>Yes</td>
+                                <td>User ID</td>
+                            </tr>
+                            <tr>
+                                <td><code>hash</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>Verification hash from email</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="response">
+                    <h4>Response (200 OK)</h4>
+                    <pre>{
+  "message": "Email verified successfully."
+}</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/email/resend</span>
+                </div>
+                <p class="description">Resend email verification notification.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>email</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>User's email address</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/user/profile</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Get the authenticated user's profile information.</p>
+
+                <div class="response">
+                    <h4>Response (200 OK)</h4>
+                    <pre>{
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "email_verified_at": "2025-10-09T10:00:00.000000Z",
+    "supervisor": false,
+    "avatar": "/storage/avatars/avatar.jpg",
+    "created_at": "2025-10-09T10:00:00.000000Z",
+    "updated_at": "2025-10-09T10:00:00.000000Z"
+  }
+}</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/user/logout</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Logout and invalidate all authentication tokens.</p>
+
+                <div class="response">
+                    <h4>Response (200 OK)</h4>
+                    <pre>{
+  "message": "Logged out successfully."
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="cards">
+            <h2>Cards</h2>
+            <p>Manage custom trading cards with images, types, and dynamic field data.</p>
+
+            <div class="note">
+                <strong>Note:</strong> All card endpoints require authentication and return only the authenticated user's cards.
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/cards</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Retrieve all cards belonging to the authenticated user.</p>
+
+                <div class="response">
+                    <h4>Response (200 OK)</h4>
+                    <pre>[
+  {
+    "id": 1,
+    "user_id": 1,
+    "game_id": 1,
+    "type_id": 1,
+    "name": "Fire Dragon",
+    "image": "/storage/images/fire-dragon.jpg",
+    "card_text": "A powerful dragon that breathes fire.",
+    "card_data": [
+      {"fieldname": "Attack", "fieldvalue": "10"},
+      {"fieldname": "Defense", "fieldvalue": "8"},
+      {"fieldname": "HP", "fieldvalue": "100"}
+    ],
+    "created_at": "2025-10-09T10:00:00.000000Z",
+    "updated_at": "2025-10-09T10:00:00.000000Z"
+  }
+]</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/cards/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Retrieve a specific card by ID.</p>
+
+                <div class="response">
+                    <h4>Response (200 OK)</h4>
+                    <pre>{
+  "id": 1,
+  "user_id": 1,
+  "game_id": 1,
+  "type_id": 1,
+  "name": "Fire Dragon",
+  "image": "/storage/images/fire-dragon.jpg",
+  "card_text": "A powerful dragon that breathes fire.",
+  "card_data": [
+    {"fieldname": "Attack", "fieldvalue": "10"},
+    {"fieldname": "Defense", "fieldvalue": "8"}
+  ],
+  "created_at": "2025-10-09T10:00:00.000000Z",
+  "updated_at": "2025-10-09T10:00:00.000000Z"
+}</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/v1/cards</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Create a new card.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>game_id</code></td>
+                                <td>integer</td>
+                                <td>Yes</td>
+                                <td>ID of the game this card belongs to</td>
+                            </tr>
+                            <tr>
+                                <td><code>type_id</code></td>
+                                <td>integer</td>
+                                <td>Yes</td>
+                                <td>ID of the card type</td>
+                            </tr>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>Card name (max 255 characters)</td>
+                            </tr>
+                            <tr>
+                                <td><code>image</code></td>
+                                <td>string</td>
+                                <td>No</td>
+                                <td>Image path or URL (max 255 characters)</td>
+                            </tr>
+                            <tr>
+                                <td><code>card_text</code></td>
+                                <td>string</td>
+                                <td>No</td>
+                                <td>Card description or flavor text</td>
+                            </tr>
+                            <tr>
+                                <td><code>card_data</code></td>
+                                <td>array</td>
+                                <td>No</td>
+                                <td>Array of objects with fieldname and fieldvalue</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="response">
+                    <h4>Response (201 Created)</h4>
+                    <pre>{
+  "id": 1
+}</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method put">PUT</span>
+                    <span class="route">/api/v1/cards/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Update an existing card. All parameters are optional.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <p>Same parameters as POST, but all fields are optional.</p>
+                </div>
+
+                <div class="response">
+                    <h4>Response (200 OK)</h4>
+                    <p>Returns the updated card object.</p>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method delete">DELETE</span>
+                    <span class="route">/api/v1/cards/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Delete a card.</p>
+
+                <div class="response">
+                    <h4>Response (200 OK)</h4>
+                    <pre>{
+  "message": "Card deleted successfully"
+}</pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="cardtypes">
+            <h2>Card Types</h2>
+            <p>Define categories or types for your cards (e.g., Monster, Spell, Trap).</p>
+
+            <div class="note">
+                <strong>Note:</strong> Card Types endpoints follow the same RESTful pattern as Cards. All operations require authentication and are user-scoped.
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/cardtypes</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">List all card types.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/cardtypes/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Get a specific card type.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/v1/cardtypes</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Create a new card type.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>game_id</code></td>
+                                <td>integer</td>
+                                <td>Yes</td>
+                                <td>ID of the game this type belongs to</td>
+                            </tr>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>Card type name</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method put">PUT</span>
+                    <span class="route">/api/v1/cardtypes/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Update a card type.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method delete">DELETE</span>
+                    <span class="route">/api/v1/cardtypes/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Delete a card type.</p>
+            </div>
+        </section>
+
+        <section id="decks">
+            <h2>Decks</h2>
+            <p>Create and manage decks containing your cards.</p>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/decks</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">List all decks belonging to the authenticated user.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/decks/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Get a specific deck.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/v1/decks</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Create a new deck.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>game_id</code></td>
+                                <td>integer</td>
+                                <td>Yes</td>
+                                <td>ID of the game this deck belongs to</td>
+                            </tr>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>Deck name</td>
+                            </tr>
+                            <tr>
+                                <td><code>deck_data</code></td>
+                                <td>array</td>
+                                <td>No</td>
+                                <td>JSON array with flexible deck data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method put">PUT</span>
+                    <span class="route">/api/v1/decks/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Update a deck.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method delete">DELETE</span>
+                    <span class="route">/api/v1/decks/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Delete a deck.</p>
+            </div>
+        </section>
+
+        <section id="games">
+            <h2>Games</h2>
+            <p>Create games that contain card types, cards, and decks.</p>
+
+            <div class="note">
+                <strong>Note:</strong> When a new game is created, an email notification is sent to the administrator.
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/games</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">List all games created by the authenticated user.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/games/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Get a specific game.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/v1/games</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Create a new game.</p>
+
+                <div class="params">
+                    <h4>Request Body</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td>string</td>
+                                <td>Yes</td>
+                                <td>Game name</td>
+                            </tr>
+                            <tr>
+                                <td><code>description</code></td>
+                                <td>string</td>
+                                <td>No</td>
+                                <td>Game description</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method put">PUT</span>
+                    <span class="route">/api/v1/games/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Update a game.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method delete">DELETE</span>
+                    <span class="route">/api/v1/games/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Delete a game.</p>
+            </div>
+        </section>
+
+        <section id="hexas">
+            <h2>Hexas</h2>
+            <p>Manage hexagonal grid elements for games.</p>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/hexas</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">List all hexas.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/hexas/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Get a specific hexa.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/v1/hexas</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Create a new hexa.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method put">PUT</span>
+                    <span class="route">/api/v1/hexas/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Update a hexa.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method delete">DELETE</span>
+                    <span class="route">/api/v1/hexas/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Delete a hexa.</p>
+            </div>
+        </section>
+
+        <section id="figures">
+            <h2>Figures</h2>
+            <p>Manage game figures and pieces.</p>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/figures</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">List all figures.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/figures/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Get a specific figure.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method post">POST</span>
+                    <span class="route">/api/v1/figures</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Create a new figure.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method put">PUT</span>
+                    <span class="route">/api/v1/figures/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Update a figure.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method delete">DELETE</span>
+                    <span class="route">/api/v1/figures/{id}</span>
+                    <span class="auth-required">🔒 Authentication Required</span>
+                </div>
+                <p class="description">Delete a figure.</p>
+            </div>
+        </section>
+
+        <section id="user-activity">
+            <h2>User Activity Logs</h2>
+            <p>View user login and logout activity (supervisor only).</p>
+
+            <div class="warning">
+                <strong>Supervisor Access Required:</strong> These endpoints are only accessible to users with supervisor privileges.
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/useractivitylogs</span>
+                    <span class="auth-required">🔒 Supervisor Required</span>
+                </div>
+                <p class="description">List all user activity logs.</p>
+            </div>
+
+            <div class="endpoint">
+                <div>
+                    <span class="method get">GET</span>
+                    <span class="route">/api/v1/useractivitylogs/{id}</span>
+                    <span class="auth-required">🔒 Supervisor Required</span>
+                </div>
+                <p class="description">Get a specific activity log entry.</p>
+            </div>
+        </section>
+
+        <section id="errors">
+            <h2>Error Handling</h2>
+            <p>The API uses standard HTTP status codes to indicate success or failure.</p>
+
+            <h3>HTTP Status Codes</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Meaning</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>200</code></td>
+                        <td>OK</td>
+                        <td>Request successful</td>
+                    </tr>
+                    <tr>
+                        <td><code>201</code></td>
+                        <td>Created</td>
+                        <td>Resource created successfully</td>
+                    </tr>
+                    <tr>
+                        <td><code>400</code></td>
+                        <td>Bad Request</td>
+                        <td>Invalid request parameters</td>
+                    </tr>
+                    <tr>
+                        <td><code>401</code></td>
+                        <td>Unauthorized</td>
+                        <td>Authentication required or invalid credentials</td>
+                    </tr>
+                    <tr>
+                        <td><code>403</code></td>
+                        <td>Forbidden</td>
+                        <td>Email not verified or insufficient permissions</td>
+                    </tr>
+                    <tr>
+                        <td><code>404</code></td>
+                        <td>Not Found</td>
+                        <td>Resource not found</td>
+                    </tr>
+                    <tr>
+                        <td><code>422</code></td>
+                        <td>Unprocessable Entity</td>
+                        <td>Validation errors</td>
+                    </tr>
+                    <tr>
+                        <td><code>500</code></td>
+                        <td>Internal Server Error</td>
+                        <td>Server error</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Error Response Format</h3>
+            <pre>{
+  "message": "Error message description",
+  "errors": {
+    "field_name": [
+      "Validation error message"
+    ]
+  }
+}</pre>
+
+            <h3>Example Error Response</h3>
+            <pre>{
+  "message": "The given data was invalid.",
+  "errors": {
+    "email": [
+      "The email field is required."
+    ],
+    "password": [
+      "The password must be at least 12 characters."
+    ]
+  }
+}</pre>
+        </section>
+
+        <footer style="margin-top: 60px; padding: 40px 0; border-top: 2px solid #e2e8f0; text-align: center; color: #64748b;">
+            <p>&copy; 2025 <a href="https://webtech-solutions.hu" target="_blank" style="color: #3b82f6; text-decoration: none;">Webtech-solutions</a>. All rights reserved.</p>
+            <p style="margin-top: 10px;">Cards Forge API Documentation</p>
+        </footer>
+    </div>
+</body>
+</html>
