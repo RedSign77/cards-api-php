@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Rules\Recaptcha;
 
 class SupervisorController extends Controller
 {
@@ -24,6 +25,7 @@ class SupervisorController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'g-recaptcha-response' => ['required', new Recaptcha()],
         ]);
 
         $user = User::where('email', $request->email)
