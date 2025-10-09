@@ -26,7 +26,7 @@ class ApiController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:12',
-            'g-recaptcha-response' => ['required', new Recaptcha()],
+            'g-recaptcha-response' => ['required', new Recaptcha('register')],
         ]);
 
         $user = User::create([
@@ -53,7 +53,7 @@ class ApiController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'g-recaptcha-response' => ['required', new Recaptcha()],
+            'g-recaptcha-response' => ['required', new Recaptcha('login')],
         ]);
 
         $user = User::where('email', $request->email)->first();
