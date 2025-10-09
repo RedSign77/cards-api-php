@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Rules\Recaptcha;
 
 class ApiController extends Controller
 {
@@ -25,6 +26,7 @@ class ApiController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:12',
+            'g-recaptcha-response' => ['required', new Recaptcha()],
         ]);
 
         $user = User::create([
@@ -51,6 +53,7 @@ class ApiController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'g-recaptcha-response' => ['required', new Recaptcha()],
         ]);
 
         $user = User::where('email', $request->email)->first();
