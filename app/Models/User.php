@@ -17,6 +17,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\NewUserRegistered;
+use App\Notifications\UserEmailConfirmed;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerifyEmail
 {
@@ -55,6 +56,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     {
         return [
             'email_verified_at' => 'datetime',
+            'approved_at' => 'datetime',
             'password' => 'hashed',
             'supervisor' => 'boolean',
         ];
@@ -70,17 +72,33 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
             Notification::route('mail', 'info@webtech-solutions.hu')
                 ->notify(new NewUserRegistered($user));
         });
+
+        static::updated(function (User $user) {
+            // Send notification to all supervisors when user confirms email
+            if ($user->wasChanged('email_verified_at') && $user->email_verified_at !== null && $user->approved_at === null) {
+                $supervisors = User::where('supervisor', true)->get();
+                foreach ($supervisors as $supervisor) {
+                    $supervisor->notify(new UserEmailConfirmed($user));
+                }
+            }
+        });
     }
 
     /**
-     * Fix production issue
+     * Check if user can access Filament panel
      *
      * @param Panel $panel
      * @return bool
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        // Supervisors can always access
+        if ($this->supervisor) {
+            return true;
+        }
+
+        // Regular users need email verified and supervisor approval
+        return $this->hasVerifiedEmail() && $this->approved_at !== null;
     }
 
     /**
