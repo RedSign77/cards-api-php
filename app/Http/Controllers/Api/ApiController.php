@@ -68,6 +68,12 @@ class ApiController extends Controller
             ], 403);
         }
 
+        if (!$user->approved_at) {
+            return response()->json([
+                'message' => 'Your account is pending approval by a supervisor. You will be notified once approved.'
+            ], 403);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

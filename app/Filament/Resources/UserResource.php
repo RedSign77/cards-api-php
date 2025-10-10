@@ -59,6 +59,11 @@ class UserResource extends Resource
                         Forms\Components\DateTimePicker::make('email_verified_at')
                             ->label('Email Verified At')
                             ->displayFormat('Y-m-d H:i:s'),
+
+                        Forms\Components\DateTimePicker::make('approved_at')
+                            ->label('Approved At')
+                            ->displayFormat('Y-m-d H:i:s')
+                            ->helperText('Set automatically when supervisor approves the user'),
                     ])
                     ->columns(2),
 
@@ -116,13 +121,22 @@ class UserResource extends Resource
                     ->falseColor('gray'),
 
                 Tables\Columns\TextColumn::make('email_verified_at')
-                    ->label('Verified')
+                    ->label('Email Verified')
                     ->dateTime('Y-m-d H:i:s')
                     ->sortable()
                     ->toggleable()
                     ->badge()
                     ->color(fn ($state) => $state ? 'success' : 'danger')
                     ->formatStateUsing(fn ($state) => $state ? 'Verified' : 'Not Verified'),
+
+                Tables\Columns\TextColumn::make('approved_at')
+                    ->label('Approved')
+                    ->dateTime('Y-m-d H:i:s')
+                    ->sortable()
+                    ->toggleable()
+                    ->badge()
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
+                    ->formatStateUsing(fn ($state) => $state ? 'Approved' : 'Pending'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created')
@@ -141,6 +155,22 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('approve')
+                    ->label('Approve')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Approve User')
+                    ->modalDescription(fn (User $record) => "Are you sure you want to approve {$record->name}? They will be able to login and use the platform.")
+                    ->modalSubmitActionLabel('Yes, approve')
+                    ->action(function (User $record) {
+                        $record->update([
+                            'approved_at' => now(),
+                        ]);
+                    })
+                    ->visible(fn (User $record) => $record->email_verified_at !== null && $record->approved_at === null)
+                    ->successNotificationTitle('User approved successfully'),
+
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
