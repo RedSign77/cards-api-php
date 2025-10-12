@@ -358,9 +358,9 @@
                 <h4 class="text-lg font-semibold text-white mb-4">Platform</h4>
                 <ul class="space-y-2">
                     <li><a href="/admin" class="text-slate-300 hover:text-white transition-colors">Admin Panel</a></li>
-                    <li><a href="/cards" class="text-slate-300 hover:text-white transition-colors">Manage Cards</a></li>
-                    <li><a href="/decks" class="text-slate-300 hover:text-white transition-colors">Deck Builder</a></li>
-                    <li><a href="/games" class="text-slate-300 hover:text-white transition-colors">Create Games</a></li>
+                    <li><a href="/admin/cards" class="text-slate-300 hover:text-white transition-colors">Manage Cards</a></li>
+                    <li><a href="/admin/decks" class="text-slate-300 hover:text-white transition-colors">Deck Builder</a></li>
+                    <li><a href="/admin/games" class="text-slate-300 hover:text-white transition-colors">Create Games</a></li>
                 </ul>
             </div>
 
