@@ -89,6 +89,24 @@
     </div>
 </nav>
 
+<!-- Beta Notice Banner -->
+<div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-2 text-center">
+            <div class="flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="font-bold text-lg">BETA VERSION</span>
+            </div>
+            <span class="hidden md:inline">•</span>
+            <p class="text-sm md:text-base">
+                This platform is currently in beta. New user registration requires supervisor approval before first use.
+            </p>
+        </div>
+    </div>
+</div>
+
 <!-- Hero Section -->
 <section class="relative py-20 overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 opacity-50"></div>
