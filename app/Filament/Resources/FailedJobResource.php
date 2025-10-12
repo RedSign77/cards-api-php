@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FailedJobResource\Pages;
 use App\Models\FailedJob;
+use App\Models\SupervisorActivityLog;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -118,6 +119,19 @@ class FailedJobResource extends Resource
                         try {
                             Artisan::call('queue:retry', ['id' => $record->uuid]);
 
+                            // Log supervisor action
+                            SupervisorActivityLog::log(
+                                action: 'retry_failed_job',
+                                resourceType: 'FailedJob',
+                                resourceId: $record->id,
+                                description: "Retried failed job: {$record->uuid} from queue: {$record->queue}",
+                                metadata: [
+                                    'uuid' => $record->uuid,
+                                    'queue' => $record->queue,
+                                    'connection' => $record->connection,
+                                ]
+                            );
+
                             Notification::make()
                                 ->title('Job Retried')
                                 ->success()
@@ -143,14 +157,28 @@ class FailedJobResource extends Resource
                         ->requiresConfirmation()
                         ->action(function ($records) {
                             $count = 0;
+                            $uuids = [];
                             foreach ($records as $record) {
                                 try {
                                     Artisan::call('queue:retry', ['id' => $record->uuid]);
                                     $count++;
+                                    $uuids[] = $record->uuid;
                                 } catch (\Exception $e) {
                                     // Continue with next record
                                 }
                             }
+
+                            // Log supervisor action
+                            SupervisorActivityLog::log(
+                                action: 'retry_failed_job',
+                                resourceType: 'FailedJob',
+                                resourceId: null,
+                                description: "Bulk retried {$count} failed job(s)",
+                                metadata: [
+                                    'count' => $count,
+                                    'uuids' => $uuids,
+                                ]
+                            );
 
                             Notification::make()
                                 ->title('Jobs Retried')

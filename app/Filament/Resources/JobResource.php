@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\JobResource\Pages;
 use App\Models\Job;
+use App\Models\SupervisorActivityLog;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -118,6 +119,18 @@ class JobResource extends Resource
                             ]);
 
                             if ($exitCode === 0) {
+                                // Log supervisor action
+                                SupervisorActivityLog::log(
+                                    action: 'run_job',
+                                    resourceType: 'Job',
+                                    resourceId: $record->id,
+                                    description: "Manually executed job from queue: {$record->queue}",
+                                    metadata: [
+                                        'queue' => $record->queue,
+                                        'job_id' => $record->id,
+                                    ]
+                                );
+
                                 \Filament\Notifications\Notification::make()
                                     ->title('Job executed successfully')
                                     ->success()

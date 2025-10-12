@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use App\Models\SupervisorActivityLog;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -167,6 +168,18 @@ class UserResource extends Resource
                         $record->update([
                             'approved_at' => now(),
                         ]);
+
+                        // Log supervisor action
+                        SupervisorActivityLog::log(
+                            action: 'approve_user',
+                            resourceType: 'User',
+                            resourceId: $record->id,
+                            description: "Approved user: {$record->name} ({$record->email})",
+                            metadata: [
+                                'user_name' => $record->name,
+                                'user_email' => $record->email,
+                            ]
+                        );
                     })
                     ->visible(fn (User $record) => $record->email_verified_at !== null && $record->approved_at === null)
                     ->successNotificationTitle('User approved successfully'),
