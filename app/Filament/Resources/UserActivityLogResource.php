@@ -9,8 +9,6 @@ use App\Filament\Resources\UserActivityLogResource\Pages;
 use App\Models\UserActivityLog;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -33,49 +31,6 @@ class UserActivityLogResource extends Resource
         return auth()->user()->isSupervisor();
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Infolists\Components\Section::make('Activity Details')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('user.name')
-                            ->label('User')
-                            ->icon('heroicon-m-user'),
-                        Infolists\Components\TextEntry::make('event_type')
-                            ->label('Event Type')
-                            ->badge()
-                            ->color(fn (string $state): string => match ($state) {
-                                'login' => 'success',
-                                'logout' => 'warning',
-                                default => 'gray',
-                            })
-                            ->icon(fn (string $state): string => match ($state) {
-                                'login' => 'heroicon-m-arrow-right-on-rectangle',
-                                'logout' => 'heroicon-m-arrow-left-on-rectangle',
-                                default => 'heroicon-m-question-mark-circle',
-                            }),
-                        Infolists\Components\TextEntry::make('created_at')
-                            ->label('Date & Time')
-                            ->dateTime()
-                            ->icon('heroicon-m-clock'),
-                    ])
-                    ->columns(3),
-                Infolists\Components\Section::make('Technical Information')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('ip_address')
-                            ->label('IP Address')
-                            ->icon('heroicon-m-globe-alt')
-                            ->copyable(),
-                        Infolists\Components\TextEntry::make('user_agent')
-                            ->label('User Agent')
-                            ->icon('heroicon-m-computer-desktop')
-                            ->copyable()
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(2),
-            ]);
-    }
 
     public static function table(Table $table): Table
     {
@@ -84,7 +39,8 @@ class UserActivityLogResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('User')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->default('N/A'),
                 Tables\Columns\TextColumn::make('event_type')
                     ->label('Event')
                     ->badge()
@@ -134,7 +90,11 @@ class UserActivityLogResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn ($record) => 'Activity Log #' . $record->id)
+                    ->modalContent(fn ($record) => view('filament.resources.user-activity-log-view', ['record' => $record]))
+                    ->modalWidth('xl')
+                    ->slideOver(),
             ])
             ->defaultSort('created_at', 'desc');
     }
@@ -150,7 +110,6 @@ class UserActivityLogResource extends Resource
     {
         return [
             'index' => Pages\ListUserActivityLogs::route('/'),
-            'view' => Pages\ViewUserActivityLog::route('/{record}'),
         ];
     }
 }

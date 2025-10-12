@@ -8,12 +8,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\JobResource\Pages;
 use App\Models\Job;
 use Filament\Forms\Form;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Artisan;
 
 class JobResource extends Resource
 {
@@ -53,55 +53,6 @@ class JobResource extends Resource
         return false;
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Infolists\Components\Section::make('Job Details')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('id')
-                            ->label('Job ID'),
-                        Infolists\Components\TextEntry::make('queue')
-                            ->label('Queue')
-                            ->badge(),
-                        Infolists\Components\TextEntry::make('attempts')
-                            ->label('Attempts')
-                            ->badge()
-                            ->color(fn (int $state): string => match (true) {
-                                $state === 0 => 'success',
-                                $state < 3 => 'warning',
-                                default => 'danger',
-                            }),
-                        Infolists\Components\TextEntry::make('available_at')
-                            ->label('Available At')
-                            ->formatStateUsing(fn ($state) => $state ? date('Y-m-d H:i:s', $state) : 'N/A'),
-                        Infolists\Components\TextEntry::make('reserved_at')
-                            ->label('Reserved At')
-                            ->formatStateUsing(fn ($state) => $state ? date('Y-m-d H:i:s', $state) : 'Not Reserved'),
-                        Infolists\Components\TextEntry::make('created_at')
-                            ->label('Created At')
-                            ->formatStateUsing(fn ($state) => $state ? date('Y-m-d H:i:s', $state) : 'N/A'),
-                    ])
-                    ->columns(3),
-                Infolists\Components\Section::make('Payload')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('payload')
-                            ->label('')
-                            ->formatStateUsing(function ($state) {
-                                if (is_array($state)) {
-                                    return json_encode($state, JSON_PRETTY_PRINT);
-                                }
-                                if (is_string($state)) {
-                                    $decoded = json_decode($state, true);
-                                    return $decoded ? json_encode($decoded, JSON_PRETTY_PRINT) : $state;
-                                }
-                                return 'N/A';
-                            })
-                            ->copyable()
-                            ->columnSpanFull(),
-                    ]),
-            ]);
-    }
 
     public static function table(Table $table): Table
     {
@@ -148,7 +99,57 @@ class JobResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('run')
+                    ->label('Run Now')
+                    ->icon('heroicon-o-play')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Run Queue Job')
+                    ->modalDescription(fn (Job $record) => "Are you sure you want to manually execute this job? Queue: {$record->queue}")
+                    ->modalSubmitActionLabel('Yes, run it')
+                    ->action(function (Job $record) {
+                        try {
+                            // Simply run queue:work for one job
+                            // This is the safest way to execute a queued job
+                            $exitCode = Artisan::call('queue:work', [
+                                '--once' => true,
+                                '--queue' => $record->queue,
+                                '--stop-when-empty' => true,
+                            ]);
+
+                            if ($exitCode === 0) {
+                                \Filament\Notifications\Notification::make()
+                                    ->title('Job executed successfully')
+                                    ->success()
+                                    ->body('The job has been processed.')
+                                    ->send();
+                            } else {
+                                throw new \Exception('Queue worker returned non-zero exit code: ' . $exitCode);
+                            }
+                        } catch (\Exception $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Failed to run job')
+                                ->danger()
+                                ->body('Error: ' . $e->getMessage())
+                                ->duration(10000)
+                                ->send();
+
+                            // Log the error for debugging
+                            \Log::error('Manual job execution failed', [
+                                'job_id' => $record->id,
+                                'error' => $e->getMessage(),
+                                'trace' => $e->getTraceAsString(),
+                            ]);
+                        }
+                    })
+                    ->visible(fn (Job $record) => $record->reserved_at === null),
+
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn ($record) => 'Queue Job #' . $record->id)
+                    ->modalContent(fn ($record) => view('filament.resources.job-view', ['record' => $record]))
+                    ->modalWidth('xl')
+                    ->slideOver(),
+
                 Tables\Actions\DeleteAction::make()
                     ->label('Remove'),
             ])
@@ -171,7 +172,6 @@ class JobResource extends Resource
     {
         return [
             'index' => Pages\ListJobs::route('/'),
-            'view' => Pages\ViewJob::route('/{record}'),
         ];
     }
 }
