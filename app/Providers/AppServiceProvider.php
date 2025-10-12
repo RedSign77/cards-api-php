@@ -22,10 +22,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Mail::extend('mailjet', function (array $config) {
-            return new MailjetTransport(
-                config('services.mailjet.key'),
-                config('services.mailjet.secret')
-            );
+            $apiKey = config('services.mailjet.key');
+            $apiSecret = config('services.mailjet.secret');
+
+            // If credentials are not set, return log transport as fallback
+            if (empty($apiKey) || empty($apiSecret)) {
+                return Mail::createSymfonyTransport(['transport' => 'log']);
+            }
+
+            return new MailjetTransport($apiKey, $apiSecret);
         });
     }
 }

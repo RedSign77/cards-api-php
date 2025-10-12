@@ -8,8 +8,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\FailedJobResource\Pages;
 use App\Models\FailedJob;
 use Filament\Forms\Form;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -54,57 +52,6 @@ class FailedJobResource extends Resource
         return false;
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                Infolists\Components\Section::make('Failed Job Details')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('id')
-                            ->label('ID'),
-                        Infolists\Components\TextEntry::make('uuid')
-                            ->label('UUID')
-                            ->copyable(),
-                        Infolists\Components\TextEntry::make('connection')
-                            ->label('Connection')
-                            ->badge(),
-                        Infolists\Components\TextEntry::make('queue')
-                            ->label('Queue')
-                            ->badge()
-                            ->color('danger'),
-                        Infolists\Components\TextEntry::make('failed_at')
-                            ->label('Failed At')
-                            ->dateTime(),
-                    ])
-                    ->columns(3),
-                Infolists\Components\Section::make('Payload')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('payload')
-                            ->label('')
-                            ->formatStateUsing(function ($state) {
-                                if (is_array($state)) {
-                                    return json_encode($state, JSON_PRETTY_PRINT);
-                                }
-                                if (is_string($state)) {
-                                    $decoded = json_decode($state, true);
-                                    return $decoded ? json_encode($decoded, JSON_PRETTY_PRINT) : $state;
-                                }
-                                return 'N/A';
-                            })
-                            ->copyable()
-                            ->columnSpanFull(),
-                    ])
-                    ->collapsible(),
-                Infolists\Components\Section::make('Exception')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('exception')
-                            ->label('')
-                            ->columnSpanFull()
-                            ->copyable(),
-                    ])
-                    ->collapsible(),
-            ]);
-    }
 
     public static function table(Table $table): Table
     {
@@ -157,7 +104,11 @@ class FailedJobResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn ($record) => 'Failed Job #' . $record->id)
+                    ->modalContent(fn ($record) => view('filament.resources.failed-job-view', ['record' => $record]))
+                    ->modalWidth('xl')
+                    ->slideOver(),
                 Tables\Actions\Action::make('retry')
                     ->label('Retry')
                     ->icon('heroicon-o-arrow-path')
@@ -224,7 +175,6 @@ class FailedJobResource extends Resource
     {
         return [
             'index' => Pages\ListFailedJobs::route('/'),
-            'view' => Pages\ViewFailedJob::route('/{record}'),
         ];
     }
 }
