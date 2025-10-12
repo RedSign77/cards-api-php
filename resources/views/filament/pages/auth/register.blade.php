@@ -1,4 +1,16 @@
 <x-filament-panels::page.simple>
+    <x-slot name="heading">
+        @if(config('app_version.status') !== 'stable')
+            <div style="background: linear-gradient(to right, #f59e0b, #ea580c); color: #ffffff; padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; font-weight: 600; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                <svg style="display: inline-block; width: 1.25rem; height: 1.25rem; vertical-align: middle; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ strtoupper(config('app_version.status')) }} VERSION - Registration requires supervisor approval before first use
+            </div>
+        @endif
+        {{ __('filament-panels::pages/auth/register.title') }}
+    </x-slot>
+
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
     <x-filament-panels::form wire:submit="register" id="register-form">
