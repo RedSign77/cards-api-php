@@ -67,12 +67,13 @@ class AdminPanelProvider extends PanelProvider
                     ->shouldShowDeleteAccountForm(false)
                     ->shouldShowBrowserSessionsForm(false)
                     ->shouldShowSanctumTokens(false)
+                    ->shouldRegisterNavigation(false)
             ])
             ->userMenuItems([
-                'profile' => MenuItem::make('profile')
-                    ->label(fn() => auth()->user()->name)
+                'profile' => MenuItem::make()
+                    ->label('Edit Profile')
                     ->url(fn (): string => EditProfilePage::getUrl())
-                    ->icon('heroicon-m-user-circle')
+                    ->icon('heroicon-m-pencil-square'),
             ])
             ->middleware([
                 EncryptCookies::class,
