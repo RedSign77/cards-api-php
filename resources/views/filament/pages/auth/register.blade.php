@@ -11,6 +11,14 @@
         {{ __('filament-panels::pages/auth/register.title') }}
     </x-slot>
 
+    @if (filament()->hasLogin())
+        <x-slot name="subheading">
+            Already have an account?
+
+            {{ $this->loginAction }}
+        </x-slot>
+    @endif
+
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
     <x-filament-panels::form wire:submit="register" id="register-form">

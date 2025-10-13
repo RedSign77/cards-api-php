@@ -13,6 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Notifications\Notification;
+use Illuminate\Auth\Notifications\VerifyEmail;
 
 class UserResource extends Resource
 {
@@ -156,6 +158,68 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('resend_verification')
+                    ->label('Resend Verification')
+                    ->icon('heroicon-o-envelope')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->modalHeading('Resend Verification Email')
+                    ->modalDescription(fn (User $record) => "Send a new verification email to {$record->email}?")
+                    ->modalSubmitActionLabel('Yes, send email')
+                    ->action(function (User $record) {
+                        $record->sendEmailVerificationNotification();
+
+                        Notification::make()
+                            ->title('Verification email sent')
+                            ->body("Verification email has been sent to {$record->email}")
+                            ->success()
+                            ->send();
+
+                        // Log supervisor action
+                        SupervisorActivityLog::log(
+                            action: 'resend_verification',
+                            resourceType: 'User',
+                            resourceId: $record->id,
+                            description: "Resent verification email to: {$record->name} ({$record->email})",
+                            metadata: [
+                                'user_name' => $record->name,
+                                'user_email' => $record->email,
+                            ]
+                        );
+                    })
+                    ->visible(fn (User $record) => $record->email_verified_at === null),
+
+                Tables\Actions\Action::make('verify_email')
+                    ->label('Verify Email')
+                    ->icon('heroicon-o-check-badge')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Manually Verify Email')
+                    ->modalDescription(fn (User $record) => "Manually verify the email for {$record->name}? This will mark their email as verified without requiring them to click a link.")
+                    ->modalSubmitActionLabel('Yes, verify email')
+                    ->action(function (User $record) {
+                        $record->markEmailAsVerified();
+
+                        Notification::make()
+                            ->title('Email verified')
+                            ->body("{$record->name}'s email has been manually verified")
+                            ->success()
+                            ->send();
+
+                        // Log supervisor action
+                        SupervisorActivityLog::log(
+                            action: 'verify_email',
+                            resourceType: 'User',
+                            resourceId: $record->id,
+                            description: "Manually verified email for: {$record->name} ({$record->email})",
+                            metadata: [
+                                'user_name' => $record->name,
+                                'user_email' => $record->email,
+                            ]
+                        );
+                    })
+                    ->visible(fn (User $record) => $record->email_verified_at === null),
+
                 Tables\Actions\Action::make('approve')
                     ->label('Approve')
                     ->icon('heroicon-o-check-circle')

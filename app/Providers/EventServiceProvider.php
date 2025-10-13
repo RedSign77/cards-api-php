@@ -11,12 +11,14 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Queue\Events\JobProcessed;
 use App\Listeners\LogUserLogin;
 use App\Listeners\LogUserLogout;
 use App\Listeners\LogUserRegistered;
 use App\Listeners\LogPasswordReset;
 use App\Listeners\LogFailedLogin;
 use App\Listeners\LogEmailVerified;
+use App\Listeners\LogCompletedJob;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -44,6 +46,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         Verified::class => [
             LogEmailVerified::class,
+        ],
+        JobProcessed::class => [
+            LogCompletedJob::class,
         ],
     ];
 

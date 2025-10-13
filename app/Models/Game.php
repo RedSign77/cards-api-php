@@ -51,7 +51,7 @@ class Game extends Model
     {
         static::created(function (Game $game) {
             // Send notification to admin email about new game
-            Notification::route('mail', 'info@webtech-solutions.hu')
+            Notification::route('mail', 'signred@gmail.com')
                 ->notify(new NewGameAdded($game));
         });
     }

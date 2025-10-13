@@ -115,7 +115,7 @@ All v1 API controllers are in `app/Http/Controllers/Api/v1/`.
 
 Located at `/admin` route. Key features:
 
-**Resources:** Card, CardType, Deck, Game, User, UserActivityLog
+**Resources:** Card, CardType, Deck, Game, User, UserActivityLog, CompletedJob, FailedJob
 
 **Custom Dashboard:** `app/Filament/Pages/Dashboard.php` with widgets:
 - CustomAccountWidget (user profile)
@@ -150,13 +150,21 @@ Two notification types:
 
 Both use model events in the `booted()` method.
 
-### User Activity Logging
+### Activity and Job Logging
 
+**User Activity Logging:**
 `UserActivityLog` model tracks user login/logout events via event listeners:
 - `LogUserLogin` - Listens for `Illuminate\Auth\Events\Login`
 - `LogUserLogout` - Listens for `Illuminate\Auth\Events\Logout`
 
-Registered in `app/Providers/EventServiceProvider.php`.
+**Completed Jobs Logging:**
+`CompletedJob` model tracks successfully processed queue jobs:
+- `LogCompletedJob` - Listens for `Illuminate\Queue\Events\JobProcessed`
+- Stores job payload, execution details, and timing
+- Viewable in Filament Admin Panel under Administration > Completed Jobs
+- Supervisor-only access
+
+All event listeners registered in `app/Providers/EventServiceProvider.php`.
 
 ### File Storage
 
@@ -177,4 +185,4 @@ Uses Rewardenv Laravel project setup (see `.reward` directory). Can also use sta
 - When creating API endpoints, follow the existing v1 controller pattern
 - All copyright headers use "Webtech-solutions 2025, All rights reserved."
 - Card and Deck images should use FileUpload component with `imageEditor()` in Filament
-- Notifications go to hardcoded admin email `info@webtech-solutions.hu`
+- Notifications go to hardcoded admin email `signred@gmail.com`

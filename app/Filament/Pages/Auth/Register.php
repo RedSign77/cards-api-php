@@ -10,6 +10,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Hidden;
 use Filament\Pages\Auth\Register as BaseRegister;
 use App\Rules\Recaptcha;
+use Filament\Notifications\Notification;
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use Illuminate\Auth\Events\Registered;
+use Filament\Actions\Action;
 
 class Register extends BaseRegister
 {
@@ -76,5 +80,52 @@ class Register extends BaseRegister
     public function getView(): string
     {
         return 'filament.pages.auth.register';
+    }
+
+    protected function getLoginAction(): Action
+    {
+        return Action::make('login')
+            ->link()
+            ->label('Sign in')
+            ->url(filament()->getLoginUrl());
+    }
+
+    public function register(): ?\Filament\Http\Responses\Auth\Contracts\RegistrationResponse
+    {
+        try {
+            $this->rateLimit(2);
+        } catch (TooManyRequestsException $exception) {
+            Notification::make()
+                ->title(__('filament-panels::pages/auth/register.notifications.throttled.title', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]))
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/register.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/register.notifications.throttled.body', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]) : null)
+                ->danger()
+                ->send();
+
+            return null;
+        }
+
+        $data = $this->form->getState();
+
+        $user = $this->getUserModel()::create($data);
+
+        event(new Registered($user));
+
+        // Redirect to registration page with success message instead of logging in
+        Notification::make()
+            ->title('Registration Successful!')
+            ->body('Please check your email to verify your account. After email verification, a supervisor will need to approve your account before you can access the system.')
+            ->success()
+            ->persistent()
+            ->send();
+
+        $this->redirect(route('filament.admin.auth.register'));
+
+        return null;
     }
 }
