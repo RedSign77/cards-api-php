@@ -254,11 +254,59 @@ class UserResource extends Resource
                     ->visible(fn (User $record) => $record->email_verified_at !== null && $record->approved_at === null)
                     ->successNotificationTitle('User approved successfully'),
 
+                Tables\Actions\DeleteAction::make()
+                    ->before(function (User $record) {
+                        // Log supervisor action before deletion
+                        SupervisorActivityLog::log(
+                            action: 'delete_user',
+                            resourceType: 'User',
+                            resourceId: $record->id,
+                            description: "Deleted user: {$record->name} ({$record->email})",
+                            metadata: [
+                                'user_id' => $record->id,
+                                'user_name' => $record->name,
+                                'user_email' => $record->email,
+                                'email_verified_at' => $record->email_verified_at?->toDateTimeString(),
+                                'approved_at' => $record->approved_at?->toDateTimeString(),
+                                'supervisor' => $record->supervisor,
+                            ]
+                        );
+                    }),
+
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->action(function ($records) {
+                            $count = $records->count();
+                            $users = $records->map(fn ($user) => [
+                                'id' => $user->id,
+                                'name' => $user->name,
+                                'email' => $user->email,
+                            ])->toArray();
+
+                            // Log bulk delete action
+                            SupervisorActivityLog::log(
+                                action: 'bulk_delete_users',
+                                resourceType: 'User',
+                                resourceId: null,
+                                description: "Bulk deleted {$count} user(s)",
+                                metadata: [
+                                    'count' => $count,
+                                    'users' => $users,
+                                ]
+                            );
+
+                            // Perform the deletion
+                            $records->each->delete();
+
+                            Notification::make()
+                                ->title('Users deleted')
+                                ->success()
+                                ->body("{$count} user(s) have been deleted.")
+                                ->send();
+                        }),
                 ]),
             ]);
     }
