@@ -145,4 +145,22 @@ return [
 
     'admin_address' => env('MAIL_ADMIN_ADDRESS', 'admin@example.com'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Markdown Mail Settings
+    |--------------------------------------------------------------------------
+    |
+    | If you are using Markdown based email rendering, you may configure your
+    | theme and component paths here, allowing you to customize the design
+    | of the emails. Or, you may simply stick with the Laravel defaults!
+    |
+    */
+
+    'markdown' => [
+        'theme' => env('MAIL_MARKDOWN_THEME', 'cardsforge'),
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
+    ],
+
 ];
