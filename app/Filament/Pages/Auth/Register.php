@@ -25,6 +25,7 @@ class Register extends BaseRegister
                     ->schema([
                         $this->getNameFormComponent(),
                         $this->getEmailFormComponent(),
+                        $this->getLocationFormComponent(),
                         $this->getPasswordFormComponent(),
                         $this->getPasswordConfirmationFormComponent(),
                         Hidden::make('g-recaptcha-response')
@@ -55,6 +56,15 @@ class Register extends BaseRegister
             ->required()
             ->maxLength(255)
             ->unique($this->getUserModel());
+    }
+
+    protected function getLocationFormComponent(): Component
+    {
+        return TextInput::make('location')
+            ->label('Location')
+            ->required()
+            ->maxLength(255)
+            ->placeholder('City, Country');
     }
 
     protected function getPasswordFormComponent(): Component

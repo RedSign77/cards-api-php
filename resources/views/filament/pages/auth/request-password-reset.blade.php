@@ -56,13 +56,20 @@
             /* Cards Forge Auth Page Styling */
             .fi-simple-page {
                 background: #f8fafc;
-                min-height: 100vh;
+                min-height: auto !important;
+                padding: 3rem 0 !important;
+            }
+
+            .fi-simple-layout {
+                min-height: auto !important;
             }
 
             .fi-simple-main {
                 background: #ffffff;
                 border: 1px solid #e2e8f0;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
             }
 
             /* Card suit decorations */
