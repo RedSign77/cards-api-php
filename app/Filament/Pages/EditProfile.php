@@ -16,6 +16,7 @@ class EditProfile extends BaseEditProfilePage
     {
         return $form
             ->schema([
+                $this->getAvatarFormComponent(),
                 $this->getNameFormComponent(),
                 $this->getEmailFormComponent(),
                 TextInput::make('location')
