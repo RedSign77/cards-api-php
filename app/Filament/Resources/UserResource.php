@@ -60,6 +60,31 @@ class UserResource extends Resource
                             ->required()
                             ->maxLength(255),
 
+                        Forms\Components\TextInput::make('location')
+                            ->label('Location')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('City, Country'),
+
+                        Forms\Components\TextInput::make('phone')
+                            ->label('Phone')
+                            ->tel()
+                            ->maxLength(255)
+                            ->placeholder('+1 (555) 123-4567'),
+
+                        Forms\Components\TextInput::make('website')
+                            ->label('Website')
+                            ->url()
+                            ->maxLength(255)
+                            ->placeholder('https://example.com'),
+
+                        Forms\Components\Textarea::make('bio')
+                            ->label('Bio')
+                            ->rows(3)
+                            ->maxLength(1000)
+                            ->placeholder('Tell us about yourself...')
+                            ->columnSpanFull(),
+
                         Forms\Components\DateTimePicker::make('email_verified_at')
                             ->label('Email Verified At')
                             ->displayFormat('Y-m-d H:i:s'),
@@ -256,6 +281,11 @@ class UserResource extends Resource
 
                 Tables\Actions\DeleteAction::make()
                     ->before(function (User $record) {
+                        // Send deletion notification email to user
+                        if (config('mail.enabled', true)) {
+                            $record->notify(new \App\Notifications\AccountDeleted(auth()->user()));
+                        }
+
                         // Log supervisor action before deletion
                         SupervisorActivityLog::log(
                             action: 'delete_user',
@@ -285,6 +315,13 @@ class UserResource extends Resource
                                 'name' => $user->name,
                                 'email' => $user->email,
                             ])->toArray();
+
+                            // Send deletion notification emails to users
+                            if (config('mail.enabled', true)) {
+                                foreach ($records as $record) {
+                                    $record->notify(new \App\Notifications\AccountDeleted(auth()->user()));
+                                }
+                            }
 
                             // Log bulk delete action
                             SupervisorActivityLog::log(

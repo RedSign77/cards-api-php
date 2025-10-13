@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use App\Rules\Recaptcha;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Filament\Actions\Action;
 
 class Login extends BaseLogin
 {
@@ -90,5 +91,21 @@ class Login extends BaseLogin
     public function getView(): string
     {
         return 'filament.pages.auth.login';
+    }
+
+    protected function getRequestPasswordResetAction(): Action
+    {
+        return Action::make('requestPasswordReset')
+            ->link()
+            ->label('Forgot password?')
+            ->url(filament()->getRequestPasswordResetUrl());
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getAuthenticateFormAction(),
+            $this->getRequestPasswordResetAction(),
+        ];
     }
 }

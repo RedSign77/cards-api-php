@@ -18,10 +18,13 @@ use Filament\Navigation\MenuItem;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
+use App\Filament\Pages\Auth\RequestPasswordReset;
+use App\Filament\Pages\Auth\ResetPassword;
 use App\Filament\Widgets\CustomAccountWidget;
 use App\Filament\Widgets\SystemStatsWidget;
 use App\Filament\Widgets\QuickLinksWidget;
 use App\Filament\Widgets\StatsOverview;
+use App\Filament\Pages\EditProfile;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -29,7 +32,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
-use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -41,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->registration(Register::class)
-            ->passwordReset()
+            ->passwordReset(RequestPasswordReset::class, ResetPassword::class)
             ->emailVerification()
             ->brandName('Cards Forge')
             ->colors([
@@ -51,6 +53,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Dashboard::class,
+                EditProfile::class,
             ])
             ->widgets([
                 CustomAccountWidget::class,
@@ -72,7 +75,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label('Edit Profile')
-                    ->url(fn (): string => EditProfilePage::getUrl())
+                    ->url(fn (): string => EditProfile::getUrl())
                     ->icon('heroicon-m-pencil-square'),
             ])
             ->middleware([

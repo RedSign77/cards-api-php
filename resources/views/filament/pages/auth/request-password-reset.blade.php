@@ -1,23 +1,11 @@
 <x-filament-panels::page.simple>
-    @if (filament()->hasRegistration())
-        <x-slot name="subheading">
-            {{ __('filament-panels::pages/auth/login.actions.register.before') }}
+    <x-slot name="subheading">
+        {{ $this->loginAction }}
+    </x-slot>
 
-            {{ $this->registerAction }}
-        </x-slot>
-    @endif
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_PASSWORD_RESET_REQUEST_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-    @if (session('success'))
-        <div class="rounded-lg bg-success-50 dark:bg-success-400/10 p-4 mb-4 border border-success-200 dark:border-success-400/20">
-            <p class="text-sm font-medium text-success-700 dark:text-success-400">
-                {{ session('success') }}
-            </p>
-        </div>
-    @endif
-
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
-
-    <x-filament-panels::form wire:submit="authenticate" id="login-form">
+    <x-filament-panels::form wire:submit="request" id="forgot-password-form">
         {{ $this->form }}
 
         <x-filament-panels::form.actions
@@ -26,7 +14,7 @@
         />
     </x-filament-panels::form>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_PASSWORD_RESET_REQUEST_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}
 
     @push('scripts')
         <script src="https://www.google.com/recaptcha/enterprise.js?render={{ config('recaptcha.site_key') }}"></script>
@@ -34,7 +22,7 @@
             let recaptchaExecuted = false;
 
             document.addEventListener('DOMContentLoaded', function() {
-                const form = document.getElementById('login-form');
+                const form = document.getElementById('forgot-password-form');
 
                 if (form) {
                     form.addEventListener('submit', function(e) {
@@ -43,7 +31,7 @@
                             e.stopPropagation();
 
                             grecaptcha.enterprise.ready(function() {
-                                grecaptcha.enterprise.execute('{{ config('recaptcha.site_key') }}', {action: 'login'})
+                                grecaptcha.enterprise.execute('{{ config('recaptcha.site_key') }}', {action: 'forgot_password'})
                                     .then(function(token) {
                                         recaptchaExecuted = true;
                                         @this.set('data.g-recaptcha-response', token);
