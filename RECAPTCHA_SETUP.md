@@ -131,4 +131,4 @@ curl -X POST https://your-domain.com/api/user/login \
 
 ## Support
 
-For issues related to reCAPTCHA integration, contact: info@webtech-solutions.hu
+For issues related to reCAPTCHA integration, contact: signred@gmail.com
