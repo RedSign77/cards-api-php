@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'version' => env('APP_VERSION', 'v0.9.0-beta'),
+    'version' => env('APP_VERSION', 'v0.9.3-beta'),
 
     'release_date' => '2025-10-12',
 

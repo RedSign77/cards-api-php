@@ -4,6 +4,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Email Enabled
+    |--------------------------------------------------------------------------
+    |
+    | This option controls whether emails are sent at all. When set to false,
+    | no emails will be sent regardless of other configuration. Useful for
+    | disabling emails in production or staging environments.
+    |
+    */
+
+    'enabled' => env('MAIL_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Mailer
     |--------------------------------------------------------------------------
     |
@@ -119,5 +132,17 @@ return [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Email Address
+    |--------------------------------------------------------------------------
+    |
+    | This is the email address where admin notifications are sent,
+    | such as new user registrations and new game creations.
+    |
+    */
+
+    'admin_address' => env('MAIL_ADMIN_ADDRESS', 'admin@example.com'),
 
 ];
