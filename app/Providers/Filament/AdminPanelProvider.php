@@ -18,6 +18,8 @@ use Filament\Navigation\MenuItem;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
+use App\Filament\Pages\Auth\RequestPasswordReset;
+use App\Filament\Pages\Auth\ResetPassword;
 use App\Filament\Widgets\CustomAccountWidget;
 use App\Filament\Widgets\SystemStatsWidget;
 use App\Filament\Widgets\QuickLinksWidget;
@@ -41,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->registration(Register::class)
-            ->passwordReset()
+            ->passwordReset(RequestPasswordReset::class, ResetPassword::class)
             ->emailVerification()
             ->brandName('Cards Forge')
             ->colors([

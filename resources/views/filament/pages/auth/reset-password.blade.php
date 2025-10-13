@@ -1,23 +1,7 @@
 <x-filament-panels::page.simple>
-    @if (filament()->hasRegistration())
-        <x-slot name="subheading">
-            {{ __('filament-panels::pages/auth/login.actions.register.before') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_PASSWORD_RESET_RESET_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-            {{ $this->registerAction }}
-        </x-slot>
-    @endif
-
-    @if (session('success'))
-        <div class="rounded-lg bg-success-50 dark:bg-success-400/10 p-4 mb-4 border border-success-200 dark:border-success-400/20">
-            <p class="text-sm font-medium text-success-700 dark:text-success-400">
-                {{ session('success') }}
-            </p>
-        </div>
-    @endif
-
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
-
-    <x-filament-panels::form wire:submit="authenticate" id="login-form">
+    <x-filament-panels::form wire:submit="resetPassword">
         {{ $this->form }}
 
         <x-filament-panels::form.actions
@@ -26,42 +10,7 @@
         />
     </x-filament-panels::form>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}
-
-    @push('scripts')
-        <script src="https://www.google.com/recaptcha/enterprise.js?render={{ config('recaptcha.site_key') }}"></script>
-        <script>
-            let recaptchaExecuted = false;
-
-            document.addEventListener('DOMContentLoaded', function() {
-                const form = document.getElementById('login-form');
-
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        if (!recaptchaExecuted) {
-                            e.preventDefault();
-                            e.stopPropagation();
-
-                            grecaptcha.enterprise.ready(function() {
-                                grecaptcha.enterprise.execute('{{ config('recaptcha.site_key') }}', {action: 'login'})
-                                    .then(function(token) {
-                                        recaptchaExecuted = true;
-                                        @this.set('data.g-recaptcha-response', token);
-
-                                        // Trigger form submission after setting token
-                                        setTimeout(() => {
-                                            form.querySelector('button[type="submit"]').click();
-                                        }, 100);
-                                    });
-                            });
-
-                            return false;
-                        }
-                    });
-                }
-            });
-        </script>
-    @endpush
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_PASSWORD_RESET_RESET_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}
 
     @push('styles')
         <style>

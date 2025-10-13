@@ -114,17 +114,13 @@ class Register extends BaseRegister
 
         $user = $this->getUserModel()::create($data);
 
-        event(new Registered($user));
+        // Send verification email
+        $user->sendEmailVerificationNotification();
 
-        // Redirect to registration page with success message instead of logging in
-        Notification::make()
-            ->title('Registration Successful!')
-            ->body('Please check your email to verify your account. After email verification, a supervisor will need to approve your account before you can access the system.')
-            ->success()
-            ->persistent()
-            ->send();
+        // Redirect to login page with success message
+        session()->flash('success', 'Registration Successful! Please check your email to verify your account. After email verification, a supervisor will need to approve your account before you can access the system.');
 
-        $this->redirect(route('filament.admin.auth.register'));
+        $this->redirect(route('filament.admin.auth.login'));
 
         return null;
     }
