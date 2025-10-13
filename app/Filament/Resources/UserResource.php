@@ -256,6 +256,11 @@ class UserResource extends Resource
 
                 Tables\Actions\DeleteAction::make()
                     ->before(function (User $record) {
+                        // Send deletion notification email to user
+                        if (config('mail.enabled', true)) {
+                            $record->notify(new \App\Notifications\AccountDeleted(auth()->user()));
+                        }
+
                         // Log supervisor action before deletion
                         SupervisorActivityLog::log(
                             action: 'delete_user',
@@ -285,6 +290,13 @@ class UserResource extends Resource
                                 'name' => $user->name,
                                 'email' => $user->email,
                             ])->toArray();
+
+                            // Send deletion notification emails to users
+                            if (config('mail.enabled', true)) {
+                                foreach ($records as $record) {
+                                    $record->notify(new \App\Notifications\AccountDeleted(auth()->user()));
+                                }
+                            }
 
                             // Log bulk delete action
                             SupervisorActivityLog::log(

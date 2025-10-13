@@ -286,6 +286,7 @@ img {
     border-left: 24px solid #ef4444;
     border-right: 24px solid #ef4444;
     border-top: 10px solid #ef4444;
+    color: #ffffff !important;
 }
 
 .button-blue:hover,
@@ -295,6 +296,7 @@ img {
     border-left: 24px solid #dc2626 !important;
     border-right: 24px solid #dc2626 !important;
     border-top: 10px solid #dc2626 !important;
+    color: #ffffff !important;
 }
 
 .button-green,
