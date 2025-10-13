@@ -146,11 +146,13 @@ Example `card_data` structure:
 
 Email notifications can be disabled via `MAIL_ENABLED=false` in `.env`.
 
-Two notification types:
-- `NewUserRegistered` - Sent to admin email on user creation
-- `NewGameAdded` - Sent to admin email on game creation
+Notification types:
+- `NewUserRegistered` - Sent to admin email on user creation (model event)
+- `UserEmailConfirmed` - Sent to supervisors when user verifies email (model event)
+- `NewGameAdded` - Sent to admin email on game creation (model event)
+- `UserApproved` - Sent to user when supervisor approves their account (Filament action)
 
-Both use model events in the `booted()` method and check `config('mail.enabled')` before sending.
+All notifications check `config('mail.enabled')` before sending and implement `ShouldQueue` for background processing.
 
 ### Activity and Job Logging
 

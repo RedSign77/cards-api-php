@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use App\Models\SupervisorActivityLog;
+use App\Notifications\UserApproved;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -232,6 +233,11 @@ class UserResource extends Resource
                         $record->update([
                             'approved_at' => now(),
                         ]);
+
+                        // Send notification to the user
+                        if (config('mail.enabled', true)) {
+                            $record->notify(new UserApproved(auth()->user()));
+                        }
 
                         // Log supervisor action
                         SupervisorActivityLog::log(
