@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use App\Notifications\EmailVerifiedSuccess;
 
 Route::get('/',[HomeController::class, 'index'])->name('home');
 
@@ -25,7 +26,12 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
 
     $user->markEmailAsVerified();
 
-    return redirect('/admin/login')->with('success', 'Email verified successfully! Your account is now awaiting supervisor approval. You will be notified once approved.');
+    // Send confirmation email to the user
+    if (config('mail.enabled', true)) {
+        $user->notify(new EmailVerifiedSuccess());
+    }
+
+    return redirect('/admin/login')->with('success', 'Email verified successfully! Check your inbox for confirmation. Your account is now awaiting supervisor approval.');
 })->middleware(['signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
