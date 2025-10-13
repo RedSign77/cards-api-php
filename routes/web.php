@@ -39,13 +39,3 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
-// Email Preview Route (for development only - remove in production)
-Route::get('/email-preview', function () {
-    $user = \App\Models\User::first();
-    if (!$user) {
-        return 'No user found in database';
-    }
-    $notification = new EmailVerifiedSuccess();
-    return $notification->toMail($user);
-})->middleware('web');
