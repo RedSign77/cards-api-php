@@ -144,11 +144,13 @@ Example `card_data` structure:
 
 ### Notifications
 
-Two notification types:
-- `NewUserRegistered` - Sent to `info@webtech-solutions.hu` on user creation
-- `NewGameAdded` - Sent to `info@webtech-solutions.hu` on game creation
+Email notifications can be disabled via `MAIL_ENABLED=false` in `.env`.
 
-Both use model events in the `booted()` method.
+Two notification types:
+- `NewUserRegistered` - Sent to admin email on user creation
+- `NewGameAdded` - Sent to admin email on game creation
+
+Both use model events in the `booted()` method and check `config('mail.enabled')` before sending.
 
 ### Activity and Job Logging
 
@@ -185,4 +187,5 @@ Uses Rewardenv Laravel project setup (see `.reward` directory). Can also use sta
 - When creating API endpoints, follow the existing v1 controller pattern
 - All copyright headers use "Webtech-solutions 2025, All rights reserved."
 - Card and Deck images should use FileUpload component with `imageEditor()` in Filament
-- Notifications go to hardcoded admin email `signred@gmail.com`
+- Admin notification email configured via `MAIL_ADMIN_ADDRESS` environment variable
+

@@ -18,6 +18,12 @@ class LogCompletedJob
     {
         try {
             $payload = json_decode($event->job->getRawBody(), true);
+            $uuid = $payload['uuid'] ?? Str::uuid();
+
+            // Check if this job was already logged (prevent duplicates)
+            if (CompletedJob::where('uuid', $uuid)->exists()) {
+                return;
+            }
 
             // Extract job class name
             $jobClass = null;
@@ -28,7 +34,7 @@ class LogCompletedJob
             }
 
             CompletedJob::create([
-                'uuid' => $payload['uuid'] ?? Str::uuid(),
+                'uuid' => $uuid,
                 'connection' => $event->connectionName,
                 'queue' => $event->job->getQueue(),
                 'payload' => $payload,

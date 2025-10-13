@@ -71,16 +71,20 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     {
         static::created(function (User $user) {
             // Send notification to admin email about new user registration
-            Notification::route('mail', 'signred@gmail.com')
-                ->notify(new NewUserRegistered($user));
+            if (config('mail.enabled', true)) {
+                Notification::route('mail', config('mail.admin_address'))
+                    ->notify(new NewUserRegistered($user));
+            }
         });
 
         static::updated(function (User $user) {
             // Send notification to all supervisors when user confirms email
             if ($user->wasChanged('email_verified_at') && $user->email_verified_at !== null && $user->approved_at === null) {
-                $supervisors = User::where('supervisor', true)->get();
-                foreach ($supervisors as $supervisor) {
-                    $supervisor->notify(new UserEmailConfirmed($user));
+                if (config('mail.enabled', true)) {
+                    $supervisors = User::where('supervisor', true)->get();
+                    foreach ($supervisors as $supervisor) {
+                        $supervisor->notify(new UserEmailConfirmed($user));
+                    }
                 }
             }
         });
