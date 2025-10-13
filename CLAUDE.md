@@ -149,6 +149,7 @@ Email notifications can be disabled via `MAIL_ENABLED=false` in `.env`.
 Notification types:
 - `NewUserRegistered` - Sent to admin email on user creation (model event)
 - `UserEmailConfirmed` - Sent to supervisors when user verifies email (model event)
+- `EmailVerifiedSuccess` - Sent to user after successfully verifying email (verification route)
 - `NewGameAdded` - Sent to admin email on game creation (model event)
 - `UserApproved` - Sent to user when supervisor approves their account (Filament action)
 
