@@ -12,8 +12,11 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 
 class DeckResource extends Resource
 {
@@ -178,6 +181,48 @@ class DeckResource extends Resource
             ]);
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make('Deck Information')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('deck_name')
+                            ->label('Deck Name')
+                            ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                            ->weight('bold'),
+                        Infolists\Components\TextEntry::make('game.name')
+                            ->label('Game'),
+                        Infolists\Components\TextEntry::make('creator.name')
+                            ->label('Creator'),
+                        Infolists\Components\TextEntry::make('deck_description')
+                            ->label('Description')
+                            ->html()
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+
+                Infolists\Components\Section::make('Cards in Deck')
+                    ->schema([
+                        Infolists\Components\ViewEntry::make('deck_data')
+                            ->label('')
+                            ->view('filament.infolists.deck-cards-list'),
+                    ]),
+
+                Infolists\Components\Section::make('Metadata')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label('Created At')
+                            ->dateTime('Y-m-d H:i:s'),
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label('Updated At')
+                            ->dateTime('Y-m-d H:i:s'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
+            ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -190,6 +235,7 @@ class DeckResource extends Resource
         return [
             'index' => Pages\ListDecks::route('/'),
             'create' => Pages\CreateDeck::route('/create'),
+            'view' => Pages\ViewDeck::route('/{record}'),
             'edit' => Pages\EditDeck::route('/{record}/edit'),
         ];
     }
