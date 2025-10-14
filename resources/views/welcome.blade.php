@@ -247,25 +247,49 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-red-500 mb-2">{{ $totalCards ?? '1,247' }}</div>
+                    <div class="text-4xl font-bold text-red-500 mb-2">{{ $totalCards ?? '0' }}</div>
                     <div class="text-slate-300">Total Cards</div>
                 </div>
             </div>
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-amber-500 mb-2">{{ $totalDecks ?? '89' }}</div>
+                    <div class="text-4xl font-bold text-orange-500 mb-2">{{ $totalCardTypes ?? '0' }}</div>
+                    <div class="text-slate-300">Card Types</div>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
+                    <div class="text-4xl font-bold text-amber-500 mb-2">{{ $totalDecks ?? '0' }}</div>
                     <div class="text-slate-300">Active Decks</div>
                 </div>
             </div>
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-green-500 mb-2">{{ $totalGames ?? '12' }}</div>
+                    <div class="text-4xl font-bold text-green-500 mb-2">{{ $totalGames ?? '0' }}</div>
                     <div class="text-slate-300">Created Games</div>
                 </div>
             </div>
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-blue-500 mb-2">{{ $apiEndpoints ?? '24' }}</div>
+                    <div class="text-4xl font-bold text-cyan-500 mb-2">{{ $totalHexas ?? '0' }}</div>
+                    <div class="text-slate-300">Hexas</div>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
+                    <div class="text-4xl font-bold text-teal-500 mb-2">{{ $totalFigures ?? '0' }}</div>
+                    <div class="text-slate-300">Figures</div>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
+                    <div class="text-4xl font-bold text-purple-500 mb-2">{{ $totalUsers ?? '0' }}</div>
+                    <div class="text-slate-300">Registered Users</div>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
+                    <div class="text-4xl font-bold text-blue-500 mb-2">{{ $apiEndpoints ?? '55' }}</div>
                     <div class="text-slate-300">API Endpoints</div>
                 </div>
             </div>
