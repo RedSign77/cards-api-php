@@ -25,6 +25,7 @@ class ApiController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
+            'location' => 'required|string|max:255',
             'password' => 'required|confirmed|min:12',
             'g-recaptcha-response' => ['required', new Recaptcha('register')],
         ]);
@@ -32,13 +33,26 @@ class ApiController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'location' => $request->location,
             'password' => Hash::make($request->password),
         ]);
 
+        // Auto-approve if app status is stable
+        $appStatus = config('app_version.status', 'beta');
+        if ($appStatus === 'stable') {
+            $user->approved_at = now();
+            $user->save();
+        }
+
         $user->sendEmailVerificationNotification();
 
+        $message = 'User registered successfully. Please check your email to verify your account.';
+        if ($appStatus !== 'stable') {
+            $message .= ' After email verification, a supervisor will need to approve your account.';
+        }
+
         return response()->json([
-            'message' => 'User registered successfully. Please check your email to verify your account.'
+            'message' => $message
         ], 201);
     }
 

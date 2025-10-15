@@ -124,11 +124,24 @@ class Register extends BaseRegister
 
         $user = $this->getUserModel()::create($data);
 
+        // Auto-approve if app status is stable
+        $appStatus = config('app_version.status', 'beta');
+        if ($appStatus === 'stable') {
+            $user->approved_at = now();
+            $user->save();
+        }
+
         // Send verification email
         $user->sendEmailVerificationNotification();
 
         // Redirect to login page with success message
-        session()->flash('success', 'Registration Successful! Please check your email to verify your account. After email verification, a supervisor will need to approve your account before you can access the system.');
+        $successMessage = 'Registration Successful! Please check your email to verify your account.';
+
+        if ($appStatus !== 'stable') {
+            $successMessage .= ' After email verification, a supervisor will need to approve your account before you can access the system.';
+        }
+
+        session()->flash('success', $successMessage);
 
         $this->redirect(route('filament.admin.auth.login'));
 
