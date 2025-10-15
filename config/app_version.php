@@ -11,10 +11,10 @@ return [
     |
     */
 
-    'version' => env('APP_VERSION', 'v1.0.0-beta'),
+    'version' => env('APP_VERSION', 'v1.0.0-stable'),
 
-    'release_date' => '2025-10-12',
+    'release_date' => '2025-10-15',
 
-    'status' => 'beta', // alpha, beta, stable
+    'status' => 'stable', // alpha, beta, stable
 
 ];
