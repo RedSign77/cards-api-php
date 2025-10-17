@@ -1,0 +1,22 @@
+<?php
+/**
+ * Webtech-solutions 2025, All rights reserved.
+ */
+
+namespace App\Filament\Resources\SessionResource\Pages;
+
+use App\Filament\Resources\SessionResource;
+use Filament\Actions;
+use Filament\Resources\Pages\ListRecords;
+
+class ListSessions extends ListRecords
+{
+    protected static string $resource = SessionResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            //
+        ];
+    }
+}

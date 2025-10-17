@@ -184,6 +184,12 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn ($record) => $record->name)
+                    ->modalContent(fn ($record) => view('filament.resources.user-view', ['record' => $record]))
+                    ->modalWidth('xl')
+                    ->slideOver(),
+
                 Tables\Actions\Action::make('resend_verification')
                     ->label('Resend Verification')
                     ->icon('heroicon-o-envelope')

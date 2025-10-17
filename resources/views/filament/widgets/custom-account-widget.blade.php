@@ -26,7 +26,7 @@
                     icon="heroicon-m-user-circle"
                     labeled-from="sm"
                     tag="a"
-                    href="{{ \Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage::getUrl() }}"
+                    href="{{ \App\Filament\Pages\EditProfile::getUrl() }}"
                 >
                     Profile
                 </x-filament::button>
