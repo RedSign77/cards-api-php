@@ -26,6 +26,11 @@ class UserActivityLogResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function canAccess(): bool
     {
         return auth()->user()->isSupervisor();

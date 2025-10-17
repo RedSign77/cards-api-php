@@ -41,6 +41,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         'bio',
         'website',
         'phone',
+        'seller_location',
+        'shipping_options',
+        'shipping_price',
+        'shipping_currency',
+        'delivery_time',
     ];
 
     /**
