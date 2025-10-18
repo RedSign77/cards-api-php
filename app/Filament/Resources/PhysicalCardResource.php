@@ -157,7 +157,7 @@ class PhysicalCardResource extends Resource
                     ->schema([
                         Infolists\Components\ImageEntry::make('image')
                             ->label('Card Image')
-                            ->defaultImageUrl(url('/images/placeholder-card.png'))
+                            ->defaultImageUrl(url('/images/placeholder-card.svg'))
                             ->columnSpanFull(),
 
                         Infolists\Components\TextEntry::make('title')
@@ -236,7 +236,7 @@ class PhysicalCardResource extends Resource
                 Tables\Columns\ImageColumn::make('image')
                     ->label('Image')
                     ->circular()
-                    ->defaultImageUrl(url('/images/placeholder-card.png')),
+                    ->defaultImageUrl(url('/images/placeholder-card.svg')),
 
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()

@@ -9,7 +9,7 @@
     </div>
     @else
     <div class="flex justify-center">
-        <img src="{{ asset('/images/placeholder-card.png') }}"
+        <img src="{{ asset('/images/placeholder-card.svg') }}"
              alt="Placeholder"
              class="max-w-full h-auto rounded-lg shadow-lg opacity-50"
              style="max-height: 400px;">
