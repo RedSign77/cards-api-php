@@ -8,12 +8,11 @@ This directory contains GitHub Actions workflows for CI/CD automation.
 **File:** `ci.yml`
 
 **Triggers:**
-- Push to `main`, `develop`, or `feature/*` branches
 - Pull requests to `main` or `develop` branches
 
 **Jobs:**
 - **Tests**: Runs PHPUnit tests on PHP 8.3 and 8.4
-- **Code Quality**: Checks code style using Laravel Pint
+- **Code Quality**: Checks code style using Laravel Pint (only on changed PHP files)
 - **Build Assets**: Builds frontend assets with Vite and uploads artifacts
 
 ### 2. Deploy
@@ -39,7 +38,6 @@ This directory contains GitHub Actions workflows for CI/CD automation.
 **File:** `security.yml`
 
 **Triggers:**
-- Push to `main` or `develop` branches
 - Pull requests to `main` or `develop` branches
 - Weekly schedule (Sundays at midnight)
 

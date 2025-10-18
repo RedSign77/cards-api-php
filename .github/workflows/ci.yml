@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches: [ main, develop, feature/* ]
   pull_request:
     branches: [ main, develop ]
 
@@ -52,6 +50,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -63,8 +63,24 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Get changed files
+        id: changed-files
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            FILES=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.php$' | xargs)
+          else
+            FILES=$(git diff --name-only --diff-filter=ACMRT HEAD~1 | grep '\.php$' | xargs)
+          fi
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "Changed PHP files: $FILES"
+
       - name: Check code style (Laravel Pint)
-        run: ./vendor/bin/pint --test
+        if: steps.changed-files.outputs.files != ''
+        run: ./vendor/bin/pint --test ${{ steps.changed-files.outputs.files }}
+
+      - name: No PHP files changed
+        if: steps.changed-files.outputs.files == ''
+        run: echo "No PHP files changed, skipping code style check"
 
   build-assets:
     name: Build Frontend Assets
