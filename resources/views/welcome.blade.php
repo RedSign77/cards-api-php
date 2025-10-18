@@ -1,28 +1,101 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="a8ac992a-016f-41db-8929-c9d4c51dc9a9" data-blockingmode="auto" type="text/javascript"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QW8J5RJQ9C"></script>
+    @if(setting('analytics_enabled', true) && setting('cookiebot_id'))
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="{{ setting('cookiebot_id') }}" data-blockingmode="auto" type="text/javascript"></script>
+    @endif
+
+    @if(setting('analytics_enabled', true) && setting('gtm_id'))
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ setting('gtm_id') }}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-QW8J5RJQ9C', {
+        gtag('config', '{{ setting('gtm_id') }}', {
             cookie_expires: 63072000,
             cookie_update: true,
             session_cookie_expires: 1800
         });
     </script>
+    @endif
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Cards Forge - Your Customizable Digital Card Collection Hub. Create custom cards, decks, games, and access everything via REST API.">
-    <meta name="keywords" content="cards, card games, deck builder, trading cards, card collection, custom cards, REST API">
 
-    <title>Cards Forge - Custom Digital Card Platform</title>
+    <!-- Primary Meta Tags -->
+    <title>{{ setting('seo_title', 'Cards Forge - Custom Digital Card Platform') }}</title>
+    <meta name="title" content="{{ setting('seo_title', 'Cards Forge - Custom Digital Card Platform') }}">
+    <meta name="description" content="{{ setting('seo_description', 'Cards Forge - Your Customizable Digital Card Collection Hub.') }}">
+    <meta name="keywords" content="{{ setting('seo_keywords', 'cards, card games, deck builder, trading cards') }}">
+    <meta name="author" content="{{ setting('seo_author', 'Webtech-Solutions') }}">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:title" content="{{ setting('seo_title', 'Cards Forge - Custom Digital Card Platform') }}">
+    <meta property="og:description" content="{{ setting('site_description', 'Build your custom card universe') }}">
+    <meta property="og:image" content="{{ asset(setting('og_image', '/images/og-image.png')) }}">
+    <meta property="og:site_name" content="{{ setting('site_name', 'Cards Forge') }}">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url('/') }}">
+    <meta property="twitter:title" content="{{ setting('seo_title', 'Cards Forge - Custom Digital Card Platform') }}">
+    <meta property="twitter:description" content="{{ setting('site_description', 'Build your custom card universe') }}">
+    <meta property="twitter:image" content="{{ asset(setting('twitter_image', '/images/twitter-image.png')) }}">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url('/') }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset(setting('favicon_32', '/favicon-32x32.png')) }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset(setting('favicon_16', '/favicon-16x16.png')) }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset(setting('apple_touch_icon', '/apple-touch-icon.png')) }}">
+    <link rel="manifest" href="{{ asset('/site.webmanifest') }}">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="{{ setting('theme_color', '#1e293b') }}">
+    <meta name="msapplication-TileColor" content="{{ setting('theme_color', '#1e293b') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "WebApplication",
+        "name": "{{ setting('site_name', 'Cards Forge') }}",
+        "alternateName": "{{ setting('site_tagline', 'Cards Forge Platform') }}",
+        "url": "{{ url('/') }}",
+        "logo": "{{ asset(setting('logo_url', '/images/logo.png')) }}",
+        "description": "{{ setting('site_description', 'Cards Forge - Your Customizable Digital Card Collection Hub.') }}",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "creator": {
+            "@@type": "Organization",
+            "name": "Webtech-Solutions",
+            "url": "https://webtech-solutions.hu"
+        },
+        "featureList": [
+            "User Authentication",
+            "Custom Card Creation",
+            "Card Type Management",
+            "Deck Building",
+            "Game Creation",
+            "REST API Access"
+        ]
+    }
+    </script>
 
     <!-- Styles / Scripts -->
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
