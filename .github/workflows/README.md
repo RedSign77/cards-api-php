@@ -12,7 +12,7 @@ This directory contains GitHub Actions workflows for CI/CD automation.
 - Pull requests to `main` or `develop` branches
 
 **Jobs:**
-- **Tests**: Runs PHPUnit tests on PHP 8.2, 8.3, and 8.4
+- **Tests**: Runs PHPUnit tests on PHP 8.3 and 8.4
 - **Code Quality**: Checks code style using Laravel Pint
 - **Build Assets**: Builds frontend assets with Vite and uploads artifacts
 
@@ -68,7 +68,7 @@ This directory contains GitHub Actions workflows for CI/CD automation.
      - `DEPLOY_PORT`: SSH port (optional, defaults to 22)
 
 4. Ensure server has:
-   - PHP 8.2+
+   - PHP 8.3+
    - Composer
    - Node.js 20+
    - Git access to repository
