@@ -51,6 +51,32 @@ class PhysicalCardResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Card Information')
                     ->schema([
+                        Forms\Components\Placeholder::make('status_info')
+                            ->label('Listing Status')
+                            ->content(fn ($record) => $record ? new \Illuminate\Support\HtmlString(
+                                '<div class="space-y-2">' .
+                                '<div><span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ' .
+                                match($record->status) {
+                                    'pending_auto' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                                    'under_review' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+                                    'approved' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                                    'rejected' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                                    'published' => 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+                                    default => 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+                                } . '">' .
+                                \App\Models\PhysicalCard::getStatuses()[$record->status] .
+                                '</span>' .
+                                ($record->is_critical ? ' <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 ml-2">⚠ Critical</span>' : '') .
+                                '</div>' .
+                                ($record->evaluation_flags && count($record->evaluation_flags) > 0 ?
+                                    '<div class="text-xs text-gray-600 dark:text-gray-400">Flags: ' . implode(', ', array_map(fn($f) => str_replace('_', ' ', ucwords($f, '_')), $record->evaluation_flags)) . '</div>' :
+                                    '') .
+                                ($record->approved_at ? '<div class="text-xs text-gray-600 dark:text-gray-400">Approved: ' . $record->approved_at->format('Y-m-d H:i') . ' by ' . ($record->approved_by === 1 ? 'System' : $record->approver?->name) . '</div>' : '') .
+                                '</div>'
+                            ) : new \Illuminate\Support\HtmlString('<span class="text-gray-500">New listing</span>'))
+                            ->hidden(fn ($record) => $record === null)
+                            ->columnSpanFull(),
+
                         Forms\Components\TextInput::make('title')
                             ->required()
                             ->maxLength(255)
@@ -269,9 +295,37 @@ class PhysicalCardResource extends Resource
                         default => 'gray',
                     }),
 
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state, $record): string =>
+                        PhysicalCard::getStatuses()[$state] ?? $state .
+                        ($record->is_critical ? ' ⚠' : '')
+                    )
+                    ->color(fn (string $state, $record): string =>
+                        $record->is_critical ? 'danger' : match ($state) {
+                            PhysicalCard::STATUS_PENDING_AUTO => 'warning',
+                            PhysicalCard::STATUS_UNDER_REVIEW => 'info',
+                            PhysicalCard::STATUS_APPROVED => 'success',
+                            PhysicalCard::STATUS_REJECTED => 'danger',
+                            PhysicalCard::STATUS_PUBLISHED => 'primary',
+                            default => 'gray',
+                        }
+                    )
+                    ->sortable(),
+
+                Tables\Columns\IconColumn::make('is_critical')
+                    ->label('Critical')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-exclamation-triangle')
+                    ->falseIcon('')
+                    ->trueColor('danger')
+                    ->alignCenter()
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('quantity')
                     ->sortable()
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('price_per_unit')
                     ->label('Price')
@@ -291,6 +345,10 @@ class PhysicalCardResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->options(PhysicalCard::getStatuses())
+                    ->default(null),
+
                 Tables\Filters\SelectFilter::make('language')
                     ->options([
                         'English' => 'English',

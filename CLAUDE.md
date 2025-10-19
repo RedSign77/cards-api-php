@@ -152,6 +152,9 @@ Notification types:
 - `EmailVerifiedSuccess` - Sent to user after successfully verifying email (verification route)
 - `NewGameAdded` - Sent to admin email on game creation (model event)
 - `UserApproved` - Sent to user when supervisor approves their account (Filament action)
+- `CardApproved` - Sent to user when supervisor approves their card listing (Filament action)
+- `CardRejected` - Sent to user when supervisor rejects their card listing (Filament action)
+- `PendingReviewEscalation` - Sent to all supervisors when a card is pending review for 48+ hours (scheduled task)
 
 All notifications check `config('mail.enabled')` before sending and implement `ShouldQueue` for background processing.
 
@@ -170,6 +173,20 @@ All notifications check `config('mail.enabled')` before sending and implement `S
 - Supervisor-only access
 
 All event listeners registered in `app/Providers/EventServiceProvider.php`.
+
+### Scheduled Tasks
+
+Scheduled tasks are defined in `routes/console.php`:
+- `cards:check-pending-reviews` - Runs daily to check for cards in `under_review` status for 48+ hours and sends escalation notifications to supervisors
+- `logs:cleanup` - Runs daily at 2 AM to clean up old logs (user activity, supervisor activity, completed jobs older than 20 days)
+- `queue:work` - Runs every minute to process queued jobs
+
+**Physical Card Review Escalation:**
+Cards in `under_review` status waiting 48+ hours trigger automatic escalation notifications to all supervisors with:
+- Card title and seller information
+- Hours waiting
+- Link to review dashboard
+- Evaluation flags
 
 ### File Storage
 

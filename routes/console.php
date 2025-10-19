@@ -15,3 +15,6 @@ Schedule::command('queue:work', ['database', '--stop-when-empty', '--tries=3', '
 
 // Schedule: Clean up old logs daily at 2 AM (User Activity Logs, Supervisor Activity Logs, Completed Jobs older than 20 days)
 Schedule::command('logs:cleanup')->dailyAt('02:00');
+
+// Schedule: Check for pending review cards older than 48 hours and send escalation notifications
+Schedule::command('cards:check-pending-reviews')->daily();
