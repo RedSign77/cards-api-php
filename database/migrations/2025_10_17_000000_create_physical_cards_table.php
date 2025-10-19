@@ -28,6 +28,10 @@ return new class extends Migration
             $table->decimal('price_per_unit', 10, 2)->nullable();
             $table->string('currency')->default('USD');
             $table->boolean('tradeable')->default(true);
+            $table->string('status')->default('pending_auto'); // pending_auto, under_review, approved, rejected, published
+            $table->text('rejection_reason')->nullable();
+            $table->timestamp('reviewed_at')->nullable();
+            $table->foreignId('reviewed_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
         });
     }

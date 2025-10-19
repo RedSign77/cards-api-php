@@ -13,6 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create system user first
+        $this->call([
+            SystemUserSeeder::class,
+            WebsiteSettingSeeder::class,
+        ]);
+
         // User::factory(10)->create();
 
         User::factory()->create([
