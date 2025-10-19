@@ -5,6 +5,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\AutoEvaluateCard;
 use App\Models\CardStatusHistory;
 use App\Models\PhysicalCard;
 
@@ -15,6 +16,26 @@ class PhysicalCardObserver
      */
     public function updating(PhysicalCard $physicalCard): void
     {
+        // If a rejected card is being edited (any field except status), re-submit for review
+        if ($physicalCard->getOriginal('status') === PhysicalCard::STATUS_REJECTED &&
+            $physicalCard->isDirty() &&
+            !$physicalCard->isDirty('status')) {
+
+            // Reset to pending_auto for re-evaluation
+            $physicalCard->status = PhysicalCard::STATUS_PENDING_AUTO;
+            $physicalCard->rejection_reason = null;
+            $physicalCard->review_notes = null;
+            $physicalCard->reviewed_by = null;
+            $physicalCard->reviewed_at = null;
+            $physicalCard->approved_by = null;
+            $physicalCard->approved_at = null;
+            $physicalCard->is_critical = false;
+            $physicalCard->evaluation_flags = null;
+
+            // Queue auto-evaluation job
+            AutoEvaluateCard::dispatch($physicalCard);
+        }
+
         // Check if status is being changed
         if ($physicalCard->isDirty('status')) {
             $oldStatus = $physicalCard->getOriginal('status');
@@ -26,8 +47,14 @@ class PhysicalCardObserver
             $notes = null;
             $metadata = [];
 
+            // If status changed from rejected to pending_auto, it's a re-submission
+            if ($oldStatus === PhysicalCard::STATUS_REJECTED && $newStatus === PhysicalCard::STATUS_PENDING_AUTO) {
+                $actionType = 'user_resubmission';
+                $userId = auth()->id() ?? $physicalCard->user_id;
+                $notes = 'Card edited and re-submitted for review';
+            }
             // If approved_by changed to system (ID 1), it's auto-evaluation
-            if ($physicalCard->isDirty('approved_by') && $physicalCard->approved_by === 1) {
+            elseif ($physicalCard->isDirty('approved_by') && $physicalCard->approved_by === 1) {
                 $actionType = 'auto_evaluation';
                 $userId = 1;
                 $metadata['evaluation_flags'] = $physicalCard->evaluation_flags;

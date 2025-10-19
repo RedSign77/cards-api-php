@@ -23,9 +23,9 @@ class SessionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-computer-desktop';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'System Settings';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 14;
 
     public static function getNavigationBadge(): ?string
     {

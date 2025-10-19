@@ -27,7 +27,7 @@ class GameResource extends Resource
 
     protected static ?string $navigationGroup = 'Game Content';
 
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 1;
 
     public static function getEloquentQuery(): Builder
     {

@@ -22,7 +22,7 @@ class CompletedJobResource extends Resource
 
     protected static ?string $navigationLabel = 'Completed Jobs';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'System Settings';
 
     protected static ?int $navigationSort = 11;
 

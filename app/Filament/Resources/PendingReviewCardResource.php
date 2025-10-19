@@ -21,7 +21,7 @@ class PendingReviewCardResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'Marketplace';
 
     protected static ?string $navigationLabel = 'Pending Reviews';
 
