@@ -19,7 +19,7 @@ class CardAuditLogResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'Marketplace';
 
     protected static ?string $navigationLabel = 'Card Audit Log';
 
@@ -70,6 +70,7 @@ class CardAuditLogResource extends Resource
                         'supervisor_approval' => 'Approved',
                         'supervisor_rejection' => 'Rejected',
                         'user_edit' => 'User Edit',
+                        'user_resubmission' => 'Re-submitted',
                         default => ucwords(str_replace('_', ' ', $state)),
                     })
                     ->color(fn (string $state): string => match ($state) {
@@ -78,6 +79,7 @@ class CardAuditLogResource extends Resource
                         'supervisor_approval' => 'success',
                         'supervisor_rejection' => 'danger',
                         'user_edit' => 'warning',
+                        'user_resubmission' => 'primary',
                         default => 'gray',
                     })
                     ->sortable(),
@@ -139,6 +141,7 @@ class CardAuditLogResource extends Resource
                         'supervisor_approval' => 'Supervisor Approval',
                         'supervisor_rejection' => 'Supervisor Rejection',
                         'user_edit' => 'User Edit',
+                        'user_resubmission' => 'Re-submitted',
                     ]),
 
                 Tables\Filters\SelectFilter::make('new_status')

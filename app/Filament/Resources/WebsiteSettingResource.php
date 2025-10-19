@@ -19,11 +19,11 @@ class WebsiteSettingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'System Settings';
 
     protected static ?string $navigationLabel = 'Website Settings';
 
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 15;
 
     public static function canViewAny(): bool
     {

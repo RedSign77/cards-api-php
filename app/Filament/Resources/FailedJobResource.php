@@ -23,7 +23,7 @@ class FailedJobResource extends Resource
 
     protected static ?string $navigationLabel = 'Failed Jobs';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static ?string $navigationGroup = 'System Settings';
 
     protected static ?int $navigationSort = 12;
 
