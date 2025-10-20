@@ -2,12 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MarketplaceController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Notifications\EmailVerifiedSuccess;
 
 Route::get('/',[HomeController::class, 'index'])->name('home');
 
+// Marketplace Routes
+Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace.index');
+Route::get('/marketplace/card/{card}', [MarketplaceController::class, 'show'])->name('marketplace.show');
+
+// Legal Pages
 Route::get('/terms-and-conditions', function () {
     return view('legal.terms-and-conditions');
 })->name('terms');

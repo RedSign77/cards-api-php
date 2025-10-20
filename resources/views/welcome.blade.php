@@ -22,10 +22,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Primary Meta Tags -->
-    <title>{{ setting('seo_title', 'Cards Forge - Custom Digital Card Platform') }}</title>
-    <meta name="title" content="{{ setting('seo_title', 'Cards Forge - Custom Digital Card Platform') }}">
-    <meta name="description" content="{{ setting('seo_description', 'Cards Forge - Your Customizable Digital Card Collection Hub.') }}">
-    <meta name="keywords" content="{{ setting('seo_keywords', 'cards, card games, deck builder, trading cards') }}">
+    <title>{{ setting('seo_title', 'Cards Forge - Buy, Sell & Trade Physical Collectible Cards') }}</title>
+    <meta name="title" content="{{ setting('seo_title', 'Cards Forge - Physical Card Marketplace') }}">
+    <meta name="description" content="{{ setting('seo_description', 'Buy, sell and trade physical collectible cards on Cards Forge. Verified sellers, secure transactions, and quality-checked listings.') }}">
+    <meta name="keywords" content="buy cards, sell cards, trading cards marketplace, collectible cards, card marketplace, physical cards, card trading, buy collectibles">
     <meta name="author" content="{{ setting('seo_author', 'Webtech-Solutions') }}">
     <meta name="robots" content="index, follow">
     <meta name="language" content="English">
@@ -34,8 +34,8 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:title" content="{{ setting('seo_title', 'Cards Forge - Custom Digital Card Platform') }}">
-    <meta property="og:description" content="{{ setting('site_description', 'Build your custom card universe') }}">
+    <meta property="og:title" content="{{ setting('seo_title', 'Cards Forge - Physical Card Marketplace') }}">
+    <meta property="og:description" content="Buy, sell and trade physical collectible cards. Verified sellers and quality-checked listings.">
     <meta property="og:image" content="{{ asset(setting('og_image', '/images/og-image.png')) }}">
     <meta property="og:site_name" content="{{ setting('site_name', 'Cards Forge') }}">
     <meta property="og:locale" content="en_US">
@@ -43,8 +43,8 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ url('/') }}">
-    <meta property="twitter:title" content="{{ setting('seo_title', 'Cards Forge - Custom Digital Card Platform') }}">
-    <meta property="twitter:description" content="{{ setting('site_description', 'Build your custom card universe') }}">
+    <meta property="twitter:title" content="{{ setting('seo_title', 'Cards Forge - Physical Card Marketplace') }}">
+    <meta property="twitter:description" content="Buy, sell and trade physical collectible cards. Verified sellers and quality-checked listings.">
     <meta property="twitter:image" content="{{ asset(setting('twitter_image', '/images/twitter-image.png')) }}">
 
     <!-- Canonical URL -->
@@ -68,32 +68,22 @@
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
-        "@@type": "WebApplication",
+        "@@type": "WebSite",
         "name": "{{ setting('site_name', 'Cards Forge') }}",
-        "alternateName": "{{ setting('site_tagline', 'Cards Forge Platform') }}",
+        "alternateName": "Cards Forge Marketplace",
         "url": "{{ url('/') }}",
         "logo": "{{ asset(setting('logo_url', '/images/logo.png')) }}",
-        "description": "{{ setting('site_description', 'Cards Forge - Your Customizable Digital Card Collection Hub.') }}",
-        "applicationCategory": "GameApplication",
-        "operatingSystem": "Web",
-        "offers": {
-            "@@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
+        "description": "Buy, sell and trade physical collectible cards. Verified sellers, automated review system, and secure transactions.",
+        "potentialAction": {
+            "@@type": "SearchAction",
+            "target": "{{ url('/marketplace') }}?search={search_term_string}",
+            "query-input": "required name=search_term_string"
         },
-        "creator": {
+        "provider": {
             "@@type": "Organization",
-            "name": "Webtech-Solutions",
-            "url": "https://webtech-solutions.hu"
-        },
-        "featureList": [
-            "User Authentication",
-            "Custom Card Creation",
-            "Card Type Management",
-            "Deck Building",
-            "Game Creation",
-            "REST API Access"
-        ]
+            "name": "{{ setting('company_name', 'Webtech Solutions') }}",
+            "url": "{{ setting('company_website', 'https://webtech-solutions.hu') }}"
+        }
     }
     </script>
 
@@ -145,18 +135,30 @@
         <div class="flex justify-between items-center h-16">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <h1 class="text-2xl font-bold text-white">
+                    <a href="/" class="text-2xl font-bold text-white hover:text-slate-200 transition-colors">
                         <span class="text-red-500">♠</span> Cards Forge
-                    </h1>
+                    </a>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
+                <a href="{{ route('marketplace.index') }}" class="text-slate-300 hover:text-white transition-colors duration-200 font-medium">
+                    Browse Marketplace
+                </a>
+                @auth
+                <a href="/admin/physical-cards/create" class="text-slate-300 hover:text-white transition-colors duration-200">
+                    Sell Cards
+                </a>
                 <a href="/admin" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-                    Admin Panel
+                    Dashboard
                 </a>
-                <a href="/api/documentation" class="text-slate-300 hover:text-white transition-colors duration-200">
-                    API Docs
+                @else
+                <a href="/admin/login" class="text-slate-300 hover:text-white transition-colors duration-200">
+                    Login
                 </a>
+                <a href="/admin" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                    Get Started
+                </a>
+                @endauth
             </div>
         </div>
     </div>
@@ -189,18 +191,18 @@
         <div class="text-center">
             <h1 class="text-5xl md:text-7xl font-bold mb-6">
                     <span class="bg-gradient-to-r from-red-500 to-amber-500 bg-clip-text text-transparent">
-                        Cards Forge
+                        Cards Forge Marketplace
                     </span>
             </h1>
             <p class="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto">
-                Build your custom card universe: Create cards with images and fields, design card types, assemble decks, set up games, and access everything via REST API.
+                Buy, Sell & Trade Physical Collectible Cards. Verified sellers, automated quality checks, and secure transactions for collectors worldwide.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/admin" class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 transform hover:scale-105 card-glow">
-                    Get Started
+                <a href="{{ route('marketplace.index') }}" class="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 transform hover:scale-105 card-glow">
+                    Browse Marketplace
                 </a>
-                <a href="/api/documentation" class="bg-slate-700 hover:bg-slate-600 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 transform hover:scale-105">
-                    Explore API
+                <a href="/admin/physical-cards/create" class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 transform hover:scale-105">
+                    Sell Your Cards
                 </a>
             </div>
         </div>
@@ -229,143 +231,304 @@
     </div>
 </section>
 
-<!-- Features Section -->
+<!-- Marketplace Features Section -->
 <section class="py-20 bg-slate-800/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-white mb-4">Platform Features</h2>
+            <h2 class="text-4xl font-bold text-white mb-4">Why Choose Cards Forge?</h2>
             <p class="text-xl text-slate-300 max-w-2xl mx-auto">
-                Empower your creativity with full customization and seamless API integration.
+                Trusted marketplace with verified sellers and quality-checked listings
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- User Authentication -->
+            <!-- Verified Sellers -->
             <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
                 <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-2">User Authentication</h3>
-                <p class="text-slate-300">Register and login securely via admin panel or REST API endpoints.</p>
+                <h3 class="text-xl font-semibold text-white mb-2">Verified Sellers</h3>
+                <p class="text-slate-300">All sellers go through supervisor approval before listing. Only trusted members can sell.</p>
             </div>
 
-            <!-- Custom Cards -->
-            <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
-                <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-white mb-2">Custom Cards</h3>
-                <p class="text-slate-300">Create personalized cards with images, custom fields, and metadata.</p>
-            </div>
-
-            <!-- Card Types -->
-            <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
-                <div class="w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012-2h2a2 2 0 012 2m-6 0v12a2 2 0 002 2h2a2 2 0 002-2V6m-4 0a2 2 0 002 2h2a2 2 0 002-2m-6 0a2 2 0 012-2h2a2 2 0 012 2m4 0V4" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-white mb-2">Custom Card Types</h3>
-                <p class="text-slate-300">Define and manage your own card types for ultimate flexibility.</p>
-            </div>
-
-            <!-- Deck Building -->
-            <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
-                <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold text-white mb-2">Deck Building</h3>
-                <p class="text-slate-300">Assemble decks by adding your custom cards with ease.</p>
-            </div>
-
-            <!-- Game Creation -->
+            <!-- Automated Review -->
             <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
                 <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.5a2.5 2.5 0 110 5H9V10z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-2">Game Creation</h3>
-                <p class="text-slate-300">Create games that contain decks composed of your cards.</p>
+                <h3 class="text-xl font-semibold text-white mb-2">Automated Review</h3>
+                <p class="text-slate-300">AI-powered listing evaluation ensures quality and completeness before going live.</p>
             </div>
 
-            <!-- REST API -->
+            <!-- Secure Transactions -->
+            <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
+                <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">Secure Platform</h3>
+                <p class="text-slate-300">Protected buyer-seller communication and transaction tracking for peace of mind.</p>
+            </div>
+
+            <!-- Multiple Conditions -->
+            <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
+                <div class="w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">All Conditions Welcome</h3>
+                <p class="text-slate-300">From mint to heavily played - find cards in every condition with detailed descriptions.</p>
+            </div>
+
+            <!-- Price Comparison -->
+            <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
+                <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">Easy Price Comparison</h3>
+                <p class="text-slate-300">Browse and filter by price to find the best deals on the cards you need.</p>
+            </div>
+
+            <!-- Trade Options -->
             <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 card-hover">
                 <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-4">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-semibold text-white mb-2">REST API Access</h3>
-                <p class="text-slate-300">Perform every action programmatically through our comprehensive REST API.</p>
+                <h3 class="text-xl font-semibold text-white mb-2">Buy or Trade</h3>
+                <p class="text-slate-300">Support for both purchases and trades. Mark your cards as tradeable to connect with other collectors.</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Statistics Section -->
+<!-- Marketplace Statistics Section -->
 <section class="py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-4xl font-bold text-white mb-4">Platform Statistics</h2>
-            <p class="text-xl text-slate-300">Real-time insights into your card ecosystem.</p>
+            <h2 class="text-4xl font-bold text-white mb-4">Marketplace at a Glance</h2>
+            <p class="text-xl text-slate-300">Real-time statistics from our growing community</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-red-500 mb-2">{{ $totalCards ?? '0' }}</div>
-                    <div class="text-slate-300">Total Cards</div>
+                    <div class="text-4xl font-bold text-red-500 mb-2">{{ $activeListings ?? '0' }}</div>
+                    <div class="text-slate-300">Active Listings</div>
                 </div>
             </div>
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-orange-500 mb-2">{{ $totalCardTypes ?? '0' }}</div>
-                    <div class="text-slate-300">Card Types</div>
+                    <div class="text-4xl font-bold text-green-500 mb-2">{{ $cardsAvailable ?? '0' }}</div>
+                    <div class="text-slate-300">Cards Available</div>
                 </div>
             </div>
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-amber-500 mb-2">{{ $totalDecks ?? '0' }}</div>
-                    <div class="text-slate-300">Active Decks</div>
-                </div>
-            </div>
-            <div class="text-center">
-                <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-green-500 mb-2">{{ $totalGames ?? '0' }}</div>
-                    <div class="text-slate-300">Created Games</div>
-                </div>
-            </div>
-            <div class="text-center">
-                <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-cyan-500 mb-2">{{ $totalHexas ?? '0' }}</div>
-                    <div class="text-slate-300">Hexas</div>
-                </div>
-            </div>
-            <div class="text-center">
-                <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-teal-500 mb-2">{{ $totalFigures ?? '0' }}</div>
-                    <div class="text-slate-300">Figures</div>
+                    <div class="text-4xl font-bold text-blue-500 mb-2">{{ $totalSellers ?? '0' }}</div>
+                    <div class="text-slate-300">Verified Sellers</div>
                 </div>
             </div>
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
                     <div class="text-4xl font-bold text-purple-500 mb-2">{{ $totalUsers ?? '0' }}</div>
-                    <div class="text-slate-300">Registered Users</div>
+                    <div class="text-slate-300">Community Members</div>
                 </div>
             </div>
             <div class="text-center">
                 <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                    <div class="text-4xl font-bold text-blue-500 mb-2">{{ $apiEndpoints ?? '55' }}</div>
-                    <div class="text-slate-300">API Endpoints</div>
+                    <div class="text-4xl font-bold text-amber-500 mb-2">${{ number_format($averagePrice ?? 0, 2) }}</div>
+                    <div class="text-slate-300">Average Card Price</div>
                 </div>
             </div>
+            <div class="text-center">
+                <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
+                    <div class="text-4xl font-bold text-orange-500 mb-2">{{ $pendingReviews ?? '0' }}</div>
+                    <div class="text-slate-300">Pending Reviews</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Listings Section -->
+@if(isset($featuredListings) && $featuredListings->isNotEmpty())
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-white mb-4">Featured Listings</h2>
+            <p class="text-xl text-slate-300">Recently approved cards from verified sellers</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            @foreach($featuredListings as $card)
+            <a href="{{ route('marketplace.show', $card) }}" class="group block">
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden transition-all duration-200 hover:border-red-500 hover:transform hover:-translate-y-1">
+                    <!-- Card Image -->
+                    <div class="aspect-[3/4] bg-slate-900 relative overflow-hidden">
+                        @if($card->image)
+                            <img src="{{ Storage::url($card->image) }}"
+                                 alt="{{ $card->title }}"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                        @else
+                            <div class="w-full h-full flex items-center justify-center">
+                                <svg class="w-20 h-20 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        @endif
+
+                        <!-- Condition Badge -->
+                        <div class="absolute top-3 right-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-900/80 text-white backdrop-blur-sm border border-slate-600">
+                                {{ ucfirst($card->condition) }}
+                            </span>
+                        </div>
+
+                        <!-- Tradeable Badge -->
+                        @if($card->tradeable)
+                        <div class="absolute top-3 left-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-600/80 text-white backdrop-blur-sm">
+                                Tradeable
+                            </span>
+                        </div>
+                        @endif
+                    </div>
+
+                    <!-- Card Info -->
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-white mb-1 line-clamp-1 group-hover:text-red-400 transition-colors">
+                            {{ $card->title }}
+                        </h3>
+
+                        @if($card->set)
+                        <p class="text-sm text-slate-400 mb-2">{{ $card->set }}</p>
+                        @endif
+
+                        <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-700">
+                            <div>
+                                <p class="text-2xl font-bold text-white">
+                                    ${{ number_format($card->price_per_unit, 2) }}
+                                </p>
+                                <p class="text-xs text-slate-400">{{ $card->quantity }} available</p>
+                            </div>
+
+                            <div class="text-right">
+                                <p class="text-xs text-slate-400">Seller</p>
+                                <p class="text-sm text-slate-300 font-medium">{{ $card->user->name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+        <div class="text-center">
+            <a href="{{ route('marketplace.index') }}" class="inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 transform hover:scale-105">
+                View All Listings
+            </a>
+        </div>
+    </div>
+</section>
+@endif
+
+<!-- How It Works Section -->
+<section class="py-20 bg-slate-800/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-white mb-4">How It Works</h2>
+            <p class="text-xl text-slate-300">Simple steps to start buying and selling collectible cards</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+            <!-- Step 1 -->
+            <div class="text-center relative">
+                <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center mb-6 mx-auto pulse-glow">
+                    <span class="text-3xl font-bold text-white">1</span>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">List Your Card</h3>
+                <p class="text-slate-300">Upload photos, add details, and set your price. Support for all conditions and languages.</p>
+                @if(!request()->is('md:*'))
+                <div class="hidden md:block absolute top-10 left-full w-full">
+                    <svg class="w-full h-0.5" viewBox="0 0 100 2">
+                        <line x1="0" y1="1" x2="100" y2="1" stroke="#475569" stroke-width="2" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+                @endif
+            </div>
+
+            <!-- Step 2 -->
+            <div class="text-center relative">
+                <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <span class="text-3xl font-bold text-white">2</span>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Automated Review</h3>
+                <p class="text-slate-300">Our system automatically checks your listing for quality, completeness, and policy compliance.</p>
+                @if(!request()->is('md:*'))
+                <div class="hidden md:block absolute top-10 left-full w-full">
+                    <svg class="w-full h-0.5" viewBox="0 0 100 2">
+                        <line x1="0" y1="1" x2="100" y2="1" stroke="#475569" stroke-width="2" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+                @endif
+            </div>
+
+            <!-- Step 3 -->
+            <div class="text-center relative">
+                <div class="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <span class="text-3xl font-bold text-white">3</span>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Supervisor Approval</h3>
+                <p class="text-slate-300">Our team verifies authenticity and ensures listings meet marketplace standards.</p>
+                @if(!request()->is('md:*'))
+                <div class="hidden md:block absolute top-10 left-full w-full">
+                    <svg class="w-full h-0.5" viewBox="0 0 100 2">
+                        <line x1="0" y1="1" x2="100" y2="1" stroke="#475569" stroke-width="2" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+                @endif
+            </div>
+
+            <!-- Step 4 -->
+            <div class="text-center relative">
+                <div class="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <span class="text-3xl font-bold text-white">4</span>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Go Live</h3>
+                <p class="text-slate-300">Your card appears in the marketplace, searchable and visible to thousands of collectors.</p>
+                @if(!request()->is('md:*'))
+                <div class="hidden md:block absolute top-10 left-full w-full">
+                    <svg class="w-full h-0.5" viewBox="0 0 100 2">
+                        <line x1="0" y1="1" x2="100" y2="1" stroke="#475569" stroke-width="2" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+                @endif
+            </div>
+
+            <!-- Step 5 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-amber-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                    <span class="text-3xl font-bold text-white">5</span>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Complete Sale</h3>
+                <p class="text-slate-300">Connect with buyers, negotiate trades, and complete secure transactions.</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-12">
+            <a href="/admin/register" class="inline-block bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200 transform hover:scale-105">
+                Start Selling Today
+            </a>
         </div>
     </div>
 </section>
@@ -375,56 +538,67 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
             <h2 class="text-4xl font-bold text-white mb-4">Quick Access</h2>
-            <p class="text-xl text-slate-300">Jump directly to the tools and resources you need.</p>
+            <p class="text-xl text-slate-300">Jump directly to the marketplace tools you need.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Admin Panel -->
+            <!-- Browse Marketplace -->
             <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
                 <div class="w-16 h-16 bg-red-600 rounded-xl flex items-center justify-center mb-6 mx-auto pulse-glow">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <h3 class="text-2xl font-semibold text-white mb-4 text-center">Admin Panel</h3>
-                <p class="text-slate-300 mb-6 text-center">Manage users, cards, decks, games, and settings through our intuitive interface.</p>
+                <h3 class="text-2xl font-semibold text-white mb-4 text-center">Browse Marketplace</h3>
+                <p class="text-slate-300 mb-6 text-center">Explore thousands of collectible cards from verified sellers worldwide.</p>
                 <div class="text-center">
-                    <a href="/admin" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
-                        Open Admin Panel
+                    <a href="{{ route('marketplace.index') }}" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
+                        Browse Cards
                     </a>
                 </div>
             </div>
 
-            <!-- API Documentation -->
-            <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
-                <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-6 mx-auto">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <h3 class="text-2xl font-semibold text-white mb-4 text-center">API Documentation</h3>
-                <p class="text-slate-300 mb-6 text-center">Full documentation for our REST API covering all actions and endpoints.</p>
-                <div class="text-center">
-                    <a href="/api/documentation" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
-                        View API Docs
-                    </a>
-                </div>
-            </div>
-
-            <!-- Get Started -->
+            <!-- Sell Your Cards -->
             <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
                 <div class="w-16 h-16 bg-green-600 rounded-xl flex items-center justify-center mb-6 mx-auto">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                 </div>
-                <h3 class="text-2xl font-semibold text-white mb-4 text-center">Get Started</h3>
-                <p class="text-slate-300 mb-6 text-center">Start building your card collection today!</p>
+                <h3 class="text-2xl font-semibold text-white mb-4 text-center">Sell Your Cards</h3>
+                <p class="text-slate-300 mb-6 text-center">List your collectible cards for sale or trade with our simple upload process.</p>
                 <div class="text-center">
-                    <a href="/admin/register" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
-                        Sign Up Now
+                    @auth
+                    <a href="/admin/physical-cards/create" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
+                        Create Listing
                     </a>
+                    @else
+                    <a href="/admin/register" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
+                        Sign Up to Sell
+                    </a>
+                    @endauth
+                </div>
+            </div>
+
+            <!-- My Listings -->
+            <div class="bg-slate-900/50 backdrop-blur-sm rounded-xl p-8 border border-slate-700/50 card-hover">
+                <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-6 mx-auto">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold text-white mb-4 text-center">My Listings</h3>
+                <p class="text-slate-300 mb-6 text-center">Manage your card listings, track sales, and update inventory.</p>
+                <div class="text-center">
+                    @auth
+                    <a href="/admin/physical-cards" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
+                        View My Listings
+                    </a>
+                    @else
+                    <a href="/admin/login" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 inline-block">
+                        Login to Manage
+                    </a>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -440,8 +614,8 @@
                     <span class="text-red-500">♠</span> Cards Forge
                 </h3>
                 <p class="text-slate-300 mb-4">
-                    Customizable digital card platform built with Laravel and Filament.
-                    Create, manage, and integrate your card games seamlessly.
+                    Buy, sell, and trade physical collectible cards with verified sellers worldwide.
+                    Secure transactions, automated reviews, and a thriving collector community.
                 </p>
                 <div class="flex space-x-4">
                     <span class="text-2xl">♠</span>
@@ -452,22 +626,22 @@
             </div>
 
             <div>
-                <h4 class="text-lg font-semibold text-white mb-4">Platform</h4>
+                <h4 class="text-lg font-semibold text-white mb-4">Marketplace</h4>
                 <ul class="space-y-2">
-                    <li><a href="/admin" class="text-slate-300 hover:text-white transition-colors">Admin Panel</a></li>
-                    <li><a href="/admin/cards" class="text-slate-300 hover:text-white transition-colors">Manage Cards</a></li>
-                    <li><a href="/admin/decks" class="text-slate-300 hover:text-white transition-colors">Deck Builder</a></li>
-                    <li><a href="/admin/games" class="text-slate-300 hover:text-white transition-colors">Create Games</a></li>
+                    <li><a href="{{ route('marketplace.index') }}" class="text-slate-300 hover:text-white transition-colors">Browse Cards</a></li>
+                    <li><a href="/admin/physical-cards/create" class="text-slate-300 hover:text-white transition-colors">Sell Cards</a></li>
+                    <li><a href="/admin/physical-cards" class="text-slate-300 hover:text-white transition-colors">My Listings</a></li>
+                    <li><a href="/admin" class="text-slate-300 hover:text-white transition-colors">Dashboard</a></li>
                 </ul>
             </div>
 
             <div>
-                <h4 class="text-lg font-semibold text-white mb-4">Developers</h4>
+                <h4 class="text-lg font-semibold text-white mb-4">Support</h4>
                 <ul class="space-y-2">
-                    <li><a href="/api/documentation" class="text-slate-300 hover:text-white transition-colors">API Documentation</a></li>
-                    <li><a href="/api/examples" class="text-slate-300 hover:text-white transition-colors">Code Examples</a></li>
-                    <li><a href="/api/status" class="text-slate-300 hover:text-white transition-colors">API Status</a></li>
-                    <li><a href="/support" class="text-slate-300 hover:text-white transition-colors">Support</a></li>
+                    <li><a href="{{ route('terms') }}" class="text-slate-300 hover:text-white transition-colors">Terms & Conditions</a></li>
+                    <li><a href="{{ route('privacy') }}" class="text-slate-300 hover:text-white transition-colors">Privacy Policy</a></li>
+                    <li><a href="/admin/register" class="text-slate-300 hover:text-white transition-colors">Create Account</a></li>
+                    <li><a href="/admin/login" class="text-slate-300 hover:text-white transition-colors">Login</a></li>
                 </ul>
             </div>
         </div>
