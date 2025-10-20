@@ -23,6 +23,7 @@ use App\Filament\Pages\Auth\ResetPassword;
 use App\Filament\Widgets\CustomAccountWidget;
 use App\Filament\Widgets\SystemStatsWidget;
 use App\Filament\Widgets\QuickLinksWidget;
+use App\Filament\Widgets\SupervisorReviewStatsWidget;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Pages\EditProfile;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -56,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 CustomAccountWidget::class,
                 QuickLinksWidget::class,
+                SupervisorReviewStatsWidget::class,
                 SystemStatsWidget::class,
             ])
             ->userMenuItems([
