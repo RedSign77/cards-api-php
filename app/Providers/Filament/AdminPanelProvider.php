@@ -20,6 +20,8 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Filament\Pages\Auth\ResetPassword;
+use App\Filament\Pages\TermsAndConditions;
+use App\Filament\Pages\PrivacyPolicy;
 use App\Filament\Widgets\CustomAccountWidget;
 use App\Filament\Widgets\SystemStatsWidget;
 use App\Filament\Widgets\QuickLinksWidget;
@@ -53,6 +55,8 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
                 EditProfile::class,
+                TermsAndConditions::class,
+                PrivacyPolicy::class,
             ])
             ->widgets([
                 CustomAccountWidget::class,

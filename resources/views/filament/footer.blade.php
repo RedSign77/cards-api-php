@@ -1,9 +1,20 @@
 <div class="fi-footer border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
     <div class="fi-container mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <!-- Copyright -->
+            <!-- Copyright & Legal Links -->
             <div class="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
-                © {{ date('Y') }} <a href="https://webtech-solutions.hu" target="_blank" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Webtech-solutions</a>, All rights reserved.
+                <div>
+                    © {{ date('Y') }} <a href="https://webtech-solutions.hu" target="_blank" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Webtech-solutions</a>, All rights reserved.
+                </div>
+                <div class="mt-1 space-x-3">
+                    <a href="{{ \App\Filament\Pages\TermsAndConditions::getUrl() }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                        Terms & Conditions
+                    </a>
+                    <span class="text-gray-300 dark:text-gray-600">•</span>
+                    <a href="{{ \App\Filament\Pages\PrivacyPolicy::getUrl() }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                        Privacy Policy
+                    </a>
+                </div>
             </div>
 
             <!-- Version Badge -->

@@ -472,10 +472,17 @@
             </div>
         </div>
 
-        <div class="border-t border-slate-700 mt-8 pt-8 text-center">
-            <p class="text-slate-400">
-                &copy; {{ date('Y') }} Cards Forge. Created by <a href="https://webtech-solutions.hu/{{ str_replace('_', '-', app()->getLocale()) }}" target="_blank">Webtech-Solutions</a>.
-            </p>
+        <div class="border-t border-slate-700 mt-8 pt-8">
+            <div class="flex flex-col items-center space-y-4">
+                <div class="flex items-center space-x-4 text-sm text-slate-300">
+                    <a href="{{ route('terms') }}" class="hover:text-white transition-colors">Terms & Conditions</a>
+                    <span class="text-slate-600">•</span>
+                    <a href="{{ route('privacy') }}" class="hover:text-white transition-colors">Privacy Policy</a>
+                </div>
+                <p class="text-slate-400">
+                    &copy; {{ date('Y') }} Cards Forge. Created by <a href="https://webtech-solutions.hu/{{ str_replace('_', '-', app()->getLocale()) }}" target="_blank" class="hover:text-white transition-colors">Webtech-Solutions</a>.
+                </p>
+            </div>
         </div>
     </div>
 </footer>
