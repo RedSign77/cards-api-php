@@ -3,8 +3,63 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Privacy Policy - Cards Forge</title>
-    <meta name="description" content="Privacy Policy for Cards Forge marketplace platform">
+
+    <!-- SEO Meta Tags -->
+    <title>{{ setting('legal_privacy_title', 'Privacy Policy - Cards Forge') }}</title>
+    <meta name="description" content="{{ setting('legal_privacy_description', 'GDPR-compliant Privacy Policy for Cards Forge. Learn how we collect, use, and protect your personal data.') }}">
+    <meta name="keywords" content="privacy policy, cards forge, GDPR, data protection, personal data, EU law, Hungarian law, privacy rights">
+    <meta name="author" content="{{ setting('seo_author', 'Webtech Solutions') }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url()->current() }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ setting('legal_privacy_title', 'Privacy Policy - Cards Forge') }}">
+    <meta property="og:description" content="{{ setting('legal_privacy_description', 'GDPR-compliant Privacy Policy for Cards Forge.') }}">
+    <meta property="og:image" content="{{ asset(setting('og_image', '/images/og-image.png')) }}">
+    <meta property="og:site_name" content="{{ setting('site_name', 'Cards Forge') }}">
+    <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="{{ setting('legal_privacy_title', 'Privacy Policy - Cards Forge') }}">
+    <meta name="twitter:description" content="{{ setting('legal_privacy_description', 'GDPR-compliant Privacy Policy for Cards Forge.') }}">
+    <meta name="twitter:image" content="{{ asset(setting('twitter_image', '/images/twitter-image.png')) }}">
+    @if(setting('twitter_handle'))
+    <meta name="twitter:site" content="{{ '@' . setting('twitter_handle') }}">
+    @endif
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset(setting('favicon_32', '/favicon-32x32.png')) }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset(setting('favicon_16', '/favicon-16x16.png')) }}">
+    <link rel="apple-touch-icon" href="{{ asset(setting('apple_touch_icon', '/apple-touch-icon.png')) }}">
+    <meta name="theme-color" content="{{ setting('theme_color', '#1e293b') }}">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "WebPage",
+        "name": "{{ setting('legal_privacy_title', 'Privacy Policy') }}",
+        "description": "{{ setting('legal_privacy_description', 'GDPR-compliant Privacy Policy for Cards Forge.') }}",
+        "url": "{{ url()->current() }}",
+        "inLanguage": "{{ app()->getLocale() }}",
+        "isPartOf": {
+            "@@type": "WebSite",
+            "name": "{{ setting('site_name', 'Cards Forge') }}",
+            "url": "{{ config('app.url') }}"
+        },
+        "publisher": {
+            "@@type": "Organization",
+            "name": "{{ setting('company_name', 'Webtech Solutions') }}",
+            "url": "{{ setting('company_website', config('app.url')) }}",
+            "email": "{{ setting('company_email', 'info@webtech-solutions.hu') }}"
+        }
+    }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
@@ -30,10 +85,10 @@
 
                 <div class="text-sm text-gray-600 dark:text-gray-400 mb-8 space-y-1">
                     <p><strong>Last Updated:</strong> {{ date('F d, Y', filemtime(resource_path('views/legal/privacy-policy.blade.php'))) }}</p>
-                    <p><strong>Operator:</strong> Webtech Solutions (hereinafter referred to as "the Service Provider" or "we")</p>
-                    <p><strong>Email:</strong> info@webtech-solutions.hu</p>
-                    <p><strong>Website:</strong> <a href="https://cards-forge.webtech-solutions.hu" class="text-blue-600 dark:text-blue-400 hover:underline">https://cards-forge.webtech-solutions.hu</a></p>
-                    <p><strong>Governing Law:</strong> Hungarian and European Union law (GDPR compliant)</p>
+                    <p><strong>Operator:</strong> {{ setting('company_name', 'Webtech Solutions') }} (hereinafter referred to as "the Service Provider" or "we")</p>
+                    <p><strong>Email:</strong> {{ setting('company_email', 'info@webtech-solutions.hu') }}</p>
+                    <p><strong>Website:</strong> <a href="{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}</a></p>
+                    <p><strong>Governing Law:</strong> {{ setting('company_country', 'Hungarian') }} and European Union law (GDPR compliant)</p>
                 </div>
 
                 <section class="mb-8">
@@ -213,9 +268,9 @@
                         If you have any questions, concerns, or requests regarding this Privacy Policy or our data processing practices, please contact us:
                     </p>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        <strong>Webtech Solutions</strong><br>
-                        <strong>Email:</strong> <a href="mailto:info@webtech-solutions.hu" class="text-blue-600 dark:text-blue-400 hover:underline">info@webtech-solutions.hu</a><br>
-                        <strong>Website:</strong> <a href="https://cards-forge.webtech-solutions.hu" class="text-blue-600 dark:text-blue-400 hover:underline">https://cards-forge.webtech-solutions.hu</a>
+                        <strong>{{ setting('company_name', 'Webtech Solutions') }}</strong><br>
+                        <strong>Email:</strong> <a href="mailto:{{ setting('company_email', 'info@webtech-solutions.hu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_email', 'info@webtech-solutions.hu') }}</a><br>
+                        <strong>Website:</strong> <a href="{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}</a>
                     </p>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
                         <strong>Supervisory Authority:</strong><br>
@@ -231,7 +286,7 @@
 
                 <div class="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                        © {{ date('Y') }} Cards Forge. All rights reserved. Webtech Solutions.
+                        © {{ date('Y') }} {{ setting('site_name', 'Cards Forge') }}. All rights reserved. {{ setting('company_name', 'Webtech Solutions') }}.
                     </p>
                 </div>
             </div>

@@ -6,6 +6,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Redirect;
 
 class TermsAndConditions extends Page
 {
@@ -29,5 +30,11 @@ class TermsAndConditions extends Page
     public static function getSlug(): string
     {
         return 'terms-and-conditions';
+    }
+
+    public function mount(): void
+    {
+        // Redirect to public page in new window via JavaScript
+        $this->js('window.open("' . route('terms') . '", "_blank")');
     }
 }

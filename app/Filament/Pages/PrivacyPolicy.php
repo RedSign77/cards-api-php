@@ -6,6 +6,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Redirect;
 
 class PrivacyPolicy extends Page
 {
@@ -29,5 +30,11 @@ class PrivacyPolicy extends Page
     public static function getSlug(): string
     {
         return 'privacy-policy';
+    }
+
+    public function mount(): void
+    {
+        // Redirect to public page in new window via JavaScript
+        $this->js('window.open("' . route('privacy') . '", "_blank")');
     }
 }

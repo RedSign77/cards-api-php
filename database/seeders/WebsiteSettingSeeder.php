@@ -187,6 +187,82 @@ class WebsiteSettingSeeder extends Seeder
                 'description' => 'Browser theme color (hex code)',
                 'order' => 44,
             ],
+
+            // Legal Pages SEO
+            [
+                'key' => 'legal_terms_title',
+                'value' => 'Terms and Conditions - Cards Forge',
+                'type' => 'text',
+                'group' => 'legal_seo',
+                'label' => 'Terms & Conditions Page Title',
+                'description' => 'SEO title for Terms and Conditions page',
+                'order' => 50,
+            ],
+            [
+                'key' => 'legal_terms_description',
+                'value' => 'Terms and Conditions for Cards Forge marketplace platform. Hungarian and EU law compliant. Learn about user accounts, marketplace services, prohibited activities, and your rights.',
+                'type' => 'textarea',
+                'group' => 'legal_seo',
+                'label' => 'Terms & Conditions Meta Description',
+                'description' => 'Meta description for Terms page',
+                'order' => 51,
+            ],
+            [
+                'key' => 'legal_privacy_title',
+                'value' => 'Privacy Policy - Cards Forge',
+                'type' => 'text',
+                'group' => 'legal_seo',
+                'label' => 'Privacy Policy Page Title',
+                'description' => 'SEO title for Privacy Policy page',
+                'order' => 52,
+            ],
+            [
+                'key' => 'legal_privacy_description',
+                'value' => 'GDPR-compliant Privacy Policy for Cards Forge. Learn how we collect, use, and protect your personal data in accordance with Hungarian and European Union law.',
+                'type' => 'textarea',
+                'group' => 'legal_seo',
+                'label' => 'Privacy Policy Meta Description',
+                'description' => 'Meta description for Privacy page',
+                'order' => 53,
+            ],
+
+            // Company Information
+            [
+                'key' => 'company_name',
+                'value' => 'Webtech Solutions',
+                'type' => 'text',
+                'group' => 'company',
+                'label' => 'Company Name',
+                'description' => 'Legal company name',
+                'order' => 60,
+            ],
+            [
+                'key' => 'company_email',
+                'value' => 'info@webtech-solutions.hu',
+                'type' => 'text',
+                'group' => 'company',
+                'label' => 'Company Email',
+                'description' => 'Primary company contact email',
+                'order' => 61,
+            ],
+            [
+                'key' => 'company_website',
+                'value' => 'https://cards-forge.webtech-solutions.hu',
+                'type' => 'text',
+                'group' => 'company',
+                'label' => 'Company Website',
+                'description' => 'Full company website URL',
+                'order' => 62,
+            ],
+            [
+                'key' => 'company_country',
+                'value' => 'Hungary',
+                'type' => 'text',
+                'group' => 'company',
+                'label' => 'Company Country',
+                'description' => 'Country of operation',
+                'order' => 63,
+            ],
         ];
 
         foreach ($settings as $setting) {
