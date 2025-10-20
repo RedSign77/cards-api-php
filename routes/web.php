@@ -8,6 +8,14 @@ use App\Notifications\EmailVerifiedSuccess;
 
 Route::get('/',[HomeController::class, 'index'])->name('home');
 
+Route::get('/terms-and-conditions', function () {
+    return view('legal.terms-and-conditions');
+})->name('terms');
+
+Route::get('/privacy-policy', function () {
+    return view('legal.privacy-policy');
+})->name('privacy');
+
 Route::get('/api/documentation', function () {
     return response()->file(public_path('api-documentation.html'));
 });
