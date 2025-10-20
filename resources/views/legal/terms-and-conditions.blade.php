@@ -26,117 +26,190 @@
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-8">
             <div class="prose dark:prose-invert max-w-none">
-                <h1 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Terms and Conditions</h1>
+                <h1 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Cards Forge – Terms and Conditions</h1>
 
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-8">
-                    <strong>Last Updated:</strong> {{ date('F d, Y') }}
-                </p>
+                <div class="text-sm text-gray-600 dark:text-gray-400 mb-8 space-y-1">
+                    <p><strong>Last Updated:</strong> {{ date('F d, Y', filemtime(resource_path('views/legal/terms-and-conditions.blade.php'))) }}</p>
+                    <p><strong>Operator:</strong> Webtech Solutions (hereinafter referred to as "the Service Provider" or "we")</p>
+                    <p><strong>Email:</strong> info@webtech-solutions.hu</p>
+                    <p><strong>Website:</strong> <a href="https://cards-forge.webtech-solutions.hu" class="text-blue-600 dark:text-blue-400 hover:underline">https://cards-forge.webtech-solutions.hu</a></p>
+                    <p><strong>Governing Law:</strong> Hungarian and European Union law</p>
+                </div>
 
                 <section class="mb-8">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">1. Acceptance of Terms</h2>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        By accessing and using Cards Forge ("the Platform"), you accept and agree to be bound by the terms
-                        and provision of this agreement. If you do not agree to these Terms and Conditions, please do not
-                        use this Platform.
+                        By accessing or using the Cards Forge platform ("the Platform"), you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions ("Terms").
+                        If you do not agree with any part of these Terms, you must not use the Platform.
                     </p>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        These Terms are supplemented by:
+                    </p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2 text-gray-700 dark:text-gray-300">
+                        <li>our Privacy Policy (GDPR compliant),</li>
+                        <li>any Community Guidelines or Marketplace Rules published on the Platform.</li>
+                    </ul>
                 </section>
 
                 <section class="mb-8">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">2. User Accounts</h2>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        To access certain features of the Platform, you must register for an account. You agree to:
+                        To access certain features of the Platform, you must create an account.
+                        By registering, you agree to:
                     </p>
                     <ul class="list-disc pl-6 mb-4 space-y-2 text-gray-700 dark:text-gray-300">
-                        <li>Provide accurate, current, and complete information during registration</li>
-                        <li>Maintain the security of your password and account</li>
-                        <li>Notify us immediately of any unauthorized use of your account</li>
-                        <li>Accept responsibility for all activities that occur under your account</li>
+                        <li>provide accurate, complete, and up-to-date information,</li>
+                        <li>maintain the confidentiality of your login credentials,</li>
+                        <li>notify us immediately if you suspect unauthorized access to your account,</li>
+                        <li>accept full responsibility for all activities under your account.</li>
                     </ul>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        Your account requires email verification and supervisor approval before full access is granted.
+                        Account activation may require email verification and supervisor approval before full access is granted.
                     </p>
                 </section>
 
                 <section class="mb-8">
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">3. Physical Card Marketplace</h2>
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">3. Marketplace Services</h2>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        Cards Forge provides a marketplace for buying, selling, and trading physical cards. By listing cards
-                        for sale, you agree that:
+                        Cards Forge operates as a facilitator for buying, selling, and trading physical collectible cards between users ("Sellers" and "Buyers").
+                        The Platform does not own or sell the listed cards and acts only as an intermediary for user-to-user transactions.
+                    </p>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        By listing or purchasing cards, you agree that:
                     </p>
                     <ul class="list-disc pl-6 mb-4 space-y-2 text-gray-700 dark:text-gray-300">
-                        <li>All card listings must be accurate and truthful</li>
-                        <li>Card condition descriptions must match the actual condition</li>
-                        <li>Pricing must be reasonable and not misleading</li>
-                        <li>All listings are subject to review and approval by supervisors</li>
-                        <li>We reserve the right to reject any listing that violates these terms</li>
-                        <li>You are responsible for fulfilling all sales you agree to</li>
+                        <li>All listings must be accurate, truthful, and comply with applicable laws.</li>
+                        <li>Card conditions and descriptions must match the actual item.</li>
+                        <li>Prices must be fair and not misleading.</li>
+                        <li>Listings are subject to review and approval by our moderation team.</li>
+                        <li>You are solely responsible for completing any sale you commit to.</li>
+                        <li>The Service Provider is not a contractual party to sales between users and assumes no liability for the quality, delivery, or authenticity of items traded between users.</li>
                     </ul>
                 </section>
 
                 <section class="mb-8">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">4. Prohibited Activities</h2>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        You agree not to:
+                        Users must not:
                     </p>
                     <ul class="list-disc pl-6 mb-4 space-y-2 text-gray-700 dark:text-gray-300">
-                        <li>List counterfeit, proxy, fake, or reproduction cards</li>
-                        <li>Use the Platform for any illegal purposes</li>
-                        <li>Attempt to circumvent any security features</li>
-                        <li>Harass, abuse, or harm other users</li>
-                        <li>Spam or send unsolicited communications</li>
-                        <li>Manipulate prices or engage in fraudulent activities</li>
-                        <li>Upload malicious code or viruses</li>
+                        <li>List or sell counterfeit, proxy, fake, or reproduction cards.</li>
+                        <li>Use the Platform for illegal, fraudulent, or deceptive activities.</li>
+                        <li>Manipulate prices, ratings, or marketplace data.</li>
+                        <li>Upload viruses, malware, or other malicious code.</li>
+                        <li>Harass, abuse, threaten, or harm other users.</li>
+                        <li>Send unsolicited messages or spam.</li>
+                        <li>Attempt to bypass or disable Platform security or approval systems.</li>
                     </ul>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        Violation of these rules may result in account suspension or permanent ban.
+                    </p>
                 </section>
 
                 <section class="mb-8">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">5. Content and Intellectual Property</h2>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        By uploading content (including card images, descriptions, and game data), you grant Cards Forge
-                        a non-exclusive, worldwide, royalty-free license to use, display, and distribute your content on
-                        the Platform.
+                        By uploading content (including card images, descriptions, and game-related data), you grant Cards Forge a non-exclusive, worldwide, royalty-free license to use, display, and distribute that content solely for the purpose of operating and promoting the Platform.
                     </p>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        You retain ownership of your content and are responsible for ensuring you have the right to upload it.
+                        You retain ownership of your uploaded content and represent that:
+                    </p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2 text-gray-700 dark:text-gray-300">
+                        <li>You have the legal right to share such content.</li>
+                        <li>Your content does not infringe on third-party copyrights, trademarks, or other intellectual property rights.</li>
+                    </ul>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        All other materials on the Platform — including its design, structure, code, and branding — are the intellectual property of Webtech Solutions and protected under EU and Hungarian copyright law.
                     </p>
                 </section>
 
                 <section class="mb-8">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">6. Review and Approval Process</h2>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        All card listings are subject to automated and manual review:
+                        All listings are subject to automated and manual review:
                     </p>
                     <ul class="list-disc pl-6 mb-4 space-y-2 text-gray-700 dark:text-gray-300">
-                        <li>Listings are automatically evaluated based on quality criteria</li>
-                        <li>Critical listings require supervisor approval</li>
-                        <li>We may reject listings that don't meet our standards</li>
-                        <li>You will be notified of approval or rejection decisions</li>
-                        <li>Rejected listings may be edited and resubmitted</li>
+                        <li>Automated checks assess listing quality and completeness.</li>
+                        <li>Critical or high-value listings may require supervisor approval.</li>
+                        <li>Listings that fail to meet standards may be rejected or removed.</li>
+                        <li>Users will be notified about approval or rejection.</li>
+                        <li>Rejected listings may be edited and resubmitted.</li>
                     </ul>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        The Service Provider reserves the right to modify or remove listings that violate these Terms or applicable law.
+                    </p>
                 </section>
 
                 <section class="mb-8">
                     <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">7. Fees and Payments</h2>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        Currently, Cards Forge does not charge listing fees. We reserve the right to introduce fees in the
-                        future with reasonable notice to users.
+                        Currently, Cards Forge does not charge listing or transaction fees.
+                        We reserve the right to introduce reasonable fees in the future with prior notice to users.
+                    </p>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        All payments and transactions between users must comply with applicable EU consumer and payment regulations.
+                        Users are responsible for any taxes, customs, or fees related to their transactions.
                     </p>
                 </section>
 
                 <section class="mb-8">
-                    <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">8. Contact Information</h2>
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">8. Consumer and Legal Compliance</h2>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        If you have any questions about these Terms and Conditions, please contact us at:
+                        This Platform operates under Hungarian and European Union law.
+                        If you are a consumer residing in the EU, you are entitled to the rights and protections provided under EU consumer law (Directive 2011/83/EU and Hungarian Government Decree 45/2014).
                     </p>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
-                        <strong>Email:</strong> {{ config('mail.admin_address', 'admin@cardsforge.com') }}<br>
-                        <strong>Website:</strong> {{ config('app.url') }}
+                        Cards Forge, as an intermediary, is not responsible for consumer warranty or return claims arising from user-to-user transactions.
+                        Such claims must be resolved directly between the buyer and seller.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">9. Limitation of Liability</h2>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        To the fullest extent permitted by law:
+                    </p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2 text-gray-700 dark:text-gray-300">
+                        <li>The Service Provider shall not be liable for indirect, incidental, or consequential damages arising from Platform use.</li>
+                        <li>We do not guarantee the accuracy or availability of user-generated content.</li>
+                        <li>We are not responsible for disputes, losses, or fraud committed by users.</li>
+                    </ul>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        Nothing in these Terms limits your statutory consumer rights.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">10. Termination and Suspension</h2>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        We reserve the right to suspend or terminate user accounts that violate these Terms or engage in unlawful behavior.
+                        Upon termination, your access to the Platform and related data may be disabled without prior notice.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">11. Modifications to the Terms</h2>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        We may update these Terms from time to time to reflect changes in legal requirements, Platform features, or business practices.
+                        Updated versions will be published on this page with a revised "Last Updated" date. Continued use of the Platform after such updates constitutes acceptance of the revised Terms.
+                    </p>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">12. Contact Information</h2>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        For any questions, complaints, or legal notices related to these Terms, please contact:
+                    </p>
+                    <p class="mb-4 text-gray-700 dark:text-gray-300">
+                        <strong>Webtech Solutions</strong><br>
+                        <strong>Email:</strong> info@webtech-solutions.hu<br>
+                        <strong>Website:</strong> <a href="https://cards-forge.webtech-solutions.hu" class="text-blue-600 dark:text-blue-400 hover:underline">https://cards-forge.webtech-solutions.hu</a>
                     </p>
                 </section>
 
                 <div class="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                        © {{ date('Y') }} Cards Forge. All rights reserved. Webtech-solutions.
+                        © {{ date('Y') }} Cards Forge. All rights reserved. Webtech Solutions.
                     </p>
                 </div>
             </div>

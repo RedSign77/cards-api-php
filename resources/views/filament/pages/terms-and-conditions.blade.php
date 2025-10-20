@@ -3,7 +3,7 @@
         <h1 class="text-3xl font-bold mb-6">Terms and Conditions</h1>
 
         <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
-            <strong>Last Updated:</strong> {{ date('F d, Y') }}
+            <strong>Last Updated:</strong> {{ date('F d, Y', filemtime(resource_path('views/filament/pages/terms-and-conditions.blade.php'))) }}
         </p>
 
         <section class="mb-8">
