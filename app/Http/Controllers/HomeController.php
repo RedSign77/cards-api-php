@@ -14,32 +14,34 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Marketplace Statistics
+        // Platform Statistics
+        $totalUsers = User::count();
+        $totalCards = \App\Models\Card::count();
+        $totalGames = \App\Models\Game::count();
+        $totalDecks = \App\Models\Deck::count();
+
+        // Marketplace Statistics (Secondary)
         $activeListings = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)->count();
         $totalSellers = User::whereHas('physicalCards', function ($query) {
             $query->where('status', PhysicalCard::STATUS_APPROVED);
         })->count();
         $cardsAvailable = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)->sum('quantity');
-        $pendingReviews = PhysicalCard::where('status', PhysicalCard::STATUS_UNDER_REVIEW)->count();
-        $averagePrice = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
-            ->where('price_per_unit', '>', 0)
-            ->avg('price_per_unit') ?? 0;
-        $totalUsers = User::count();
 
-        // Featured Listings - Recently approved cards
+        // Featured Listings - Recently approved cards (reduced to 4)
         $featuredListings = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
             ->with('user')
             ->latest('approved_at')
-            ->take(8)
+            ->take(4)
             ->get();
 
         return view('welcome', compact(
+            'totalUsers',
+            'totalCards',
+            'totalGames',
+            'totalDecks',
             'activeListings',
             'totalSellers',
             'cardsAvailable',
-            'pendingReviews',
-            'averagePrice',
-            'totalUsers',
             'featuredListings'
         ));
     }
