@@ -173,6 +173,7 @@ class EditProfile extends Page implements HasForms
                                 'JPY' => 'JPY - Japanese Yen',
                                 'CAD' => 'CAD - Canadian Dollar',
                                 'AUD' => 'AUD - Australian Dollar',
+                                'HUF' => 'HUF - Hungarian Forint',
                             ])
                             ->default('USD')
                             ->required(),

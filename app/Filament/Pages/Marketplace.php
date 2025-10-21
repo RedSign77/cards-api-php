@@ -30,6 +30,7 @@ class Marketplace extends Page
     public bool $tradeableOnly = false;
     public string $sortBy = 'latest';
     public ?int $selectedCardId = null;
+    public bool $showModal = false;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -153,11 +154,13 @@ class Marketplace extends Page
     public function viewCard(int $cardId): void
     {
         $this->selectedCardId = $cardId;
+        $this->showModal = true;
     }
 
     public function closeCardModal(): void
     {
         $this->selectedCardId = null;
+        $this->showModal = false;
     }
 
     public function getSelectedCard()
