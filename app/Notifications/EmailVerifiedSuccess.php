@@ -16,7 +16,7 @@ class EmailVerifiedSuccess extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -31,5 +31,18 @@ class EmailVerifiedSuccess extends Notification implements ShouldQueue
             ->line('After approval, you will be able to access all features of the platform.')
             ->line('This process typically takes 1-2 business days.')
             ->line('Thank you for your patience!');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'action' => 'email_verified',
+            'message' => 'Thank you for verifying your email. Your account is awaiting supervisor approval.',
+        ];
     }
 }

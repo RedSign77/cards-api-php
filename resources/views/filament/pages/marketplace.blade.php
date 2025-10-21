@@ -184,7 +184,19 @@
                                     <div class="space-y-1 mt-1.5 pt-1.5 border-t border-gray-200 dark:border-gray-700">
                                         <div class="flex items-baseline justify-between">
                                             <p class="text-base font-bold text-gray-900 dark:text-white">
-                                                ${{ number_format($card->price_per_unit, 2) }}
+                                                @php
+                                                    $currencySymbols = [
+                                                        'USD' => '$',
+                                                        'EUR' => '€',
+                                                        'GBP' => '£',
+                                                        'JPY' => '¥',
+                                                        'CAD' => 'CA$',
+                                                        'AUD' => 'A$',
+                                                        'HUF' => 'Ft',
+                                                    ];
+                                                    $symbol = $currencySymbols[$card->currency] ?? $card->currency;
+                                                @endphp
+                                                {{ number_format($card->price_per_unit, 2) }} {{ $symbol }}
                                             </p>
                                             <p class="text-[10px] text-gray-500 dark:text-gray-400">{{ $card->quantity }}</p>
                                         </div>

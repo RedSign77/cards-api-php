@@ -21,7 +21,7 @@ class AccountDeleted extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -38,5 +38,19 @@ class AccountDeleted extends Notification implements ShouldQueue
             ->action('Contact Support', url('/'))
             ->line('All your data including games, cards, decks, and card types have been permanently removed from our system.')
             ->line('Thank you for using Cards Forge.');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'action' => 'account_deleted',
+            'deleted_by' => $this->deletedBy->name,
+            'message' => 'Your account has been deleted.',
+        ];
     }
 }
