@@ -142,14 +142,14 @@
                         >
                             <div class="fi-section rounded-lg bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 overflow-hidden transition-all duration-200 hover:ring-primary-500 hover:transform hover:-translate-y-1">
                                 {{-- Card Image - Absolute fixed height and width with crop --}}
-                                <div class="relative overflow-hidden" style="width: 100%; height: 200px;">
+                                <div class="relative overflow-hidden" style="width: 100%; height: 400px;">
                                     @if($card->image)
                                         <img src="{{ Storage::url($card->image) }}"
                                              alt="{{ $card->title }}"
-                                             style="width: 100%; height: 200px; object-fit: cover; object-position: center;"
+                                             style="width: 100%; height: 400px; object-fit: cover; object-position: center;"
                                              class="group-hover:scale-105 transition-transform duration-200 bg-gray-100 dark:bg-gray-800">
                                     @else
-                                        <div style="width: 100%; height: 200px;" class="flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                                        <div style="width: 100%; height: 400px;" class="flex items-center justify-center bg-gray-100 dark:bg-gray-800">
                                             <x-heroicon-o-photo class="h-10 w-10 text-gray-400 dark:text-gray-600" />
                                         </div>
                                     @endif
