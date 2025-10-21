@@ -111,6 +111,7 @@ class PhysicalCardResource extends Resource
                                 'Japanese' => 'Japanese',
                                 'Chinese' => 'Chinese',
                                 'Korean' => 'Korean',
+                                'Hungarian' => 'Hungarian',
                                 'Other' => 'Other',
                             ])
                             ->default('English')
@@ -159,6 +160,7 @@ class PhysicalCardResource extends Resource
                                 'JPY' => 'JPY - Japanese Yen',
                                 'CAD' => 'CAD - Canadian Dollar',
                                 'AUD' => 'AUD - Australian Dollar',
+                                'HUF' => 'HUF - Hungarian Forint',
                             ])
                             ->default('USD')
                             ->required(),
@@ -360,6 +362,7 @@ class PhysicalCardResource extends Resource
                         'Japanese' => 'Japanese',
                         'Chinese' => 'Chinese',
                         'Korean' => 'Korean',
+                        'Hungarian' => 'Hungarian',
                         'Other' => 'Other',
                     ]),
                 Tables\Filters\SelectFilter::make('condition')

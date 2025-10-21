@@ -21,7 +21,7 @@ class UserApproved extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -34,5 +34,19 @@ class UserApproved extends Notification implements ShouldQueue
             ->action('Login to Your Account', url('/admin/login'))
             ->line('If you have any questions, please don\'t hesitate to contact us.')
             ->line('Welcome aboard!');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'action' => 'account_approved',
+            'approved_by' => $this->approvedBy->name,
+            'message' => 'Your account has been approved by a supervisor.',
+        ];
     }
 }

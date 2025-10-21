@@ -420,7 +420,19 @@
 
                         <div class="mt-3 pt-3 border-t border-slate-700">
                             <p class="text-2xl font-bold text-white">
-                                ${{ number_format($card->price_per_unit, 2) }}
+                                @php
+                                    $currencySymbols = [
+                                        'USD' => '$',
+                                        'EUR' => '€',
+                                        'GBP' => '£',
+                                        'JPY' => '¥',
+                                        'CAD' => 'CA$',
+                                        'AUD' => 'A$',
+                                        'HUF' => 'Ft',
+                                    ];
+                                    $symbol = $currencySymbols[$card->currency] ?? $card->currency;
+                                @endphp
+                                {{ number_format($card->price_per_unit, 2) }} {{ $symbol }}
                             </p>
                             <p class="text-xs text-slate-400">{{ $card->quantity }} available</p>
                         </div>

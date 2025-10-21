@@ -64,6 +64,8 @@ class AdminPanelProvider extends PanelProvider
                 SupervisorReviewStatsWidget::class,
                 SystemStatsWidget::class,
             ])
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label('Edit Profile')
