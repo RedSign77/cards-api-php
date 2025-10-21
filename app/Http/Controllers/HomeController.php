@@ -6,27 +6,41 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Card;
-use App\Models\CardType;
-use App\Models\Deck;
-use App\Models\Game;
+use App\Models\PhysicalCard;
 use App\Models\User;
-use App\Models\Hexa;
-use App\Models\Figure;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $totalCards = Card::count();
-        $totalCardTypes = CardType::count();
-        $totalDecks = Deck::count();
-        $totalGames = Game::count();
+        // Marketplace Statistics
+        $activeListings = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)->count();
+        $totalSellers = User::whereHas('physicalCards', function ($query) {
+            $query->where('status', PhysicalCard::STATUS_APPROVED);
+        })->count();
+        $cardsAvailable = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)->sum('quantity');
+        $pendingReviews = PhysicalCard::where('status', PhysicalCard::STATUS_UNDER_REVIEW)->count();
+        $averagePrice = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
+            ->where('price_per_unit', '>', 0)
+            ->avg('price_per_unit') ?? 0;
         $totalUsers = User::count();
-        $totalHexas = Hexa::count();
-        $totalFigures = Figure::count();
-        $apiEndpoints = 55;
 
-        return view('welcome', compact('totalCards', 'totalCardTypes', 'totalDecks', 'totalGames', 'totalUsers', 'totalHexas', 'totalFigures', 'apiEndpoints'));
+        // Featured Listings - Recently approved cards
+        $featuredListings = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
+            ->with('user')
+            ->latest('approved_at')
+            ->take(8)
+            ->get();
+
+        return view('welcome', compact(
+            'activeListings',
+            'totalSellers',
+            'cardsAvailable',
+            'pendingReviews',
+            'averagePrice',
+            'totalUsers',
+            'featuredListings'
+        ));
     }
 }

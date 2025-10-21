@@ -2,12 +2,23 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MarketplaceController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Notifications\EmailVerifiedSuccess;
 
 Route::get('/',[HomeController::class, 'index'])->name('home');
 
+// Marketplace Routes - Redirect to admin login (now only accessible in Filament admin)
+Route::get('/marketplace', function () {
+    return redirect('/admin/login')->with('info', 'Please login to access the marketplace.');
+})->name('marketplace.index');
+
+Route::get('/marketplace/card/{card}', function () {
+    return redirect('/admin/login')->with('info', 'Please login to access the marketplace.');
+})->name('marketplace.show');
+
+// Legal Pages
 Route::get('/terms-and-conditions', function () {
     return view('legal.terms-and-conditions');
 })->name('terms');

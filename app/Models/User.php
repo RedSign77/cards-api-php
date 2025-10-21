@@ -180,6 +180,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     }
 
     /**
+     * Get all physical cards listed by this user
+     */
+    public function physicalCards()
+    {
+        return $this->hasMany(PhysicalCard::class);
+    }
+
+    /**
      * Check if user is a supervisor
      */
     public function isSupervisor(): bool
