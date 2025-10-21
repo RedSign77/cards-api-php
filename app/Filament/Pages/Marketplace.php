@@ -25,6 +25,8 @@ class Marketplace extends Page
     public string $search = '';
     public string $condition = '';
     public string $language = '';
+    public string $set = '';
+    public string $edition = '';
     public string $minPrice = '';
     public string $maxPrice = '';
     public bool $tradeableOnly = false;
@@ -36,6 +38,8 @@ class Marketplace extends Page
         'search' => ['except' => ''],
         'condition' => ['except' => ''],
         'language' => ['except' => ''],
+        'set' => ['except' => ''],
+        'edition' => ['except' => ''],
         'minPrice' => ['except' => ''],
         'maxPrice' => ['except' => ''],
         'tradeableOnly' => ['except' => false],
@@ -75,6 +79,16 @@ class Marketplace extends Page
         // Condition filter
         if ($this->condition) {
             $query->where('condition', $this->condition);
+        }
+
+        // Set filter
+        if ($this->set) {
+            $query->where('set', $this->set);
+        }
+
+        // Edition filter
+        if ($this->edition) {
+            $query->where('edition', $this->edition);
         }
 
         // Price range filter
@@ -135,6 +149,26 @@ class Marketplace extends Page
             ->values();
     }
 
+    public function getSets()
+    {
+        return PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
+            ->distinct()
+            ->pluck('set')
+            ->filter()
+            ->sort()
+            ->values();
+    }
+
+    public function getEditions()
+    {
+        return PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
+            ->distinct()
+            ->pluck('edition')
+            ->filter()
+            ->sort()
+            ->values();
+    }
+
     public function applyFilters(): void
     {
         // Livewire will automatically re-render when properties change
@@ -145,6 +179,8 @@ class Marketplace extends Page
         $this->search = '';
         $this->condition = '';
         $this->language = '';
+        $this->set = '';
+        $this->edition = '';
         $this->minPrice = '';
         $this->maxPrice = '';
         $this->tradeableOnly = false;
@@ -155,12 +191,14 @@ class Marketplace extends Page
     {
         $this->selectedCardId = $cardId;
         $this->showModal = true;
+        $this->dispatch('open-modal', id: 'card-detail-modal');
     }
 
     public function closeCardModal(): void
     {
         $this->selectedCardId = null;
         $this->showModal = false;
+        $this->dispatch('close-modal', id: 'card-detail-modal');
     }
 
     public function getSelectedCard()
