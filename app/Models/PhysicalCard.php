@@ -79,6 +79,11 @@ class PhysicalCard extends Model
         return $this->hasMany(CardStatusHistory::class)->orderBy('created_at', 'desc');
     }
 
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
     public function isPendingAuto(): bool
     {
         return $this->status === self::STATUS_PENDING_AUTO;

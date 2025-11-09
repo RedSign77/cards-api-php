@@ -5,6 +5,7 @@
 
 use App\Http\Controllers\Api\v1\Cards;
 use App\Http\Controllers\Api\v1\CardTypes;
+use App\Http\Controllers\Api\v1\Carts;
 use App\Http\Controllers\Api\v1\Decks;
 use App\Http\Controllers\Api\v1\Games;
 use App\Http\Controllers\Api\v1\Hexas;
@@ -32,6 +33,13 @@ Route::group(['middleware' => 'auth:sanctum'], static function () {
         Route::apiResource('games', Games::class);
         Route::apiResource('hexas', Hexas::class);
         Route::apiResource('figures', Figures::class);
+
+        // Cart routes
+        Route::get('cart', [Carts::class, 'index']);
+        Route::post('cart/items', [Carts::class, 'addItem']);
+        Route::put('cart/items/{cartItemId}', [Carts::class, 'updateItem']);
+        Route::delete('cart/items/{cartItemId}', [Carts::class, 'removeItem']);
+        Route::delete('cart', [Carts::class, 'clear']);
 
         Route::middleware('supervisor')->group(function () {
             Route::apiResource('useractivitylogs', UserActivityLogs::class)->only(['index', 'show']);
