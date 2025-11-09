@@ -208,4 +208,4 @@ Uses Rewardenv Laravel project setup (see `.reward` directory). Can also use sta
 - All copyright headers use "Webtech-solutions 2025, All rights reserved."
 - Card and Deck images should use FileUpload component with `imageEditor()` in Filament
 - Admin notification email configured via `MAIL_ADMIN_ADDRESS` environment variable
-
+- Bash commands running inside a docker container with "docker exec cards-api-php-php-fpm-1 command"

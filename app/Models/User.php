@@ -194,4 +194,20 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     {
         return $this->supervisor === true;
     }
+
+    /**
+     * Get user's cart (creates one if it doesn't exist)
+     */
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    /**
+     * Get or create user's cart
+     */
+    public function getOrCreateCart(): Cart
+    {
+        return $this->cart()->firstOrCreate(['user_id' => $this->id]);
+    }
 }

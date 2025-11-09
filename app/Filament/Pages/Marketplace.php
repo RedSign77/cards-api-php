@@ -7,44 +7,41 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use App\Models\PhysicalCard;
+use App\Models\CartItem;
 use Filament\Pages\Page;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components;
+use Filament\Infolists\Infolist;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
-class Marketplace extends Page
+class Marketplace extends Page implements HasTable, HasForms
 {
+    use InteractsWithTable;
+    use InteractsWithForms;
+
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     protected static string $view = 'filament.pages.marketplace';
 
-    protected static ?string $navigationLabel = 'Marketplace';
+    protected static ?string $navigationLabel = 'Browse';
 
     protected static ?string $title = 'Browse Marketplace';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Marketplace';
 
-    public string $search = '';
-    public string $condition = '';
-    public string $language = '';
-    public string $set = '';
-    public string $edition = '';
-    public string $minPrice = '';
-    public string $maxPrice = '';
-    public bool $tradeableOnly = false;
-    public string $sortBy = 'latest';
-    public ?int $selectedCardId = null;
-    public bool $showModal = false;
-
-    protected $queryString = [
-        'search' => ['except' => ''],
-        'condition' => ['except' => ''],
-        'language' => ['except' => ''],
-        'set' => ['except' => ''],
-        'edition' => ['except' => ''],
-        'minPrice' => ['except' => ''],
-        'maxPrice' => ['except' => ''],
-        'tradeableOnly' => ['except' => false],
-        'sortBy' => ['except' => 'latest'],
-    ];
+    protected static ?int $navigationSort = 1;
 
     public function getTitle(): string | Htmlable
     {
@@ -61,169 +58,310 @@ class Marketplace extends Page
         return 'Discover and browse physical collectible cards from verified sellers';
     }
 
-    public function getCards()
+    public function table(Table $table): Table
     {
-        $query = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
-            ->with('user');
+        return $table
+            ->query(PhysicalCard::query()->where('status', PhysicalCard::STATUS_APPROVED))
+            ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Image')
+                    ->disk('public')
+                    ->size(80)
+                    ->defaultImageUrl(url('/images/placeholder-card.png')),
 
-        // Search filter
-        if ($this->search) {
-            $search = $this->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('set', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold')
+                    ->description(fn (PhysicalCard $record): string => $record->set ? "Set: {$record->set}" : ''),
 
-        // Condition filter
-        if ($this->condition) {
-            $query->where('condition', $this->condition);
-        }
+                Tables\Columns\TextColumn::make('condition')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'mint' => 'success',
+                        'near_mint' => 'info',
+                        'excellent' => 'primary',
+                        'good' => 'warning',
+                        'played' => 'gray',
+                        default => 'gray',
+                    }),
 
-        // Set filter
-        if ($this->set) {
-            $query->where('set', $this->set);
-        }
+                Tables\Columns\TextColumn::make('price_per_unit')
+                    ->label('Price')
+                    ->sortable()
+                    ->money(fn (PhysicalCard $record): string => $record->currency)
+                    ->weight('bold'),
 
-        // Edition filter
-        if ($this->edition) {
-            $query->where('edition', $this->edition);
-        }
+                Tables\Columns\TextColumn::make('quantity')
+                    ->label('Stock')
+                    ->sortable()
+                    ->badge()
+                    ->color(fn (int $state): string => $state > 10 ? 'success' : ($state > 0 ? 'warning' : 'danger')),
 
-        // Price range filter
-        if ($this->minPrice !== '' && is_numeric($this->minPrice)) {
-            $query->where('price_per_unit', '>=', $this->minPrice);
-        }
-        if ($this->maxPrice !== '' && is_numeric($this->maxPrice)) {
-            $query->where('price_per_unit', '<=', $this->maxPrice);
-        }
+                Tables\Columns\TextColumn::make('language')
+                    ->sortable()
+                    ->toggleable(),
 
-        // Tradeable filter
-        if ($this->tradeableOnly) {
-            $query->where('tradeable', true);
-        }
+                Tables\Columns\IconColumn::make('tradeable')
+                    ->boolean()
+                    ->toggleable(),
 
-        // Language filter
-        if ($this->language) {
-            $query->where('language', $this->language);
-        }
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Seller')
+                    ->searchable()
+                    ->toggleable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('condition')
+                    ->options([
+                        'mint' => 'Mint',
+                        'near_mint' => 'Near Mint',
+                        'excellent' => 'Excellent',
+                        'good' => 'Good',
+                        'played' => 'Played',
+                    ]),
 
-        // Sort options
-        switch ($this->sortBy) {
-            case 'price_asc':
-                $query->orderBy('price_per_unit', 'asc');
-                break;
-            case 'price_desc':
-                $query->orderBy('price_per_unit', 'desc');
-                break;
-            case 'oldest':
-                $query->oldest('approved_at');
-                break;
-            case 'latest':
-            default:
-                $query->latest('approved_at');
-                break;
-        }
+                Tables\Filters\SelectFilter::make('language')
+                    ->options(fn (): array => PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
+                        ->distinct()
+                        ->pluck('language', 'language')
+                        ->filter()
+                        ->toArray()),
 
-        return $query->paginate(24);
+                Tables\Filters\SelectFilter::make('set')
+                    ->options(fn (): array => PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
+                        ->distinct()
+                        ->pluck('set', 'set')
+                        ->filter()
+                        ->toArray())
+                    ->searchable(),
+
+                Tables\Filters\TernaryFilter::make('tradeable')
+                    ->label('Tradeable Only')
+                    ->boolean()
+                    ->trueLabel('Tradeable')
+                    ->falseLabel('Not Tradeable')
+                    ->queries(
+                        true: fn (Builder $query) => $query->where('tradeable', true),
+                        false: fn (Builder $query) => $query->where('tradeable', false),
+                        blank: fn (Builder $query) => $query,
+                    ),
+            ])
+            ->actions([
+                Tables\Actions\Action::make('view')
+                    ->icon('heroicon-o-eye')
+                    ->slideOver()
+                    ->modalWidth('4xl')
+                    ->infolist(fn (PhysicalCard $record): array => [
+                        Components\ImageEntry::make('image')
+                            ->disk('public')
+                            ->hiddenLabel()
+                            ->height(400)
+                            ->columnSpanFull(),
+
+                        Components\Split::make([
+                            Components\Section::make('Card Details')
+                                ->schema([
+                                    Components\TextEntry::make('title')
+                                        ->size('lg')
+                                        ->weight('bold'),
+
+                                    Components\TextEntry::make('description')
+                                        ->markdown()
+                                        ->hidden(fn ($state): bool => empty($state)),
+
+                                    Components\Grid::make(2)
+                                        ->schema([
+                                            Components\TextEntry::make('price_per_unit')
+                                                ->label('Price')
+                                                ->money($record->currency)
+                                                ->size('lg')
+                                                ->weight('bold')
+                                                ->color('success'),
+
+                                            Components\TextEntry::make('quantity')
+                                                ->label('Available Stock')
+                                                ->badge()
+                                                ->color(fn (int $state): string => $state > 10 ? 'success' : ($state > 0 ? 'warning' : 'danger')),
+                                        ]),
+
+                                    Components\Grid::make(2)
+                                        ->schema([
+                                            Components\TextEntry::make('set')
+                                                ->hidden(fn ($state): bool => empty($state)),
+                                            Components\TextEntry::make('edition')
+                                                ->hidden(fn ($state): bool => empty($state)),
+                                            Components\TextEntry::make('language')
+                                                ->hidden(fn ($state): bool => empty($state)),
+                                            Components\TextEntry::make('condition')
+                                                ->badge()
+                                                ->color(fn (string $state): string => match ($state) {
+                                                    'mint' => 'success',
+                                                    'near_mint' => 'info',
+                                                    'excellent' => 'primary',
+                                                    'good' => 'warning',
+                                                    'played' => 'gray',
+                                                    default => 'gray',
+                                                }),
+                                        ]),
+
+                                    Components\TextEntry::make('tradeable')
+                                        ->label('Available for Trade')
+                                        ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
+                                        ->badge()
+                                        ->color(fn (bool $state): string => $state ? 'success' : 'gray'),
+                                ])
+                                ->grow(true),
+
+                            Components\Section::make('Seller Information')
+                                ->schema([
+                                    Components\TextEntry::make('user.name')
+                                        ->label('Seller'),
+
+                                    Components\TextEntry::make('user.email')
+                                        ->label('Email')
+                                        ->copyable(),
+
+                                    Components\TextEntry::make('user.seller_location')
+                                        ->label('Location')
+                                        ->icon('heroicon-o-map-pin')
+                                        ->hidden(fn ($state): bool => empty($state)),
+
+                                    Components\TextEntry::make('user.shipping_price')
+                                        ->label('Shipping Cost')
+                                        ->money(fn (PhysicalCard $record): string => $record->user->shipping_currency ?? 'USD')
+                                        ->hidden(fn ($state): bool => empty($state)),
+
+                                    Components\TextEntry::make('user.delivery_time')
+                                        ->label('Delivery Time')
+                                        ->hidden(fn ($state): bool => empty($state)),
+                                ])
+                                ->grow(false),
+                        ]),
+                    ])
+                    ->extraModalFooterActions(fn (PhysicalCard $record): array => [
+                        Tables\Actions\Action::make('addToCart')
+                            ->label('Add to Cart')
+                            ->icon('heroicon-o-shopping-cart')
+                            ->color('primary')
+                            ->visible(fn (PhysicalCard $record): bool => $record->user_id !== auth()->id())
+                            ->form([
+                                TextInput::make('quantity')
+                                    ->label('Quantity')
+                                    ->numeric()
+                                    ->default(1)
+                                    ->minValue(1)
+                                    ->maxValue(fn (PhysicalCard $record): int => $record->quantity)
+                                    ->required(),
+                            ])
+                            ->action(function (PhysicalCard $record, array $data): void {
+                                $this->addToCartAction($record->id, (int) $data['quantity']);
+                            }),
+                    ]),
+
+                Tables\Actions\Action::make('addToCart')
+                    ->label('Cart')
+                    ->icon('heroicon-o-shopping-cart')
+                    ->color('success')
+                    ->visible(fn (PhysicalCard $record): bool => $record->user_id !== auth()->id())
+                    ->form([
+                        TextInput::make('quantity')
+                            ->label('Quantity')
+                            ->numeric()
+                            ->default(1)
+                            ->minValue(1)
+                            ->maxValue(fn (PhysicalCard $record): int => $record->quantity)
+                            ->required(),
+                    ])
+                    ->action(function (PhysicalCard $record, array $data): void {
+                        $this->addToCartAction($record->id, (int) $data['quantity']);
+                    }),
+
+                Tables\Actions\EditAction::make()
+                    ->visible(fn (PhysicalCard $record): bool => $record->user_id === auth()->id())
+                    ->url(fn (PhysicalCard $record): string => route('filament.admin.resources.physical-cards.edit', ['record' => $record])),
+            ])
+            ->defaultSort('approved_at', 'desc')
+            ->paginated([10, 25, 50, 100]);
     }
 
-    public function getConditions()
+    protected function addToCartAction(int $cardId, int $quantity = 1): void
     {
-        return PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
-            ->distinct()
-            ->pluck('condition')
-            ->filter()
-            ->sort()
-            ->values();
-    }
+        $user = auth()->user();
+        $physicalCard = PhysicalCard::findOrFail($cardId);
 
-    public function getLanguages()
-    {
-        return PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
-            ->distinct()
-            ->pluck('language')
-            ->filter()
-            ->sort()
-            ->values();
-    }
-
-    public function getSets()
-    {
-        return PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
-            ->distinct()
-            ->pluck('set')
-            ->filter()
-            ->sort()
-            ->values();
-    }
-
-    public function getEditions()
-    {
-        return PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
-            ->distinct()
-            ->pluck('edition')
-            ->filter()
-            ->sort()
-            ->values();
-    }
-
-    public function applyFilters(): void
-    {
-        // Livewire will automatically re-render when properties change
-    }
-
-    public function clearFilters(): void
-    {
-        $this->search = '';
-        $this->condition = '';
-        $this->language = '';
-        $this->set = '';
-        $this->edition = '';
-        $this->minPrice = '';
-        $this->maxPrice = '';
-        $this->tradeableOnly = false;
-        $this->sortBy = 'latest';
-    }
-
-    public function viewCard(int $cardId): void
-    {
-        $this->selectedCardId = $cardId;
-        $this->showModal = true;
-        $this->dispatch('open-modal', id: 'card-detail-modal');
-    }
-
-    public function closeCardModal(): void
-    {
-        $this->selectedCardId = null;
-        $this->showModal = false;
-        $this->dispatch('close-modal', id: 'card-detail-modal');
-    }
-
-    public function getSelectedCard()
-    {
-        if ($this->selectedCardId) {
-            return PhysicalCard::with('user')->find($this->selectedCardId);
-        }
-        return null;
-    }
-
-    public function getSimilarCards()
-    {
-        $card = $this->getSelectedCard();
-        if (!$card) {
-            return collect();
+        // Prevent users from adding their own cards to cart
+        if ($physicalCard->user_id === $user->id) {
+            Notification::make()
+                ->danger()
+                ->title('Cannot add to cart')
+                ->body('You cannot add your own cards to the cart')
+                ->send();
+            return;
         }
 
-        return PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)
-            ->where('id', '!=', $card->id)
-            ->where(function ($query) use ($card) {
-                $query->where('set', $card->set)
-                    ->orWhere('title', 'like', '%' . substr($card->title, 0, 10) . '%');
-            })
-            ->with('user')
-            ->take(4)
-            ->get();
+        // Check if card is approved/published
+        if (!$physicalCard->isApproved() && !$physicalCard->isPublished()) {
+            Notification::make()
+                ->danger()
+                ->title('Cannot add to cart')
+                ->body('This card is not available for purchase')
+                ->send();
+            return;
+        }
+
+        // Validate quantity against available stock
+        if ($quantity > $physicalCard->quantity) {
+            Notification::make()
+                ->warning()
+                ->title('Insufficient stock')
+                ->body("Only {$physicalCard->quantity} available")
+                ->send();
+            return;
+        }
+
+        $cart = $user->getOrCreateCart();
+
+        // Check if item already exists in cart
+        $cartItem = $cart->items()->where('physical_card_id', $cardId)->first();
+
+        if ($cartItem) {
+            // Update quantity, but validate total doesn't exceed stock
+            $newQuantity = $cartItem->quantity + $quantity;
+
+            if ($newQuantity > $physicalCard->quantity) {
+                Notification::make()
+                    ->warning()
+                    ->title('Insufficient stock')
+                    ->body("You already have {$cartItem->quantity} in cart. Total would exceed available stock.")
+                    ->send();
+                return;
+            }
+
+            $cartItem->quantity = $newQuantity;
+            $cartItem->save();
+
+            Notification::make()
+                ->success()
+                ->title('Cart updated')
+                ->body("Quantity updated to {$newQuantity}")
+                ->send();
+        } else {
+            // Create new cart item
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'physical_card_id' => $cardId,
+                'quantity' => $quantity,
+            ]);
+
+            Notification::make()
+                ->success()
+                ->title('Added to cart')
+                ->body("{$physicalCard->title} has been added to your cart")
+                ->send();
+        }
+
+        // Refresh the page to show updated cart count
+        $this->dispatch('cart-updated');
     }
 }
