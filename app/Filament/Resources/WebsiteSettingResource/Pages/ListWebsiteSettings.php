@@ -1,7 +1,4 @@
 <?php
-/**
- * Webtech-solutions 2025, All rights reserved.
- */
 
 namespace App\Filament\Resources\WebsiteSettingResource\Pages;
 

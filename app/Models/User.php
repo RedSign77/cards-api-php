@@ -46,6 +46,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         'shipping_price',
         'shipping_currency',
         'delivery_time',
+        'currency_code',
     ];
 
     /**
@@ -125,6 +126,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     {
         $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
         return $this->$avatarColumn ? Storage::url($this->$avatarColumn) : null;
+    }
+
+    /**
+     * Get the user's preferred currency
+     */
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class, 'currency_code', 'code');
     }
 
     /**

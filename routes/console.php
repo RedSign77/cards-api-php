@@ -13,6 +13,16 @@ Schedule::command('queue:work', ['database', '--stop-when-empty', '--tries=3', '
     ->everyMinute()
     ->withoutOverlapping();
 
+// Schedule: Clean up expired cart reservations every 5 minutes
+Schedule::command('cart:cleanup-expired-reservations')
+    ->everyFiveMinutes()
+    ->withoutOverlapping();
+
+// Schedule: Update currency exchange rates daily at 3 AM
+Schedule::command('currencies:update-rates')
+    ->dailyAt('03:00')
+    ->withoutOverlapping();
+
 // Schedule: Clean up old logs daily at 2 AM (User Activity Logs, Supervisor Activity Logs, Completed Jobs older than 20 days)
 Schedule::command('logs:cleanup')->dailyAt('02:00');
 

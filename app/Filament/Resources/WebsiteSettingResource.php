@@ -1,17 +1,17 @@
 <?php
-/**
- * Webtech-solutions 2025, All rights reserved.
- */
 
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\WebsiteSettingResource\Pages;
+use App\Filament\Resources\WebsiteSettingResource\RelationManagers;
 use App\Models\WebsiteSetting;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class WebsiteSettingResource extends Resource
 {
@@ -19,11 +19,11 @@ class WebsiteSettingResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationGroup = 'System Settings';
-
     protected static ?string $navigationLabel = 'Website Settings';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?string $navigationGroup = 'Administration';
+
+    protected static ?int $navigationSort = 20;
 
     public static function canViewAny(): bool
     {
@@ -34,87 +34,68 @@ class WebsiteSettingResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Setting Details')
+                Forms\Components\Section::make('Setting Information')
                     ->schema([
-                        Forms\Components\TextInput::make('key')
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->maxLength(255)
-                            ->disabled(fn ($record) => $record !== null)
-                            ->helperText('Unique identifier for this setting (cannot be changed after creation)'),
-
                         Forms\Components\TextInput::make('label')
+                            ->label('Label')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->columnSpanFull(),
 
-                        Forms\Components\Select::make('group')
+                        Forms\Components\TextInput::make('key')
+                            ->label('Key')
                             ->required()
-                            ->options([
-                                'general' => 'General',
-                                'seo' => 'SEO',
-                                'analytics' => 'Analytics & Tracking',
-                                'social' => 'Social Media',
-                                'branding' => 'Branding',
-                            ])
-                            ->default('general'),
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true)
+                            ->disabled(fn ($record) => $record !== null)
+                            ->helperText('Unique identifier for this setting')
+                            ->columnSpan(1),
 
                         Forms\Components\Select::make('type')
+                            ->label('Type')
                             ->required()
                             ->options([
                                 'text' => 'Text',
-                                'textarea' => 'Textarea',
-                                'boolean' => 'Boolean (Yes/No)',
                                 'number' => 'Number',
-                                'email' => 'Email',
-                                'url' => 'URL',
+                                'boolean' => 'Boolean',
+                                'textarea' => 'Long Text',
                             ])
                             ->default('text')
-                            ->live(),
+                            ->columnSpan(1),
 
-                        Forms\Components\Textarea::make('description')
-                            ->rows(2)
-                            ->columnSpanFull(),
-
-                        Forms\Components\TextInput::make('order')
-                            ->numeric()
-                            ->default(0)
-                            ->helperText('Order of appearance in the list'),
-                    ])
-                    ->columns(2),
-
-                Forms\Components\Section::make('Setting Value')
-                    ->schema([
                         Forms\Components\TextInput::make('value')
                             ->label('Value')
-                            ->hidden(fn (Forms\Get $get) => !in_array($get('type'), ['text', 'email', 'url', 'number']))
-                            ->required(fn (Forms\Get $get) => in_array($get('type'), ['text', 'email', 'url', 'number']))
-                            ->email(fn (Forms\Get $get) => $get('type') === 'email')
-                            ->url(fn (Forms\Get $get) => $get('type') === 'url')
-                            ->numeric(fn (Forms\Get $get) => $get('type') === 'number'),
+                            ->required()
+                            ->helperText('The actual value of this setting')
+                            ->columnSpanFull(),
 
-                        Forms\Components\Textarea::make('value_textarea')
-                            ->label('Value')
-                            ->rows(4)
-                            ->hidden(fn (Forms\Get $get) => $get('type') !== 'textarea')
-                            ->required(fn (Forms\Get $get) => $get('type') === 'textarea')
-                            ->afterStateHydrated(function (Forms\Components\Textarea $component, $state, $record) {
-                                if ($record && $record->type === 'textarea') {
-                                    $component->state($record->getRawOriginal('value'));
-                                }
-                            })
-                            ->dehydrated(false),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Description')
+                            ->rows(3)
+                            ->helperText('Explain what this setting does')
+                            ->columnSpanFull(),
 
-                        Forms\Components\Toggle::make('value_boolean')
-                            ->label('Value')
-                            ->hidden(fn (Forms\Get $get) => $get('type') !== 'boolean')
-                            ->inline(false)
-                            ->afterStateHydrated(function (Forms\Components\Toggle $component, $state, $record) {
-                                if ($record && $record->type === 'boolean') {
-                                    $component->state((bool) $record->getRawOriginal('value'));
-                                }
-                            })
-                            ->dehydrated(false),
-                    ]),
+                        Forms\Components\Select::make('group')
+                            ->label('Group')
+                            ->required()
+                            ->options([
+                                'general' => 'General',
+                                'logs' => 'Logs & Cleanup',
+                                'email' => 'Email',
+                                'security' => 'Security',
+                                'maintenance' => 'Maintenance',
+                            ])
+                            ->default('general')
+                            ->columnSpan(1),
+
+                        Forms\Components\TextInput::make('order')
+                            ->label('Display Order')
+                            ->numeric()
+                            ->default(0)
+                            ->helperText('Lower numbers appear first')
+                            ->columnSpan(1),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -123,82 +104,84 @@ class WebsiteSettingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('label')
-                    ->sortable()
+                    ->label('Setting')
                     ->searchable()
-                    ->weight('bold'),
-
-                Tables\Columns\TextColumn::make('key')
                     ->sortable()
-                    ->searchable()
-                    ->copyable()
-                    ->fontFamily('mono')
-                    ->size('sm'),
-
-                Tables\Columns\TextColumn::make('group')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'general' => 'gray',
-                        'seo' => 'success',
-                        'analytics' => 'info',
-                        'social' => 'warning',
-                        'branding' => 'danger',
-                        default => 'gray',
-                    })
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('type')
-                    ->badge()
-                    ->sortable(),
+                    ->weight('bold')
+                    ->description(fn (WebsiteSetting $record): string => $record->key),
 
                 Tables\Columns\TextColumn::make('value')
-                    ->limit(50)
+                    ->label('Value')
                     ->searchable()
-                    ->formatStateUsing(fn ($state, $record) =>
-                        $record->type === 'boolean'
-                            ? ($state ? 'Yes' : 'No')
-                            : $state
-                    ),
+                    ->badge()
+                    ->color('primary')
+                    ->limit(50),
+
+                Tables\Columns\TextColumn::make('group')
+                    ->label('Group')
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'logs' => 'warning',
+                        'security' => 'danger',
+                        'maintenance' => 'info',
+                        default => 'gray',
+                    }),
+
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Type')
+                    ->badge()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('order')
+                    ->label('Order')
+                    ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime('Y-m-d H:i')
+                    ->label('Last Updated')
+                    ->dateTime()
                     ->sortable()
                     ->since()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('group')
                     ->options([
                         'general' => 'General',
-                        'seo' => 'SEO',
-                        'analytics' => 'Analytics & Tracking',
-                        'social' => 'Social Media',
-                        'branding' => 'Branding',
+                        'logs' => 'Logs & Cleanup',
+                        'email' => 'Email',
+                        'security' => 'Security',
+                        'maintenance' => 'Maintenance',
                     ]),
 
                 Tables\Filters\SelectFilter::make('type')
                     ->options([
                         'text' => 'Text',
-                        'textarea' => 'Textarea',
-                        'boolean' => 'Boolean',
                         'number' => 'Number',
-                        'email' => 'Email',
-                        'url' => 'URL',
+                        'boolean' => 'Boolean',
+                        'textarea' => 'Long Text',
                     ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
-            ->defaultSort('order');
+            ->bulkActions([])
+            ->defaultSort('group')
+            ->defaultGroup('group')
+            ->reorderable('order')
+            ->emptyStateHeading('No settings configured')
+            ->emptyStateDescription('Add your first website setting')
+            ->emptyStateIcon('heroicon-o-cog-6-tooth');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array
@@ -208,10 +191,5 @@ class WebsiteSettingResource extends Resource
             'create' => Pages\CreateWebsiteSetting::route('/create'),
             'edit' => Pages\EditWebsiteSetting::route('/{record}/edit'),
         ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
     }
 }

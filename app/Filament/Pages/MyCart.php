@@ -55,9 +55,74 @@ class MyCart extends Page implements HasTable, HasForms
         }
 
         $totalItems = $cart->getTotalItems();
-        $totalPrice = $cart->getTotalPrice();
+        $userCurrency = auth()->user()->currency;
+        $currencyCode = $userCurrency ? $userCurrency->code : 'USD';
+        $currencySymbol = $userCurrency ? $userCurrency->symbol : '$';
 
-        return "You have {$totalItems} item(s) in your cart • Total: $" . number_format($totalPrice, 2);
+        // Group items by seller and calculate totals
+        $sellerGroups = [];
+        $itemsTotal = 0;
+
+        foreach ($cart->items as $item) {
+            $sellerId = $item->physicalCard->user_id;
+            $price = (float) $item->physicalCard->price_per_unit;
+            $quantity = $item->quantity;
+
+            // Convert item price
+            if ($userCurrency && $userCurrency->code !== $item->physicalCard->currency) {
+                $fromCurrency = \App\Models\Currency::where('code', $item->physicalCard->currency)->first();
+                if ($fromCurrency) {
+                    $price = $fromCurrency->convertTo($price, $userCurrency);
+                }
+            }
+
+            $itemSubtotal = $price * $quantity;
+            $itemsTotal += $itemSubtotal;
+
+            // Initialize seller group if not exists
+            if (!isset($sellerGroups[$sellerId])) {
+                $seller = $item->physicalCard->user;
+                $shippingPrice = (float) ($seller->shipping_price ?? 0);
+
+                // Convert shipping price
+                if ($shippingPrice > 0 && $userCurrency && $userCurrency->code !== ($seller->shipping_currency ?? 'USD')) {
+                    $fromCurrency = \App\Models\Currency::where('code', $seller->shipping_currency ?? 'USD')->first();
+                    if ($fromCurrency) {
+                        $shippingPrice = $fromCurrency->convertTo($shippingPrice, $userCurrency);
+                    }
+                }
+
+                $sellerGroups[$sellerId] = [
+                    'name' => $seller->name,
+                    'shipping' => $shippingPrice,
+                    'items' => 0,
+                ];
+            }
+
+            $sellerGroups[$sellerId]['items']++;
+        }
+
+        // Calculate total shipping
+        $totalShipping = array_sum(array_column($sellerGroups, 'shipping'));
+        $grandTotal = $itemsTotal + $totalShipping;
+
+        // Build summary
+        $sellerCount = count($sellerGroups);
+        $summary = "You have {$totalItems} item(s) from {$sellerCount} seller(s)";
+
+        // Add seller breakdown if multiple sellers
+        if ($sellerCount > 1) {
+            $summary .= " • Items: {$currencySymbol}" . number_format($itemsTotal, 2);
+            $summary .= " + Shipping: {$currencySymbol}" . number_format($totalShipping, 2);
+            $summary .= " = Total: {$currencySymbol}" . number_format($grandTotal, 2) . " {$currencyCode}";
+        } else {
+            $summary .= " • Total: {$currencySymbol}" . number_format($grandTotal, 2) . " {$currencyCode}";
+            if ($totalShipping > 0) {
+                $summary .= " (inc. {$currencySymbol}" . number_format($totalShipping, 2) . " shipping)";
+            }
+        }
+
+        return $summary;
     }
 
     public static function getNavigationBadge(): ?string
@@ -69,6 +134,15 @@ class MyCart extends Page implements HasTable, HasForms
 
         $totalItems = $cart->getTotalItems();
         return $totalItems > 0 ? (string) $totalItems : null;
+    }
+
+    public function mount(): void
+    {
+        // Extend all reservations in the user's cart when they visit the cart page
+        $cart = auth()->user()->cart;
+        if ($cart) {
+            $cart->items->each(fn ($item) => $item->extendReservation());
+        }
     }
 
     public function table(Table $table): Table
@@ -107,9 +181,32 @@ class MyCart extends Page implements HasTable, HasForms
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('physicalCard.price_per_unit')
-                    ->label('Unit Price')
+                    ->label('Original Price')
                     ->money(fn (CartItem $record): string => $record->physicalCard->currency)
-                    ->sortable(),
+                    ->description(fn (CartItem $record): string => "Seller's currency"),
+
+                Tables\Columns\TextColumn::make('converted_price')
+                    ->label('Your Price')
+                    ->getStateUsing(function (CartItem $record): float {
+                        $userCurrency = auth()->user()->currency;
+                        $price = (float) $record->physicalCard->price_per_unit;
+
+                        if (!$userCurrency || $userCurrency->code === $record->physicalCard->currency) {
+                            return $price;
+                        }
+
+                        $fromCurrency = \App\Models\Currency::where('code', $record->physicalCard->currency)->first();
+
+                        if (!$fromCurrency) {
+                            return $price;
+                        }
+
+                        return $fromCurrency->convertTo($price, $userCurrency);
+                    })
+                    ->money(fn (): string => auth()->user()->currency_code ?? 'USD')
+                    ->weight('bold')
+                    ->color('success')
+                    ->description(fn (): string => "In your currency"),
 
                 Tables\Columns\TextColumn::make('quantity')
                     ->label('Quantity')
@@ -119,10 +216,58 @@ class MyCart extends Page implements HasTable, HasForms
 
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label('Subtotal')
-                    ->money(fn (CartItem $record): string => $record->physicalCard->currency)
-                    ->getStateUsing(fn (CartItem $record): float => $record->getSubtotal())
+                    ->getStateUsing(function (CartItem $record): float {
+                        $userCurrency = auth()->user()->currency;
+                        $price = (float) $record->physicalCard->price_per_unit;
+                        $quantity = $record->quantity;
+
+                        if (!$userCurrency || $userCurrency->code === $record->physicalCard->currency) {
+                            return $price * $quantity;
+                        }
+
+                        $fromCurrency = \App\Models\Currency::where('code', $record->physicalCard->currency)->first();
+
+                        if (!$fromCurrency) {
+                            return $price * $quantity;
+                        }
+
+                        $convertedPrice = $fromCurrency->convertTo($price, $userCurrency);
+                        return $convertedPrice * $quantity;
+                    })
+                    ->money(fn (): string => auth()->user()->currency_code ?? 'USD')
                     ->weight('bold')
-                    ->sortable(),
+                    ->color('success'),
+
+                Tables\Columns\TextColumn::make('shipping')
+                    ->label('Shipping')
+                    ->getStateUsing(function (CartItem $record): float {
+                        $seller = $record->physicalCard->user;
+                        $userCurrency = auth()->user()->currency;
+
+                        if (!$seller->shipping_price) {
+                            return 0;
+                        }
+
+                        $shippingPrice = (float) $seller->shipping_price;
+                        $shippingCurrency = $seller->shipping_currency ?? 'USD';
+
+                        if (!$userCurrency || $userCurrency->code === $shippingCurrency) {
+                            return $shippingPrice;
+                        }
+
+                        $fromCurrency = \App\Models\Currency::where('code', $shippingCurrency)->first();
+
+                        if (!$fromCurrency) {
+                            return $shippingPrice;
+                        }
+
+                        return $fromCurrency->convertTo($shippingPrice, $userCurrency);
+                    })
+                    ->money(fn (): string => auth()->user()->currency_code ?? 'USD')
+                    ->color('info')
+                    ->description(fn (CartItem $record): string =>
+                        $record->physicalCard->user->shipping_price ? "Per seller" : "Free"
+                    ),
             ])
             ->actions([
                 Tables\Actions\Action::make('updateQuantity')
@@ -141,24 +286,37 @@ class MyCart extends Page implements HasTable, HasForms
                     ])
                     ->action(function (CartItem $record, array $data): void {
                         $newQuantity = (int) $data['quantity'];
+                        $cart = auth()->user()->cart;
 
-                        // Validate against available stock
+                        // Check available quantity including current reservation
+                        $availableQuantity = CartItem::getAvailableQuantity($record->physical_card_id, $cart->id) + $record->quantity;
+
+                        // Validate against available stock (including other reservations)
+                        if ($newQuantity > $availableQuantity) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Not available')
+                                ->body("Only {$availableQuantity} available. The remaining stock is reserved by other customers.")
+                                ->send();
+                            return;
+                        }
+
                         if ($newQuantity > $record->physicalCard->quantity) {
                             Notification::make()
                                 ->warning()
                                 ->title('Insufficient stock')
-                                ->body("Only {$record->physicalCard->quantity} available")
+                                ->body("Only {$record->physicalCard->quantity} in total stock")
                                 ->send();
                             return;
                         }
 
                         $record->quantity = $newQuantity;
-                        $record->save();
+                        $record->extendReservation();
 
                         Notification::make()
                             ->success()
                             ->title('Quantity updated')
-                            ->body("Quantity updated to {$newQuantity}")
+                            ->body("Quantity updated to {$newQuantity} (reservation extended)")
                             ->send();
                     }),
 

@@ -87,16 +87,43 @@ class Marketplace extends Page implements HasTable, HasForms
                     }),
 
                 Tables\Columns\TextColumn::make('price_per_unit')
-                    ->label('Price')
+                    ->label('Original Price')
                     ->sortable()
                     ->money(fn (PhysicalCard $record): string => $record->currency)
-                    ->weight('bold'),
+                    ->description(fn (PhysicalCard $record): string => "Seller's currency"),
 
-                Tables\Columns\TextColumn::make('quantity')
-                    ->label('Stock')
-                    ->sortable()
+                Tables\Columns\TextColumn::make('converted_price')
+                    ->label('Your Price')
+                    ->getStateUsing(function (PhysicalCard $record): float {
+                        $userCurrency = auth()->user()->currency;
+                        $price = (float) $record->price_per_unit;
+
+                        if (!$userCurrency || $userCurrency->code === $record->currency) {
+                            return $price;
+                        }
+
+                        $fromCurrency = \App\Models\Currency::where('code', $record->currency)->first();
+
+                        if (!$fromCurrency) {
+                            return $price;
+                        }
+
+                        return $fromCurrency->convertTo($price, $userCurrency);
+                    })
+                    ->money(fn (): string => auth()->user()->currency_code ?? 'USD')
+                    ->weight('bold')
+                    ->color('success')
+                    ->description(fn (): string => "In your currency"),
+
+                Tables\Columns\TextColumn::make('available_quantity')
+                    ->label('Available')
+                    ->getStateUsing(function (PhysicalCard $record): int {
+                        $cart = auth()->user()->cart;
+                        return CartItem::getAvailableQuantity($record->id, $cart?->id);
+                    })
                     ->badge()
-                    ->color(fn (int $state): string => $state > 10 ? 'success' : ($state > 0 ? 'warning' : 'danger')),
+                    ->color(fn (int $state): string => $state > 10 ? 'success' : ($state > 0 ? 'warning' : 'danger'))
+                    ->description(fn (PhysicalCard $record): string => "Total stock: {$record->quantity}"),
 
                 Tables\Columns\TextColumn::make('language')
                     ->sortable()
@@ -310,24 +337,27 @@ class Marketplace extends Page implements HasTable, HasForms
             return;
         }
 
-        // Validate quantity against available stock
-        if ($quantity > $physicalCard->quantity) {
-            Notification::make()
-                ->warning()
-                ->title('Insufficient stock')
-                ->body("Only {$physicalCard->quantity} available")
-                ->send();
-            return;
-        }
-
         $cart = $user->getOrCreateCart();
 
-        // Check if item already exists in cart
+        // Check available quantity (stock - reserved by others)
+        $availableQuantity = CartItem::getAvailableQuantity($cardId, $cart->id);
+
+        // Check if item already exists in user's cart
         $cartItem = $cart->items()->where('physical_card_id', $cardId)->first();
 
         if ($cartItem) {
-            // Update quantity, but validate total doesn't exceed stock
+            // Calculate new total quantity
             $newQuantity = $cartItem->quantity + $quantity;
+
+            // Validate against available quantity (not including current user's reservation)
+            if ($quantity > $availableQuantity) {
+                Notification::make()
+                    ->danger()
+                    ->title('Not available')
+                    ->body("Only {$availableQuantity} available. The remaining stock is reserved by other customers.")
+                    ->send();
+                return;
+            }
 
             if ($newQuantity > $physicalCard->quantity) {
                 Notification::make()
@@ -339,7 +369,7 @@ class Marketplace extends Page implements HasTable, HasForms
             }
 
             $cartItem->quantity = $newQuantity;
-            $cartItem->save();
+            $cartItem->extendReservation();
 
             Notification::make()
                 ->success()
@@ -347,7 +377,19 @@ class Marketplace extends Page implements HasTable, HasForms
                 ->body("Quantity updated to {$newQuantity}")
                 ->send();
         } else {
-            // Create new cart item
+            // Validate requested quantity against available quantity
+            if ($quantity > $availableQuantity) {
+                Notification::make()
+                    ->danger()
+                    ->title('Not available')
+                    ->body($availableQuantity > 0
+                        ? "Only {$availableQuantity} available. The remaining stock is reserved by other customers."
+                        : "This item is currently reserved by other customers. Please try again later.")
+                    ->send();
+                return;
+            }
+
+            // Create new cart item with automatic reservation
             CartItem::create([
                 'cart_id' => $cart->id,
                 'physical_card_id' => $cardId,
@@ -357,7 +399,7 @@ class Marketplace extends Page implements HasTable, HasForms
             Notification::make()
                 ->success()
                 ->title('Added to cart')
-                ->body("{$physicalCard->title} has been added to your cart")
+                ->body("{$physicalCard->title} has been added to your cart (reserved for 1 hour)")
                 ->send();
         }
 

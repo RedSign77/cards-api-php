@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'freecurrencyapi' => [
+        'key' => env('FREECURRENCYAPI_KEY'),
+    ],
+
 ];
