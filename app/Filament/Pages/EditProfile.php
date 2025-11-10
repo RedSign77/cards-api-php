@@ -47,6 +47,7 @@ class EditProfile extends Page implements HasForms
             'phone' => $user->phone,
             'website' => $user->website,
             'bio' => $user->bio,
+            'currency_code' => $user->currency_code ?? 'USD',
             'seller_location' => $user->seller_location,
             'shipping_options' => $user->shipping_options,
             'shipping_price' => $user->shipping_price,
@@ -139,6 +140,21 @@ class EditProfile extends Page implements HasForms
                             ->rows(4)
                             ->maxLength(1000)
                             ->placeholder('Tell us about yourself...')
+                            ->columnSpanFull(),
+                        Select::make('currency_code')
+                            ->label('Preferred Currency')
+                            ->options(function () {
+                                return \App\Models\Currency::active()
+                                    ->orderBy('sort_order')
+                                    ->get()
+                                    ->mapWithKeys(fn ($currency) => [
+                                        $currency->code => "{$currency->code} - {$currency->name} ({$currency->symbol})"
+                                    ])
+                                    ->toArray();
+                            })
+                            ->default('USD')
+                            ->required()
+                            ->helperText('Prices will be displayed in your preferred currency')
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
