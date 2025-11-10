@@ -89,8 +89,7 @@ class Marketplace extends Page implements HasTable, HasForms
                 Tables\Columns\TextColumn::make('price_per_unit')
                     ->label('Original Price')
                     ->sortable()
-                    ->money(fn (PhysicalCard $record): string => $record->currency)
-                    ->description(fn (PhysicalCard $record): string => "Seller's currency"),
+                    ->money(fn (PhysicalCard $record): string => $record->currency),
 
                 Tables\Columns\TextColumn::make('converted_price')
                     ->label('Your Price')
@@ -112,22 +111,27 @@ class Marketplace extends Page implements HasTable, HasForms
                     })
                     ->money(fn (): string => auth()->user()->currency_code ?? 'USD')
                     ->weight('bold')
-                    ->color('success')
-                    ->description(fn (): string => "In your currency"),
+                    ->color('success'),
 
                 Tables\Columns\TextColumn::make('available_quantity')
-                    ->label('Available')
-                    ->getStateUsing(function (PhysicalCard $record): int {
-                        $cart = auth()->user()->cart;
-                        return CartItem::getAvailableQuantity($record->id, $cart?->id);
+                    ->label('Available / Stock')
+                    ->getStateUsing(function (PhysicalCard $record): string {
+                        // Don't exclude any cart - show true available quantity for all users
+                        $available = CartItem::getAvailableQuantity($record->id, null);
+                        $stock = $record->quantity;
+                        return "{$available} / {$stock}";
                     })
-                    ->badge()
-                    ->color(fn (int $state): string => $state > 10 ? 'success' : ($state > 0 ? 'warning' : 'danger'))
-                    ->description(fn (PhysicalCard $record): string => "Total stock: {$record->quantity}"),
+                    ->alignCenter()
+                    ->formatStateUsing(function (string $state): string {
+                        $parts = explode(' / ', $state);
+                        return "<strong>{$parts[0]}</strong> / {$parts[1]}";
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('language')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
 
                 Tables\Columns\IconColumn::make('tradeable')
                     ->boolean()
@@ -136,7 +140,31 @@ class Marketplace extends Page implements HasTable, HasForms
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Seller')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->description(function (PhysicalCard $record): ?string {
+                        $seller = $record->user;
+                        $userCurrency = auth()->user()->currency;
+
+                        if (!$seller->shipping_price) {
+                            return 'Free shipping';
+                        }
+
+                        $shippingPrice = (float) $seller->shipping_price;
+                        $shippingCurrency = $seller->shipping_currency ?? 'USD';
+
+                        // Convert shipping price to user's currency
+                        if ($userCurrency && $userCurrency->code !== $shippingCurrency) {
+                            $fromCurrency = \App\Models\Currency::where('code', $shippingCurrency)->first();
+                            if ($fromCurrency) {
+                                $shippingPrice = $fromCurrency->convertTo($shippingPrice, $userCurrency);
+                            }
+                        }
+
+                        $currencyCode = $userCurrency ? $userCurrency->code : 'USD';
+                        $currencySymbol = $userCurrency ? $userCurrency->symbol : '$';
+
+                        return "Shipping: {$currencySymbol}" . number_format($shippingPrice, 2);
+                    }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('condition')
@@ -271,14 +299,24 @@ class Marketplace extends Page implements HasTable, HasForms
                             ->label('Add to Cart')
                             ->icon('heroicon-o-shopping-cart')
                             ->color('primary')
-                            ->visible(fn (PhysicalCard $record): bool => $record->user_id !== auth()->id())
+                            ->visible(function (PhysicalCard $record): bool {
+                                if ($record->user_id === auth()->id()) {
+                                    return false;
+                                }
+                                // Don't exclude any cart - show true availability
+                                $available = CartItem::getAvailableQuantity($record->id, null);
+                                return $available > 0;
+                            })
                             ->form([
                                 TextInput::make('quantity')
                                     ->label('Quantity')
                                     ->numeric()
                                     ->default(1)
                                     ->minValue(1)
-                                    ->maxValue(fn (PhysicalCard $record): int => $record->quantity)
+                                    ->maxValue(function (PhysicalCard $record): int {
+                                        // Don't exclude any cart - show true availability
+                                        return CartItem::getAvailableQuantity($record->id, null);
+                                    })
                                     ->required(),
                             ])
                             ->action(function (PhysicalCard $record, array $data): void {
@@ -290,14 +328,24 @@ class Marketplace extends Page implements HasTable, HasForms
                     ->label('Cart')
                     ->icon('heroicon-o-shopping-cart')
                     ->color('success')
-                    ->visible(fn (PhysicalCard $record): bool => $record->user_id !== auth()->id())
+                    ->visible(function (PhysicalCard $record): bool {
+                        if ($record->user_id === auth()->id()) {
+                            return false;
+                        }
+                        // Don't exclude any cart - show true availability
+                        $available = CartItem::getAvailableQuantity($record->id, null);
+                        return $available > 0;
+                    })
                     ->form([
                         TextInput::make('quantity')
                             ->label('Quantity')
                             ->numeric()
                             ->default(1)
                             ->minValue(1)
-                            ->maxValue(fn (PhysicalCard $record): int => $record->quantity)
+                            ->maxValue(function (PhysicalCard $record): int {
+                                // Don't exclude any cart - show true availability
+                                return CartItem::getAvailableQuantity($record->id, null);
+                            })
                             ->required(),
                     ])
                     ->action(function (PhysicalCard $record, array $data): void {
@@ -403,7 +451,10 @@ class Marketplace extends Page implements HasTable, HasForms
                 ->send();
         }
 
-        // Refresh the page to show updated cart count
+        // Refresh the page to show updated cart count and available quantities
         $this->dispatch('cart-updated');
+
+        // Reset cached table data to refresh available quantities
+        $this->resetTable();
     }
 }
