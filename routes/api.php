@@ -15,36 +15,38 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Api\SupervisorController;
 
-Route::post('/user/register', [ApiController::class, 'register']);
-Route::post('/user/login', [ApiController::class, 'login']);
-Route::post('/supervisor/login', [SupervisorController::class, 'login']);
-Route::post('/email/verify', [ApiController::class, 'verifyEmail']);
-Route::post('/email/resend', [ApiController::class, 'resendVerification']);
+// API routes for main domain
+Route::domain(env('DOMAIN_MAIN', 'cards.test'))->group(function () {
+    Route::post('/user/register', [ApiController::class, 'register']);
+    Route::post('/user/login', [ApiController::class, 'login']);
+    Route::post('/supervisor/login', [SupervisorController::class, 'login']);
+    Route::post('/email/verify', [ApiController::class, 'verifyEmail']);
+    Route::post('/email/resend', [ApiController::class, 'resendVerification']);
 
-Route::group(['middleware' => 'auth:sanctum'], static function () {
-    Route::get('/user/profile', [ApiController::class, 'profile']);
-    Route::get('/user/logout', [ApiController::class, 'logout']);
-    Route::get('/supervisor/logout', [ApiController::class, 'logout']);
+    Route::group(['middleware' => 'auth:sanctum'], static function () {
+        Route::get('/user/profile', [ApiController::class, 'profile']);
+        Route::get('/user/logout', [ApiController::class, 'logout']);
+        Route::get('/supervisor/logout', [ApiController::class, 'logout']);
 
-    Route::group(['prefix' => 'v1'], static function () {
-        Route::apiResource('cards', Cards::class);
-        Route::apiResource('cardtypes', CardTypes::class);
-        Route::apiResource('decks', Decks::class);
-        Route::apiResource('games', Games::class);
-        Route::apiResource('hexas', Hexas::class);
-        Route::apiResource('figures', Figures::class);
+        Route::group(['prefix' => 'v1'], static function () {
+            Route::apiResource('cards', Cards::class);
+            Route::apiResource('cardtypes', CardTypes::class);
+            Route::apiResource('decks', Decks::class);
+            Route::apiResource('games', Games::class);
+            Route::apiResource('hexas', Hexas::class);
+            Route::apiResource('figures', Figures::class);
 
-        // Cart routes
-        Route::get('cart', [Carts::class, 'index']);
-        Route::post('cart/items', [Carts::class, 'addItem']);
-        Route::put('cart/items/{cartItemId}', [Carts::class, 'updateItem']);
-        Route::delete('cart/items/{cartItemId}', [Carts::class, 'removeItem']);
-        Route::delete('cart', [Carts::class, 'clear']);
+            // Cart routes
+            Route::get('cart', [Carts::class, 'index']);
+            Route::post('cart/items', [Carts::class, 'addItem']);
+            Route::put('cart/items/{cartItemId}', [Carts::class, 'updateItem']);
+            Route::delete('cart/items/{cartItemId}', [Carts::class, 'removeItem']);
+            Route::delete('cart', [Carts::class, 'clear']);
 
-        Route::middleware('supervisor')->group(function () {
-            Route::apiResource('useractivitylogs', UserActivityLogs::class)->only(['index', 'show']);
+            Route::middleware('supervisor')->group(function () {
+                Route::apiResource('useractivitylogs', UserActivityLogs::class)->only(['index', 'show']);
+            });
         });
     });
-
 });
 

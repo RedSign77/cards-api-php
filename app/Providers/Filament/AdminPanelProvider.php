@@ -42,6 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->domain(env('DOMAIN_MAIN', 'cards.test'))
             ->login(Login::class)
             ->registration(Register::class)
             ->passwordReset(RequestPasswordReset::class, ResetPassword::class)
