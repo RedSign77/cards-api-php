@@ -87,7 +87,7 @@
                     <p><strong>Last Updated:</strong> {{ date('F d, Y', filemtime(resource_path('views/legal/terms-and-conditions.blade.php'))) }}</p>
                     <p><strong>Operator:</strong> {{ setting('company_name', 'Webtech Solutions') }} (hereinafter referred to as "the Service Provider" or "we")</p>
                     <p><strong>Email:</strong> {{ setting('company_email', 'info@webtech-solutions.hu') }}</p>
-                    <p><strong>Website:</strong> <a href="{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}</a></p>
+                    <p><strong>Website:</strong> <a href="{{ setting('company_website', 'https://cardsforge.eu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_website', 'https://cardsforge.eu') }}</a></p>
                     <p><strong>Governing Law:</strong> {{ setting('company_country', 'Hungarian') }} and European Union law</p>
                 </div>
 

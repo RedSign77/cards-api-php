@@ -87,7 +87,7 @@
                     <p><strong>Last Updated:</strong> {{ date('F d, Y', filemtime(resource_path('views/legal/privacy-policy.blade.php'))) }}</p>
                     <p><strong>Operator:</strong> {{ setting('company_name', 'Webtech Solutions') }} (hereinafter referred to as "the Service Provider" or "we")</p>
                     <p><strong>Email:</strong> {{ setting('company_email', 'info@webtech-solutions.hu') }}</p>
-                    <p><strong>Website:</strong> <a href="{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}</a></p>
+                    <p><strong>Website:</strong> <a href="{{ setting('company_website', 'https://cardsforge.eu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_website', 'https://cardsforge.eu') }}</a></p>
                     <p><strong>Governing Law:</strong> {{ setting('company_country', 'Hungarian') }} and European Union law (GDPR compliant)</p>
                 </div>
 
@@ -270,7 +270,7 @@
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
                         <strong>{{ setting('company_name', 'Webtech Solutions') }}</strong><br>
                         <strong>Email:</strong> <a href="mailto:{{ setting('company_email', 'info@webtech-solutions.hu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_email', 'info@webtech-solutions.hu') }}</a><br>
-                        <strong>Website:</strong> <a href="{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_website', 'https://cards-forge.webtech-solutions.hu') }}</a>
+                        <strong>Website:</strong> <a href="{{ setting('company_website', 'https://cardsforge.eu') }}" class="text-blue-600 dark:text-blue-400 hover:underline">{{ setting('company_website', 'https://cardsforge.eu') }}</a>
                     </p>
                     <p class="mb-4 text-gray-700 dark:text-gray-300">
                         <strong>Supervisory Authority:</strong><br>
