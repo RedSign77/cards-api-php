@@ -247,7 +247,7 @@ class WebsiteSettingSeeder extends Seeder
             ],
             [
                 'key' => 'company_website',
-                'value' => 'https://cards-forge.webtech-solutions.hu',
+                'value' => env('DOMAIN_MAIN', 'https://cardsforge.eu'),
                 'type' => 'text',
                 'group' => 'company',
                 'label' => 'Company Website',
