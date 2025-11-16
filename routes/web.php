@@ -7,54 +7,79 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Notifications\EmailVerifiedSuccess;
 
-Route::get('/',[HomeController::class, 'index'])->name('home');
+// Main application domain
+Route::domain(env('DOMAIN_MAIN', 'cards.test'))->group(function () {
+    Route::get('/',[HomeController::class, 'index'])->name('home');
 
-// Marketplace Routes - Redirect to admin login (now only accessible in Filament admin)
-Route::get('/marketplace', function () {
-    return redirect('/admin/login')->with('info', 'Please login to access the marketplace.');
-})->name('marketplace.index');
+    // Marketplace Routes - Redirect to admin login (now only accessible in Filament admin)
+    Route::get('/marketplace', function () {
+        return redirect('/admin/login')->with('info', 'Please login to access the marketplace.');
+    })->name('marketplace.index');
 
-Route::get('/marketplace/card/{card}', function () {
-    return redirect('/admin/login')->with('info', 'Please login to access the marketplace.');
-})->name('marketplace.show');
+    Route::get('/marketplace/card/{card}', function () {
+        return redirect('/admin/login')->with('info', 'Please login to access the marketplace.');
+    })->name('marketplace.show');
 
-// Legal Pages
-Route::get('/terms-and-conditions', function () {
-    return view('legal.terms-and-conditions');
-})->name('terms');
+    // Legal Pages
+    Route::get('/terms-and-conditions', function () {
+        return view('legal.terms-and-conditions');
+    })->name('terms');
 
-Route::get('/privacy-policy', function () {
-    return view('legal.privacy-policy');
-})->name('privacy');
+    Route::get('/privacy-policy', function () {
+        return view('legal.privacy-policy');
+    })->name('privacy');
 
-Route::get('/api/documentation', function () {
-    return response()->file(public_path('api-documentation.html'));
+    Route::get('/api/documentation', function () {
+        return response()->file(public_path('api-documentation.html'));
+    });
+
+    // Email Verification Routes
+    Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+        $user = \App\Models\User::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            abort(403, 'Invalid verification link.');
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect('/admin/login')->with('success', 'Email already verified!');
+        }
+
+        $user->markEmailAsVerified();
+
+        // Send confirmation email to the user
+        if (config('mail.enabled', true)) {
+            $user->notify(new EmailVerifiedSuccess());
+        }
+
+        return redirect('/admin/login')->with('success', 'Email verified successfully! Check your inbox for confirmation. Your account is now awaiting supervisor approval.');
+    })->middleware(['signed'])->name('verification.verify');
+
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+
+        return back()->with('message', 'Verification link sent!');
+    })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 });
 
-// Email Verification Routes
-Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
-    $user = \App\Models\User::findOrFail($id);
+// Webtech Solutions domain
+Route::domain(env('DOMAIN_WEBTECH', 'webtech-solutions.test'))->group(function () {
+    Route::get('/', function () {
+        return view('webtech-solutions');
+    });
 
-    if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-        abort(403, 'Invalid verification link.');
-    }
+    Route::get('/terms-and-conditions', function () {
+        return view('webtech-terms');
+    })->name('webtech.terms');
 
-    if ($user->hasVerifiedEmail()) {
-        return redirect('/admin/login')->with('success', 'Email already verified!');
-    }
+    Route::get('/privacy-policy', function () {
+        return view('webtech-privacy');
+    })->name('webtech.privacy');
+});
 
-    $user->markEmailAsVerified();
-
-    // Send confirmation email to the user
-    if (config('mail.enabled', true)) {
-        $user->notify(new EmailVerifiedSuccess());
-    }
-
-    return redirect('/admin/login')->with('success', 'Email verified successfully! Check your inbox for confirmation. Your account is now awaiting supervisor approval.');
-})->middleware(['signed'])->name('verification.verify');
-
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+// Unreality1 domain
+Route::domain(env('DOMAIN_UNREALITY', 'unreality1.test'))->group(function () {
+    Route::get('/', function () {
+        return view('unreality1');
+    });
+});
