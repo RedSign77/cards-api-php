@@ -53,6 +53,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         'shipping_state',
         'shipping_postal_code',
         'shipping_country',
+        'paypal_email',
+        'bank_name',
+        'bank_account_name',
+        'bank_account_number',
+        'bank_routing_number',
+        'bank_swift_code',
+        'payment_notes',
     ];
 
     /**

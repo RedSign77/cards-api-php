@@ -34,6 +34,7 @@ class Order extends Model
         'currency',
         'status',
         'notes',
+        'seller_payment_info',
         'seller_confirmed_at',
         'buyer_confirmed_at',
     ];

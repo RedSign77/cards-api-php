@@ -13,6 +13,8 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Infolists\Components;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Illuminate\Contracts\Support\Htmlable;
 
 class MySales extends Page implements HasTable
@@ -215,7 +217,47 @@ class MySales extends Page implements HasTable
                                     ->color('success'),
                             ])
                             ->columnSpan(2),
+
+                        Components\Section::make('Payment Information for Buyer')
+                            ->schema([
+                                Components\TextEntry::make('seller_payment_info')
+                                    ->label('')
+                                    ->markdown()
+                                    ->default(fn (Order $record): string => $record->seller_payment_info ?: 'No payment information provided yet')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columnSpan(2),
                     ]),
+
+                Tables\Actions\Action::make('editPaymentInfo')
+                    ->label('Edit Payment Info')
+                    ->icon('heroicon-o-credit-card')
+                    ->color('warning')
+                    ->form(fn (Order $record): array => [
+                        Textarea::make('seller_payment_info')
+                            ->label('Payment Information for Buyer')
+                            ->default(fn () => $record->seller_payment_info ?: $this->getDefaultPaymentInfo())
+                            ->rows(10)
+                            ->helperText('Provide payment instructions for the buyer (PayPal, bank transfer, etc.)')
+                            ->placeholder('Example:\n\nPayPal: your@email.com\n\nBank Transfer:\nBank: Your Bank Name\nAccount: 1234567890\nRouting: 987654321\n\nPlease include the order number in the payment memo.')
+                            ->columnSpanFull(),
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        $oldPaymentInfo = $record->seller_payment_info;
+                        $record->seller_payment_info = $data['seller_payment_info'];
+                        $record->save();
+
+                        // Send notification to buyer if payment info changed
+                        if (config('mail.enabled') && $oldPaymentInfo !== $data['seller_payment_info']) {
+                            $record->buyer->notify(new \App\Notifications\PaymentInfoUpdated($record));
+                        }
+
+                        Notification::make()
+                            ->success()
+                            ->title('Payment information updated')
+                            ->body('The buyer has been notified of the payment details.')
+                            ->send();
+                    }),
 
                 Tables\Actions\Action::make('markPacking')
                     ->label('Mark as Packing')
@@ -250,21 +292,45 @@ class MySales extends Page implements HasTable
                     ->icon('heroicon-o-banknotes')
                     ->color('success')
                     ->visible(fn (Order $record): bool => in_array($record->status, ['pending', 'packing']))
-                    ->requiresConfirmation()
-                    ->action(function (Order $record): void {
+                    ->form([
+                        Select::make('payment_method')
+                            ->label('Payment Method')
+                            ->options([
+                                'paypal' => 'PayPal',
+                                'check' => 'Check',
+                                'bank_transfer' => 'Bank Transfer',
+                            ])
+                            ->default(fn (Order $record): string => $record->payment_method)
+                            ->required()
+                            ->helperText('Update the payment method if needed'),
+                    ])
+                    ->action(function (Order $record, array $data): void {
                         $oldStatus = $record->status;
+                        $oldPaymentMethod = $record->payment_method;
+
                         $record->status = 'paid';
                         $record->payment_status = 'paid';
+                        $record->payment_method = $data['payment_method'];
                         $record->save();
 
-                        // Send notification to buyer
+                        // Send notifications
                         if (config('mail.enabled')) {
+                            // Notify about status change
                             $record->buyer->notify(new \App\Notifications\OrderStatusChanged(
                                 $record,
                                 $oldStatus,
                                 'paid',
                                 'buyer'
                             ));
+
+                            // Notify if payment method changed
+                            if ($oldPaymentMethod !== $data['payment_method']) {
+                                $record->buyer->notify(new \App\Notifications\PaymentMethodChanged(
+                                    $record,
+                                    $oldPaymentMethod,
+                                    $data['payment_method']
+                                ));
+                            }
                         }
 
                         Notification::make()
@@ -368,5 +434,41 @@ class MySales extends Page implements HasTable
             ->emptyStateHeading('No sales yet')
             ->emptyStateDescription('You haven\'t received any orders yet.')
             ->emptyStateIcon('heroicon-o-banknotes');
+    }
+
+    protected function getDefaultPaymentInfo(): string
+    {
+        $seller = auth()->user();
+        $info = [];
+
+        if ($seller->paypal_email) {
+            $info[] = "**PayPal:**\n" . $seller->paypal_email;
+        }
+
+        if ($seller->bank_name || $seller->bank_account_number) {
+            $bankInfo = "**Bank Transfer:**\n";
+            if ($seller->bank_name) {
+                $bankInfo .= "Bank: " . $seller->bank_name . "\n";
+            }
+            if ($seller->bank_account_name) {
+                $bankInfo .= "Account Name: " . $seller->bank_account_name . "\n";
+            }
+            if ($seller->bank_account_number) {
+                $bankInfo .= "Account Number: " . $seller->bank_account_number . "\n";
+            }
+            if ($seller->bank_routing_number) {
+                $bankInfo .= "Routing Number: " . $seller->bank_routing_number . "\n";
+            }
+            if ($seller->bank_swift_code) {
+                $bankInfo .= "SWIFT Code: " . $seller->bank_swift_code . "\n";
+            }
+            $info[] = $bankInfo;
+        }
+
+        if ($seller->payment_notes) {
+            $info[] = "**Additional Notes:**\n" . $seller->payment_notes;
+        }
+
+        return !empty($info) ? implode("\n\n", $info) : '';
     }
 }

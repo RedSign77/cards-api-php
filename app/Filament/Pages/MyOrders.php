@@ -216,6 +216,18 @@ class MyOrders extends Page implements HasTable
                                     ->color('success'),
                             ])
                             ->columnSpan(2),
+
+                        Components\Section::make('Payment Instructions from Seller')
+                            ->schema([
+                                Components\TextEntry::make('seller_payment_info')
+                                    ->label('')
+                                    ->markdown()
+                                    ->default(fn (Order $record): string =>
+                                        $record->seller_payment_info ?: 'The seller has not provided payment information yet. They will update this once your order is confirmed.')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columnSpan(2)
+                            ->visible(fn (Order $record): bool => !in_array($record->status, ['completed', 'cancelled'])),
                     ]),
 
                 Tables\Actions\Action::make('confirmReceived')

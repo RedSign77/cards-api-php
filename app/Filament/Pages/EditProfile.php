@@ -53,6 +53,13 @@ class EditProfile extends Page implements HasForms
             'shipping_price' => $user->shipping_price,
             'shipping_currency' => $user->shipping_currency ?? 'USD',
             'delivery_time' => $user->delivery_time,
+            'paypal_email' => $user->paypal_email,
+            'bank_name' => $user->bank_name,
+            'bank_account_name' => $user->bank_account_name,
+            'bank_account_number' => $user->bank_account_number,
+            'bank_routing_number' => $user->bank_routing_number,
+            'bank_swift_code' => $user->bank_swift_code,
+            'payment_notes' => $user->payment_notes,
         ]);
     }
 
@@ -196,6 +203,43 @@ class EditProfile extends Page implements HasForms
                     ])
                     ->columns(2)
                     ->visible(fn () => auth()->user()?->isSupervisor() ?? false),
+
+                Section::make('Payment Information')
+                    ->description('Add your payment details for receiving payments from buyers')
+                    ->schema([
+                        TextInput::make('paypal_email')
+                            ->label('PayPal Email')
+                            ->email()
+                            ->maxLength(255)
+                            ->placeholder('your@paypal.email'),
+                        TextInput::make('bank_name')
+                            ->label('Bank Name')
+                            ->maxLength(255)
+                            ->placeholder('Your Bank Name'),
+                        TextInput::make('bank_account_name')
+                            ->label('Account Name')
+                            ->maxLength(255)
+                            ->placeholder('Account holder name'),
+                        TextInput::make('bank_account_number')
+                            ->label('Account Number')
+                            ->maxLength(255)
+                            ->placeholder('Account number'),
+                        TextInput::make('bank_routing_number')
+                            ->label('Routing Number / Sort Code')
+                            ->maxLength(255)
+                            ->placeholder('Routing or sort code'),
+                        TextInput::make('bank_swift_code')
+                            ->label('SWIFT/BIC Code')
+                            ->maxLength(255)
+                            ->placeholder('For international transfers'),
+                        Textarea::make('payment_notes')
+                            ->label('Additional Payment Notes')
+                            ->rows(3)
+                            ->placeholder('Any additional instructions for buyers...')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
 
                 Section::make('Change Password')
                     ->schema([
