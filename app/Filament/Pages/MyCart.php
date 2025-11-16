@@ -8,6 +8,8 @@ namespace App\Filament\Pages;
 
 use App\Models\CartItem;
 use App\Models\PhysicalCard;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Filament\Pages\Page;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,10 +17,14 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class MyCart extends Page implements HasTable, HasForms
 {
@@ -268,6 +274,218 @@ class MyCart extends Page implements HasTable, HasForms
                     ->description(fn (CartItem $record): string =>
                         $record->physicalCard->user->shipping_price ? "Per seller" : "Free"
                     ),
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('checkout')
+                    ->label('Proceed to Checkout')
+                    ->icon('heroicon-o-shopping-bag')
+                    ->color('success')
+                    ->size('lg')
+                    ->visible(fn (): bool => auth()->user()->cart?->items->isNotEmpty() ?? false)
+                    ->form([
+                        Section::make('Shipping Address')
+                            ->schema([
+                                TextInput::make('shipping_name')
+                                    ->label('Full Name')
+                                    ->default(fn (): string => auth()->user()->name)
+                                    ->required()
+                                    ->maxLength(255),
+
+                                Grid::make(2)
+                                    ->schema([
+                                        TextInput::make('shipping_address_line1')
+                                            ->label('Address Line 1')
+                                            ->default(fn (): ?string => auth()->user()->shipping_address_line1)
+                                            ->required()
+                                            ->maxLength(255),
+
+                                        TextInput::make('shipping_address_line2')
+                                            ->label('Address Line 2')
+                                            ->default(fn (): ?string => auth()->user()->shipping_address_line2)
+                                            ->maxLength(255),
+                                    ]),
+
+                                Grid::make(3)
+                                    ->schema([
+                                        TextInput::make('shipping_city')
+                                            ->label('City')
+                                            ->default(fn (): ?string => auth()->user()->shipping_city)
+                                            ->required()
+                                            ->maxLength(100),
+
+                                        TextInput::make('shipping_state')
+                                            ->label('State/Province')
+                                            ->default(fn (): ?string => auth()->user()->shipping_state)
+                                            ->maxLength(100),
+
+                                        TextInput::make('shipping_postal_code')
+                                            ->label('Postal Code')
+                                            ->default(fn (): ?string => auth()->user()->shipping_postal_code)
+                                            ->required()
+                                            ->maxLength(20),
+                                    ]),
+
+                                TextInput::make('shipping_country')
+                                    ->label('Country')
+                                    ->default(fn (): ?string => auth()->user()->shipping_country)
+                                    ->required()
+                                    ->maxLength(100),
+                            ])
+                            ->columns(1),
+
+                        Section::make('Payment Method')
+                            ->schema([
+                                Select::make('payment_method')
+                                    ->label('Select Payment Method')
+                                    ->options([
+                                        'paypal' => 'PayPal',
+                                        'check' => 'Check',
+                                        'bank_transfer' => 'Bank Transfer',
+                                    ])
+                                    ->required()
+                                    ->default('paypal')
+                                    ->native(false)
+                                    ->helperText('Payment will be coordinated directly with the seller.'),
+                            ]),
+                    ])
+                    ->modalWidth('3xl')
+                    ->modalHeading('Checkout')
+                    ->modalSubmitActionLabel('Place Order')
+                    ->action(function (array $data): void {
+                        DB::beginTransaction();
+
+                        try {
+                            $cart = auth()->user()->cart;
+                            $buyer = auth()->user();
+                            $userCurrency = $buyer->currency;
+                            $currencyCode = $userCurrency ? $userCurrency->code : 'USD';
+
+                            // Group cart items by seller
+                            $itemsBySeller = $cart->items->groupBy('physicalCard.user_id');
+
+                            $ordersCreated = 0;
+
+                            foreach ($itemsBySeller as $sellerId => $items) {
+                                $seller = $items->first()->physicalCard->user;
+                                $orderSubtotal = 0;
+                                $shippingCost = 0;
+
+                                // Validate all items have sufficient quantity before creating order
+                                foreach ($items as $cartItem) {
+                                    $physicalCard = $cartItem->physicalCard;
+                                    if ($physicalCard->quantity < $cartItem->quantity) {
+                                        throw new \Exception("Insufficient quantity for {$physicalCard->title}. Only {$physicalCard->quantity} available.");
+                                    }
+                                }
+
+                                // Calculate shipping cost for this seller
+                                if ($seller->shipping_price) {
+                                    $shippingCost = (float) $seller->shipping_price;
+                                    $shippingCurrency = $seller->shipping_currency ?? 'USD';
+
+                                    // Convert shipping to user's currency
+                                    if ($userCurrency && $userCurrency->code !== $shippingCurrency) {
+                                        $fromCurrency = \App\Models\Currency::where('code', $shippingCurrency)->first();
+                                        if ($fromCurrency) {
+                                            $shippingCost = $fromCurrency->convertTo($shippingCost, $userCurrency);
+                                        }
+                                    }
+                                }
+
+                                // Create order
+                                $order = Order::create([
+                                    'order_number' => Order::generateOrderNumber(),
+                                    'buyer_id' => $buyer->id,
+                                    'seller_id' => $sellerId,
+                                    'shipping_name' => $data['shipping_name'],
+                                    'shipping_address_line1' => $data['shipping_address_line1'],
+                                    'shipping_address_line2' => $data['shipping_address_line2'] ?? null,
+                                    'shipping_city' => $data['shipping_city'],
+                                    'shipping_state' => $data['shipping_state'] ?? null,
+                                    'shipping_postal_code' => $data['shipping_postal_code'],
+                                    'shipping_country' => $data['shipping_country'],
+                                    'payment_method' => $data['payment_method'],
+                                    'payment_status' => 'pending',
+                                    'subtotal' => 0,
+                                    'shipping_cost' => $shippingCost,
+                                    'total' => 0,
+                                    'currency' => $currencyCode,
+                                    'status' => 'pending',
+                                ]);
+
+                                // Create order items
+                                foreach ($items as $cartItem) {
+                                    $physicalCard = $cartItem->physicalCard;
+                                    $price = (float) $physicalCard->price_per_unit;
+
+                                    // Convert price to user's currency
+                                    if ($userCurrency && $userCurrency->code !== $physicalCard->currency) {
+                                        $fromCurrency = \App\Models\Currency::where('code', $physicalCard->currency)->first();
+                                        if ($fromCurrency) {
+                                            $price = $fromCurrency->convertTo($price, $userCurrency);
+                                        }
+                                    }
+
+                                    $itemSubtotal = $price * $cartItem->quantity;
+                                    $orderSubtotal += $itemSubtotal;
+
+                                    OrderItem::create([
+                                        'order_id' => $order->id,
+                                        'physical_card_id' => $physicalCard->id,
+                                        'quantity' => $cartItem->quantity,
+                                        'price_per_unit' => $price,
+                                        'subtotal' => $itemSubtotal,
+                                        'currency' => $currencyCode,
+                                    ]);
+
+                                    // Reduce physical card quantity
+                                    $physicalCard->quantity -= $cartItem->quantity;
+                                    $physicalCard->save();
+
+                                    // Delete cart item
+                                    $cartItem->delete();
+                                }
+
+                                // Update order totals
+                                $order->subtotal = $orderSubtotal;
+                                $order->total = $orderSubtotal + $shippingCost;
+                                $order->save();
+
+                                // Send notifications to buyer and seller
+                                if (config('mail.enabled')) {
+                                    $seller->notify(new \App\Notifications\OrderPlaced($order, 'seller'));
+                                    $buyer->notify(new \App\Notifications\OrderPlaced($order, 'buyer'));
+                                }
+
+                                $ordersCreated++;
+                            }
+
+                            DB::commit();
+
+                            Notification::make()
+                                ->success()
+                                ->title('Order(s) placed successfully!')
+                                ->body("{$ordersCreated} order(s) have been placed. You can track them in My Orders.")
+                                ->send();
+
+                            // Redirect to My Orders page
+                            $this->redirect(route('filament.admin.pages.my-orders'));
+
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+
+                            Notification::make()
+                                ->danger()
+                                ->title('Order placement failed')
+                                ->body('An error occurred while placing your order. Please try again.')
+                                ->send();
+
+                            logger()->error('Order placement failed', [
+                                'error' => $e->getMessage(),
+                                'trace' => $e->getTraceAsString(),
+                            ]);
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\Action::make('updateQuantity')
