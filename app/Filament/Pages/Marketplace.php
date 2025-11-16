@@ -43,6 +43,12 @@ class Marketplace extends Page implements HasTable, HasForms
 
     protected static ?int $navigationSort = 1;
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = PhysicalCard::where('status', PhysicalCard::STATUS_APPROVED)->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
     public function getTitle(): string | Htmlable
     {
         return 'Browse Marketplace';

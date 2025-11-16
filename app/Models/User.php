@@ -47,6 +47,19 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
         'shipping_currency',
         'delivery_time',
         'currency_code',
+        'shipping_address_line1',
+        'shipping_address_line2',
+        'shipping_city',
+        'shipping_state',
+        'shipping_postal_code',
+        'shipping_country',
+        'paypal_email',
+        'bank_name',
+        'bank_account_name',
+        'bank_account_number',
+        'bank_routing_number',
+        'bank_swift_code',
+        'payment_notes',
     ];
 
     /**
@@ -218,5 +231,21 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, MustVerif
     public function getOrCreateCart(): Cart
     {
         return $this->cart()->firstOrCreate(['user_id' => $this->id]);
+    }
+
+    /**
+     * Get orders where user is the buyer
+     */
+    public function purchaseOrders()
+    {
+        return $this->hasMany(Order::class, 'buyer_id');
+    }
+
+    /**
+     * Get orders where user is the seller
+     */
+    public function salesOrders()
+    {
+        return $this->hasMany(Order::class, 'seller_id');
     }
 }
