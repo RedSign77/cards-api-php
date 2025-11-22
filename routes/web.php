@@ -64,17 +64,10 @@ Route::domain(env('DOMAIN_MAIN', 'cards.test'))->group(function () {
 
 // Webtech Solutions domain
 Route::domain(env('DOMAIN_WEBTECH', 'webtech-solutions.test'))->group(function () {
-    Route::get('/', function () {
-        return view('webtech-solutions');
-    });
-
-    Route::get('/terms-and-conditions', function () {
-        return view('webtech-terms');
-    })->name('webtech.terms');
-
-    Route::get('/privacy-policy', function () {
-        return view('webtech-privacy');
-    })->name('webtech.privacy');
+    Route::get('/', [App\Http\Controllers\WebtechController::class, 'index'])->name('webtech.home');
+    Route::get('/ai-solutions', [App\Http\Controllers\WebtechController::class, 'aiSolutions'])->name('webtech.ai');
+    Route::get('/terms-and-conditions', [App\Http\Controllers\WebtechController::class, 'terms'])->name('webtech.terms');
+    Route::get('/privacy-policy', [App\Http\Controllers\WebtechController::class, 'privacy'])->name('webtech.privacy');
 });
 
 // Unreality1 domain
