@@ -1,47 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tailored IT Solutions for SMEs - Webtech Solutions</title>
-    <meta name="keywords" content="IT solutions, web hosting, e-commerce maintenance, no-code automation, application security, data protection compliance, cloud infrastructure, DevOps, GDPR compliance">
-    <meta name="description" content="Enhance your business with Webtech Solutions tailored IT services. From hosting to security, we optimize your digital operations!">
-    <meta property="og:description" content="Enhance your business with Webtech Solutions tailored IT services. From hosting to security, we optimize your digital operations!">
-    <meta name="icbm" content="47.497912,19.040235">
-    <meta name="geo.position" content="47.497912;19.040235">
-    <meta name="geo.placename" content="Budapest">
-    <meta property="og:title" content="Tailored IT Solutions for SMEs">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="en">
-    <meta property="og:image" content="/images/webtech/logo-1200x630.png">
-    <meta property="og:url" content="https://webtech-solutions.hu/en">
-    <link rel="icon" type="image/png" href="/images/webtech/logo-16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="/images/webtech/logo-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="/images/webtech/logo-96x96.png" sizes="96x96">
-    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/images/webtech/logo-152x152.png">
-    <link rel="canonical" href="https://webtech-solutions.hu/en">
-    <link rel="alternate" hreflang="en" href="https://webtech-solutions.hu/en" title="Home">
-    <link rel="alternate" hreflang="hu" href="https://webtech-solutions.hu/hu" title="Home">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/webtech-solutions.css">
-</head>
-<body>
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-container">
-            <img src="/images/webtech/logo-240.png" alt="Webtech Solutions" class="logo">
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <button class="mobile-menu-btn">☰</button>
-        </div>
-    </nav>
+@extends('layouts.webtech')
 
+@section('title', 'Tailored IT Solutions for SMEs - Webtech Solutions')
+@section('keywords', 'IT solutions, web hosting, e-commerce maintenance, no-code automation, application security, data protection compliance, cloud infrastructure, DevOps, GDPR compliance, AI solutions')
+@section('description', 'Enhance your business with Webtech Solutions tailored IT services. From hosting to security, we optimize your digital operations!')
+@section('og_title', 'Tailored IT Solutions for SMEs')
+@section('og_url', 'https://webtech-solutions.hu/en')
+
+@section('content')
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="particle"></div>
@@ -54,6 +19,10 @@
         <div class="binary-stream">01000100 01101001 01100111 01101001 01110100 01100001 01101100</div>
         <div class="neural-line"></div>
         <div class="neural-line"></div>
+        <!-- Floating Orbs -->
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
         <div class="hero-content">
             <h1>Trusted IT Solutions<br>for Modern Businesses</h1>
             <p>Enhance your business with tailored IT services. From web hosting to security, we optimize your digital operations for sustainable growth.</p>
@@ -94,8 +63,8 @@
                 <div class="service-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                 </div>
-                <h3>No-Code Automation</h3>
-                <p>Streamline your workflows with Make.com and Zapier integrations. Automate repetitive tasks without coding.</p>
+                <h3>No-Code Automation & AI</h3>
+                <p>Streamline your workflows with Make.com and Zapier integrations. Automate repetitive tasks without coding. <a href="/ai-solutions" style="color: var(--primary); font-weight: 600;">Explore AI Solutions →</a></p>
             </div>
             <div class="service-card">
                 <div class="service-icon">
@@ -135,38 +104,4 @@
         <p>Let's discuss how we can help you achieve your digital goals</p>
         <a href="mailto:info@webtech-solutions.hu" class="btn btn-primary">Contact Us Today</a>
     </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="#home">Home</a>
-                <a href="#services">Services</a>
-                <a href="#about">About</a>
-                <a href="/terms-and-conditions">Terms & Conditions</a>
-                <a href="/privacy-policy">Privacy Policy</a>
-            </div>
-            <p class="copyright">&copy; 2025 Webtech Solutions - Zoltán Németh EV. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script src="/js/webtech-solutions.js"></script>
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4TFP8M0NH7"></script>
-    <script>
-        var disableStr = 'ga-disable-G-4TFP8M0NH7';
-        if (document.cookie.indexOf(disableStr + '=true') > -1) {
-            window[disableStr] = true;
-        }
-        function gaOptout() {
-            document.cookie = disableStr + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
-            window[disableStr] = true;
-        }
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-4TFP8M0NH7');
-    </script>
-</body>
-</html>
+@endsection

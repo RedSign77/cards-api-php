@@ -1,44 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms and Conditions - Webtech Solutions</title>
-    <meta name="description" content="Terms and Conditions for Webtech Solutions IT services">
-    <link rel="icon" type="image/png" href="/images/webtech/logo-32x32.png" sizes="32x32">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+@extends('layouts.webtech')
+
+@section('title', 'Terms and Conditions - Webtech Solutions')
+@section('description', 'Terms and Conditions for Webtech Solutions IT services')
+
+@section('styles')
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.8;
-            color: #1F2937;
-            background: #F9FAFB;
-        }
-
-        nav {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 1rem 0;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .logo {
-            height: 50px;
-        }
-
         .container {
             max-width: 900px;
             margin: 3rem auto;
@@ -48,30 +14,30 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        h1 {
+        .container h1 {
             font-size: 2.5rem;
             color: #7C3AED;
             margin-bottom: 1rem;
         }
 
-        h2 {
+        .container h2 {
             font-size: 1.75rem;
             color: #1F2937;
             margin-top: 2.5rem;
             margin-bottom: 1rem;
         }
 
-        p {
+        .container p {
             margin-bottom: 1.5rem;
             color: #6B7280;
         }
 
-        ul {
+        .container ul {
             margin-left: 2rem;
             margin-bottom: 1.5rem;
         }
 
-        li {
+        .container li {
             margin-bottom: 0.5rem;
             color: #6B7280;
         }
@@ -100,19 +66,14 @@
                 padding: 1.5rem;
             }
 
-            h1 {
+            .container h1 {
                 font-size: 2rem;
             }
         }
     </style>
-</head>
-<body>
-    <nav>
-        <div class="nav-container">
-            <img src="/images/webtech/logo-240.png" alt="Webtech Solutions" class="logo">
-        </div>
-    </nav>
+@endsection
 
+@section('content')
     <div class="container">
         <a href="/" class="back-link">← Back to Home</a>
 
@@ -186,14 +147,4 @@
         <h2>10. Final Provisions</h2>
         <p>The Provider reserves the right to unilaterally modify the GTC. The latest version is always available on the website.</p>
     </div>
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4TFP8M0NH7"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-4TFP8M0NH7');
-    </script>
-</body>
-</html>
+@endsection
