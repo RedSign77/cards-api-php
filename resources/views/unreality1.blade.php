@@ -41,20 +41,20 @@
 
     <!-- Hero Section -->
     <section class="hero" id="home">
-        <!-- Electric Elements -->
-        <div class="electric-spark"></div>
-        <div class="electric-spark"></div>
-        <div class="electric-spark"></div>
-        <!-- Nature Elements -->
-        <div class="nature-leaf"></div>
-        <div class="nature-leaf"></div>
-        <div class="nature-leaf"></div>
-        <!-- Lightning -->
-        <div class="lightning"></div>
-        <div class="lightning"></div>
-        <!-- Energy Orbs -->
-        <div class="energy-orb"></div>
-        <div class="energy-orb"></div>
+        <!-- Data Streams -->
+        <div class="data-stream"></div>
+        <div class="data-stream"></div>
+        <div class="data-stream"></div>
+        <!-- Holographic Panels -->
+        <div class="holo-panel"></div>
+        <div class="holo-panel"></div>
+        <!-- Circuit Traces -->
+        <div class="circuit-trace"></div>
+        <div class="circuit-trace"></div>
+        <!-- Scanning Beam -->
+        <div class="scan-beam"></div>
+        <!-- Hexagonal Grid -->
+        <div class="hex-grid"></div>
         <div class="hero-content">
             <h1>Shaping One Future<br>Together</h1>
             <p>We are at the gateway to endless possibilities. unreality.one is a platform where thinking about the future becomes a collective goal, where technology meets humanity, and where imagination shapes tomorrow.</p>

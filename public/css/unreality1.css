@@ -172,174 +172,280 @@ nav {
     overflow: hidden;
 }
 
-/* Electric Sparks */
-.electric-spark {
+/* Data Streams */
+.data-stream {
     position: absolute;
-    width: 3px;
-    height: 3px;
-    background: rgba(0, 170, 102, 0.8);
-    border-radius: 50%;
-    box-shadow:
-        0 0 5px rgba(0, 170, 102, 1),
-        0 0 10px rgba(0, 170, 102, 0.8),
-        0 0 15px rgba(0, 170, 102, 0.5);
-    animation: sparkle 3s infinite ease-in-out;
+    width: 4px;
+    height: 150px;
+    background: linear-gradient(180deg,
+        rgba(0, 170, 102, 0) 0%,
+        rgba(0, 170, 102, 0.9) 20%,
+        rgba(0, 170, 102, 0.9) 80%,
+        rgba(0, 170, 102, 0) 100%);
+    box-shadow: 0 0 20px rgba(0, 170, 102, 0.8),
+                0 0 40px rgba(0, 170, 102, 0.5);
+    animation: dataStream 4s infinite ease-in-out;
     z-index: 0;
 }
 
-.electric-spark:nth-child(1) {
-    left: 20%;
-    top: 30%;
-    animation-delay: 0s;
-}
-
-.electric-spark:nth-child(2) {
-    left: 70%;
-    top: 20%;
-    animation-delay: 1s;
-}
-
-.electric-spark:nth-child(3) {
-    left: 45%;
-    top: 65%;
-    animation-delay: 2s;
-}
-
-@keyframes sparkle {
-    0%, 100% {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.5);
-    }
-}
-
-/* Nature Leaves */
-.nature-leaf {
+.data-stream::before {
+    content: '';
     position: absolute;
-    width: 20px;
-    height: 12px;
-    background: linear-gradient(135deg, rgba(0, 170, 102, 0.3), rgba(34, 85, 51, 0.4));
-    border-radius: 0 100% 0 100%;
-    animation: leafFloat 20s infinite ease-in-out;
-    z-index: 0;
+    width: 100%;
+    height: 30%;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: dataPulse 4s infinite ease-in-out;
 }
 
-.nature-leaf:nth-child(4) {
-    left: 10%;
-    top: -10%;
+.data-stream:nth-child(1) {
+    left: 15%;
+    top: -150px;
     animation-delay: 0s;
-    transform: rotate(45deg);
 }
 
-.nature-leaf:nth-child(5) {
-    left: 80%;
-    top: -15%;
+.data-stream:nth-child(2) {
+    left: 60%;
+    top: -150px;
+    animation-delay: 1.5s;
+    height: 200px;
+}
+
+.data-stream:nth-child(3) {
+    left: 85%;
+    top: -150px;
     animation-delay: 3s;
-    transform: rotate(-30deg);
 }
 
-.nature-leaf:nth-child(6) {
-    left: 50%;
-    top: -20%;
-    animation-delay: 6s;
-    transform: rotate(15deg);
-}
-
-@keyframes leafFloat {
+@keyframes dataStream {
     0% {
-        transform: translateY(0) rotate(0deg);
+        transform: translateY(0);
         opacity: 0;
     }
     10% {
-        opacity: 0.6;
-    }
-    90% {
-        opacity: 0.4;
-    }
-    100% {
-        transform: translateY(120vh) rotate(360deg);
-        opacity: 0;
-    }
-}
-
-/* Lightning Bolts */
-.lightning {
-    position: absolute;
-    width: 2px;
-    height: 100px;
-    background: linear-gradient(180deg,
-        transparent,
-        rgba(0, 170, 102, 0.8) 20%,
-        rgba(0, 170, 102, 0.6) 40%,
-        rgba(0, 170, 102, 0.8) 60%,
-        transparent);
-    box-shadow: 0 0 8px rgba(0, 170, 102, 0.9);
-    animation: lightning 4s infinite ease-in-out;
-    opacity: 0;
-    z-index: 0;
-}
-
-.lightning:nth-child(7) {
-    left: 30%;
-    top: 0;
-    animation-delay: 1s;
-}
-
-.lightning:nth-child(8) {
-    left: 65%;
-    top: 0;
-    animation-delay: 3.5s;
-}
-
-@keyframes lightning {
-    0%, 90%, 100% {
-        opacity: 0;
-    }
-    92%, 94%, 96% {
         opacity: 1;
     }
-    93%, 95% {
-        opacity: 0.3;
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(120vh);
+        opacity: 0;
     }
 }
 
-/* Energy Orbs */
-.energy-orb {
+@keyframes dataPulse {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(300%);
+    }
+}
+
+/* Holographic Panels */
+.holo-panel {
     position: absolute;
-    width: 15px;
-    height: 15px;
-    background: radial-gradient(circle, rgba(0, 170, 102, 0.6), transparent 70%);
-    border-radius: 50%;
+    width: 200px;
+    height: 120px;
+    background: linear-gradient(135deg,
+        rgba(0, 170, 102, 0.15) 0%,
+        rgba(0, 170, 102, 0.05) 100%);
+    border: 2px solid rgba(0, 170, 102, 0.6);
+    border-radius: 10px;
     box-shadow:
-        0 0 15px rgba(0, 170, 102, 0.8),
-        0 0 30px rgba(0, 170, 102, 0.4);
-    animation: orbPulse 5s infinite ease-in-out;
+        0 0 30px rgba(0, 170, 102, 0.4),
+        inset 0 0 30px rgba(0, 170, 102, 0.1);
+    animation: holoFloat 8s infinite ease-in-out;
+    z-index: 0;
+    backdrop-filter: blur(5px);
+}
+
+.holo-panel::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(0, 170, 102, 0.8),
+        transparent);
+    box-shadow: 0 0 10px rgba(0, 170, 102, 0.8);
+    animation: scanLine 2s infinite ease-in-out;
+}
+
+.holo-panel:nth-child(4) {
+    left: 10%;
+    top: 20%;
+    animation-delay: 0s;
+    transform: perspective(500px) rotateY(-15deg);
+}
+
+.holo-panel:nth-child(5) {
+    right: 10%;
+    top: 50%;
+    animation-delay: 2s;
+    transform: perspective(500px) rotateY(15deg);
+    width: 180px;
+    height: 100px;
+}
+
+@keyframes holoFloat {
+    0%, 100% {
+        transform: translateY(0) perspective(500px) rotateY(-15deg);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateY(-30px) perspective(500px) rotateY(-15deg);
+        opacity: 0.9;
+    }
+}
+
+@keyframes scanLine {
+    0%, 100% {
+        transform: translateY(0);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateY(100px);
+        opacity: 1;
+    }
+}
+
+/* Circuit Traces */
+.circuit-trace {
+    position: absolute;
+    width: 300px;
+    height: 3px;
+    background: linear-gradient(90deg,
+        rgba(0, 170, 102, 0) 0%,
+        rgba(0, 170, 102, 0.8) 50%,
+        rgba(0, 170, 102, 0) 100%);
+    box-shadow: 0 0 15px rgba(0, 170, 102, 0.8);
+    animation: circuitPulse 5s infinite ease-in-out;
     z-index: 0;
 }
 
-.energy-orb:nth-child(9) {
-    left: 15%;
-    top: 50%;
+.circuit-trace::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: rgba(0, 170, 102, 1);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 170, 102, 1);
+    left: 0;
+    top: -2.5px;
+    animation: circuitNode 5s infinite ease-in-out;
+}
+
+.circuit-trace:nth-child(6) {
+    left: 5%;
+    top: 35%;
+    transform: rotate(-25deg);
     animation-delay: 0s;
 }
 
-.energy-orb:nth-child(10) {
-    left: 85%;
-    top: 60%;
+.circuit-trace:nth-child(7) {
+    right: 5%;
+    top: 65%;
+    transform: rotate(25deg);
     animation-delay: 2.5s;
 }
 
-@keyframes orbPulse {
+@keyframes circuitPulse {
     0%, 100% {
-        transform: scale(1);
-        opacity: 0.4;
+        opacity: 0.5;
     }
     50% {
-        transform: scale(1.5);
-        opacity: 0.8;
+        opacity: 1;
+    }
+}
+
+@keyframes circuitNode {
+    0% {
+        left: 0;
+        opacity: 1;
+    }
+    50% {
+        left: calc(100% - 8px);
+        opacity: 1;
+    }
+    50.1% {
+        opacity: 0;
+    }
+    100% {
+        left: 0;
+        opacity: 0;
+    }
+}
+
+/* Scanning Beam */
+.scan-beam {
+    position: absolute;
+    left: 0;
+    top: 30%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+        rgba(0, 170, 102, 0) 0%,
+        rgba(0, 170, 102, 0.9) 50%,
+        rgba(0, 170, 102, 0) 100%);
+    box-shadow: 0 0 20px rgba(0, 170, 102, 0.8),
+                0 0 40px rgba(0, 170, 102, 0.5);
+    animation: scanBeam 10s infinite ease-in-out;
+    z-index: 0;
+}
+
+@keyframes scanBeam {
+    0%, 100% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.9;
+    }
+    90% {
+        opacity: 0.9;
+    }
+    100% {
+        transform: translateY(70vh);
+        opacity: 0;
+    }
+}
+
+/* Hexagonal Grid */
+.hex-grid {
+    position: absolute;
+    right: 5%;
+    top: 15%;
+    width: 250px;
+    height: 250px;
+    background-image:
+        linear-gradient(30deg, rgba(0, 170, 102, 0.4) 12%, transparent 12.5%, transparent 87%, rgba(0, 170, 102, 0.4) 87.5%, rgba(0, 170, 102, 0.4)),
+        linear-gradient(150deg, rgba(0, 170, 102, 0.4) 12%, transparent 12.5%, transparent 87%, rgba(0, 170, 102, 0.4) 87.5%, rgba(0, 170, 102, 0.4)),
+        linear-gradient(30deg, rgba(0, 170, 102, 0.4) 12%, transparent 12.5%, transparent 87%, rgba(0, 170, 102, 0.4) 87.5%, rgba(0, 170, 102, 0.4)),
+        linear-gradient(150deg, rgba(0, 170, 102, 0.4) 12%, transparent 12.5%, transparent 87%, rgba(0, 170, 102, 0.4) 87.5%, rgba(0, 170, 102, 0.4)),
+        linear-gradient(60deg, rgba(0, 170, 102, 0.2) 25%, transparent 25.5%, transparent 75%, rgba(0, 170, 102, 0.2) 75%, rgba(0, 170, 102, 0.2)),
+        linear-gradient(60deg, rgba(0, 170, 102, 0.2) 25%, transparent 25.5%, transparent 75%, rgba(0, 170, 102, 0.2) 75%, rgba(0, 170, 102, 0.2));
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+    filter: drop-shadow(0 0 20px rgba(0, 170, 102, 0.5));
+    animation: hexPulse 6s infinite ease-in-out;
+    z-index: 0;
+    opacity: 0.7;
+}
+
+@keyframes hexPulse {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.1) rotate(5deg);
     }
 }
 
