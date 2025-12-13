@@ -29,5 +29,5 @@ Allow: /
 # Crawl-delay for polite bots (optional)
 # Crawl-delay: 10
 
-# Sitemap location (uncomment and update when sitemap is available)
-# Sitemap: https://yourdomain.com/sitemap.xml
+# Sitemap location
+Sitemap: https://cardsforge.eu/sitemap.xml
