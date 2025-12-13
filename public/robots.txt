@@ -1,2 +1,33 @@
+# Cards Forge API - Robots.txt
+# Generated for Laravel application with Filament admin panel
+
 User-agent: *
-Disallow:
+
+# Disallow admin panel
+Disallow: /admin/
+Disallow: /admin
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Disallow authentication routes
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /email/
+
+# Disallow storage (user uploads, avatars, etc.)
+Disallow: /storage/
+
+# Disallow Laravel routes
+Disallow: /livewire/
+Disallow: /filament/
+
+# Allow public content
+Allow: /
+
+# Crawl-delay for polite bots (optional)
+# Crawl-delay: 10
+
+# Sitemap location (uncomment and update when sitemap is available)
+# Sitemap: https://yourdomain.com/sitemap.xml
