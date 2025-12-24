@@ -28,3 +28,8 @@ Schedule::command('logs:cleanup')->dailyAt('02:00');
 
 // Schedule: Check for pending review cards older than 48 hours and send escalation notifications
 Schedule::command('cards:check-pending-reviews')->daily();
+
+// Schedule: Process scheduled emails every minute (checks cron expressions)
+Schedule::command('emails:process-scheduled')
+    ->everyMinute()
+    ->withoutOverlapping();

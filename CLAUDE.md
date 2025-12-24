@@ -14,41 +14,16 @@ Cards Forge API - A Laravel 12 application providing a REST API for managing tra
 - SQLite (default) / MySQL support
 
 ## Development Commands
-
-### Start Development Server
-```bash
-composer dev
-```
 This runs a concurrent process that starts:
 - Laravel development server (`php artisan serve`)
 - Queue worker (`php artisan queue:listen --tries=1`)
 - Log viewer (`php artisan pail --timeout=0`)
 - Vite dev server (`npm run dev`)
 
-### Alternative: Individual Services
-```bash
-php artisan serve          # Start server only
-php artisan queue:listen   # Queue worker
-php artisan pail           # Log viewer
-npm run dev               # Frontend assets
-```
-
-### Testing
-```bash
-composer test              # Run all tests (clears config first)
-php artisan test           # Run tests directly
-php artisan test --filter=TestName  # Run specific test
-```
-
 ### Database
 ```bash
 php artisan migrate        # Run migrations
 php artisan migrate:fresh --seed  # Fresh migration with seeders
-```
-
-### Code Quality
-```bash
-./vendor/bin/pint         # Format code (Laravel Pint)
 ```
 
 ### Asset Building
@@ -140,8 +115,6 @@ Located at `/admin` route. Key features:
 - `MyOrders.php` - Buyer's order history with delivery confirmation
 - `MySales.php` - Seller's order management with status updates
 - Cart items have 30-minute reservation system to prevent overselling
-
-**Import/Export:** Uses `pxlrbt/filament-excel` for Excel export on all resources. Importers in `app/Filament/Imports/`.
 
 **Profile Management:** Uses `joaopaulolndev/filament-edit-profile` plugin with avatar upload support.
 
@@ -242,6 +215,7 @@ Uses Rewardenv Laravel project setup (see `.reward` directory). Can also use sta
 
 ## Important Implementation Notes
 
+- Always make a feature documentation in dps/features directory for developers (maximum of 250 lines)
 - Always scope queries by user when creating new Filament resources
 - Use `auth()->id()` for user filtering, `creator_id` for Game/Deck relationships
 - JSON fields should use array casting in models
