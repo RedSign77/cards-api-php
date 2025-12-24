@@ -144,6 +144,9 @@
                 <a href="{{ route('marketplace.index') }}" class="text-slate-300 hover:text-white transition-colors duration-200 font-medium">
                     Browse Marketplace
                 </a>
+                <a href="{{ route('changelog') }}" class="text-slate-300 hover:text-white transition-colors duration-200 font-medium">
+                    Changelog
+                </a>
                 @auth
                 <a href="/admin/physical-cards/create" class="text-slate-300 hover:text-white transition-colors duration-200">
                     Sell Cards

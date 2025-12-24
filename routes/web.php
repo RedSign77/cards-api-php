@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ChangelogController;
 use App\Http\Controllers\MarketplaceController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Notifications\EmailVerifiedSuccess;
 // Main application domain
 Route::domain(env('DOMAIN_MAIN', 'cards.test'))->group(function () {
     Route::get('/',[HomeController::class, 'index'])->name('home');
+    Route::get('/changelog', [ChangelogController::class, 'index'])->name('changelog');
 
     // Marketplace Routes - Redirect to admin login (now only accessible in Filament admin)
     Route::get('/marketplace', function () {

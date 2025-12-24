@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1.0] - 2025-12-24
 
+### Added
+- Public changelog page at /changelog displaying CHANGELOG.md with homepage design
+- ChangelogController for parsing and displaying changelog entries
+- config/app_config.php for centralized version management
+- Changelog navigation link in main site header
+- Version badge showing current version and release date
+- Color-coded changelog sections (Added, Changed, Fixed, Removed)
+- Card-based changelog design with card suit symbols
+
 ### Changed
 - Email templates now use Laravel mail layout with Cards Forge custom theme
 - Email Templates and Scheduled Emails moved to System Settings navigation group
