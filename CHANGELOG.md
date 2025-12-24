@@ -2,7 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2025-12-24]
+## [1.1.0] - 2025-12-24
+
+### Changed
+- Email templates now use Laravel mail layout with Cards Forge custom theme
+- Email Templates and Scheduled Emails moved to System Settings navigation group
+- Preview modal now displays emails with actual site header and footer styling
+- Renamed "Run Now" to "Force Run" action with enhanced feedback showing sent/skipped counts
+- Force Run action now explicitly shows scheduled time being bypassed in confirmation modal
 
 ### Added
 - Custom Email Template System for managing email templates with Markdown support
@@ -24,6 +31,9 @@ All notable changes to this project will be documented in this file.
 - ScheduledEmailResource with reactive UI based on data source
 - ProcessScheduledEmails command for email dispatch with deduplication
 - Automatic scheduling via Laravel task scheduler (runs every minute)
-- Manual "Run Now" action in Filament for testing campaigns
+- Force Run action with detailed execution feedback (sent/skipped counts)
+- Bulk Force Run action to execute multiple campaigns simultaneously
+- Clear Dispatch Logs header action for resetting deduplication during testing
 - Comprehensive execution statistics tracking
+- Enhanced testing capabilities with immediate execution bypassing schedules
 - Feature documentation in dps/features/advanced-scheduled-email-dispatcher.md

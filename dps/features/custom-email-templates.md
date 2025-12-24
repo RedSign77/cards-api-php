@@ -145,7 +145,8 @@ Mail::to($user->email)->send(new TemplateEmail($template, $variables));
 - Implements `ShouldQueue` for background processing
 - Processes variables on construction
 - Converts Markdown to HTML automatically
-- Uses `emails.template` view
+- Uses `emails.template` markdown view
+- Applies 'cardsforge' theme automatically via `theme()` method
 
 ### Constructor Parameters
 - `EmailTemplate $template` - The template model
@@ -156,17 +157,22 @@ Mail::to($user->email)->send(new TemplateEmail($template, $variables));
 ### Template Email View
 **File:** `resources/views/emails/template.blade.php`
 
-Custom HTML email template with:
-- Responsive design (max-width 600px)
-- Clean typography with system fonts
-- Styled markdown elements (headings, lists, code, tables, blockquotes)
-- Branded footer with copyright
-- Inline CSS for email client compatibility
+Uses Laravel mail component system (`x-mail::message`) with:
+- Automatic integration with `resources/views/vendor/mail` layouts
+- Cards Forge custom theme (`cardsforge.css`) with branded styling
+- Responsive email-safe HTML structure
+- Consistent header with spade icon and site name
+- Branded footer with card suit symbols and copyright
 
 ### Preview View
 **File:** `resources/views/emails/template-preview.blade.php`
 
-Simplified HTML preview without email wrapper for admin panel modals.
+Simulates actual email layout for admin panel preview:
+- Loads Cards Forge theme CSS
+- Displays site header with branding
+- Shows content in email-safe table structure
+- Includes footer with card symbols and copyright
+- Provides accurate representation of sent emails
 
 ## Integration Examples
 

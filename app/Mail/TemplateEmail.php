@@ -54,11 +54,19 @@ class TemplateEmail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.template',
+            markdown: 'emails.template',
             with: [
                 'content' => $this->processedBody,
             ],
         );
+    }
+
+    /**
+     * Get the message theme
+     */
+    protected function theme(): ?string
+    {
+        return 'cardsforge';
     }
 
     /**

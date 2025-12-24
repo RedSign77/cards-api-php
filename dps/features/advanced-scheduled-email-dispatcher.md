@@ -164,13 +164,24 @@ static wasDispatched(int $scheduledEmailId, int $templateId, int $sourceRecordId
 - Data Source (users/orders)
 - Active status (ternary)
 
-**Actions:**
-- Run Now (manual trigger with --id option)
+**Row Actions:**
+- **Force Run** (bolt icon, warning color)
+  - Executes immediately bypassing schedule
+  - Shows confirmation with scheduled time
+  - Displays sent/skipped count after execution
+  - Available for all campaigns
 - Edit
 - Delete
 
 **Bulk Actions:**
+- **Force Run Selected** - Execute multiple campaigns at once
 - Delete multiple
+
+**Header Actions:**
+- **Clear Dispatch Logs** (danger color)
+  - Resets deduplication system
+  - Visible only when logs exist
+  - Useful for testing
 
 ## Console Command
 
@@ -314,6 +325,61 @@ The system prevents duplicate sends using a composite unique index:
 3. EmailDispatchLog created with order ID 123
 4. Same scheduled email runs at 2:10 PM
 5. Deduplication check finds existing log, skips send
+
+## Testing Scheduled Emails
+
+### Manual Testing with Force Run
+
+1. **Create a test campaign:**
+   - Go to System Settings > Scheduled Emails
+   - Create new campaign with any schedule
+   - Select template and recipients
+
+2. **Force execute immediately:**
+   - Click "Force Run" action (bolt icon)
+   - Confirm execution
+   - View sent/skipped count in notification
+
+3. **Test deduplication:**
+   - Click "Force Run" again
+   - All emails should be skipped
+   - Notification shows: "Sent: 0 | Skipped: X"
+
+4. **Reset for re-testing:**
+   - Click "Clear Dispatch Logs" button (header)
+   - Confirm deletion
+   - Run campaign again - emails will send
+
+### Command Line Testing
+
+```bash
+# Force run specific campaign (bypasses schedule)
+php artisan emails:process-scheduled --id=1
+
+# Process all due campaigns (respects schedule)
+php artisan emails:process-scheduled
+
+# Check what would run
+php artisan tinker --execute="
+\App\Models\ScheduledEmail::where('is_enabled', true)
+    ->where('next_run_at', '<=', now())
+    ->pluck('name', 'id');
+"
+```
+
+### Verify Email Delivery
+
+1. Check dispatch logs:
+   - `App\Models\EmailDispatchLog::latest()->get()`
+   - Status: 'sent' or 'failed'
+
+2. Check queue:
+   - Emails are queued via `ShouldQueue`
+   - Process queue: `php artisan queue:work --once`
+
+3. Check email inbox:
+   - Spam/junk folders
+   - Search by campaign execution time
 
 ## Best Practices
 

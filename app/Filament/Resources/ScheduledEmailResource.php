@@ -25,7 +25,7 @@ class ScheduledEmailResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?string $navigationGroup = 'System';
+    protected static ?string $navigationGroup = 'System Settings';
 
     protected static ?int $navigationSort = 41;
 
@@ -252,23 +252,66 @@ class ScheduledEmailResource extends Resource
                     ->label('Active'),
             ])
             ->actions([
-                Tables\Actions\Action::make('run_now')
-                    ->label('Run Now')
-                    ->icon('heroicon-o-play')
+                Tables\Actions\Action::make('force_run')
+                    ->label('Force Run')
+                    ->icon('heroicon-o-bolt')
+                    ->color('warning')
                     ->requiresConfirmation()
+                    ->modalHeading('Force Execute Scheduled Email')
+                    ->modalDescription(fn ($record) => "This will execute '{$record->name}' immediately, bypassing the scheduled time ({$record->next_run_at?->format('Y-m-d H:i')}).")
+                    ->modalSubmitActionLabel('Execute Now')
                     ->action(function (ScheduledEmail $record) {
+                        // Capture command output
                         \Artisan::call('emails:process-scheduled', ['--id' => $record->id]);
+                        $output = \Artisan::output();
+
+                        // Parse output for sent count
+                        preg_match('/Sent: (\d+)/', $output, $matches);
+                        $sent = $matches[1] ?? 0;
+
+                        preg_match('/Skipped.*?: (\d+)/', $output, $skippedMatches);
+                        $skipped = $skippedMatches[1] ?? 0;
+
+                        // Show detailed notification
                         \Filament\Notifications\Notification::make()
-                            ->title('Email dispatch initiated')
+                            ->title('Email Campaign Executed')
+                            ->body("Sent: {$sent} | Skipped: {$skipped}")
                             ->success()
                             ->send();
-                    })
-                    ->visible(fn ($record) => $record->is_enabled),
+                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('force_run_bulk')
+                        ->label('Force Run Selected')
+                        ->icon('heroicon-o-bolt')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Force Execute Multiple Campaigns')
+                        ->modalDescription('This will execute all selected scheduled emails immediately, bypassing their scheduled times.')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $totalSent = 0;
+                            $totalSkipped = 0;
+
+                            foreach ($records as $record) {
+                                \Artisan::call('emails:process-scheduled', ['--id' => $record->id]);
+                                $output = \Artisan::output();
+
+                                preg_match('/Sent: (\d+)/', $output, $matches);
+                                $totalSent += $matches[1] ?? 0;
+
+                                preg_match('/Skipped.*?: (\d+)/', $output, $skippedMatches);
+                                $totalSkipped += $skippedMatches[1] ?? 0;
+                            }
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Bulk Email Campaigns Executed')
+                                ->body("{$records->count()} campaign(s) executed | Sent: {$totalSent} | Skipped: {$totalSkipped}")
+                                ->success()
+                                ->send();
+                        }),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
