@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SystemUserSeeder::class,
             WebsiteSettingSeeder::class,
+            AiSettingSeeder::class,
         ]);
 
         // User::factory(10)->create();
