@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - AI Card Suggestion module for supervisors: generate card data from game context, re-roll card abilities with tone selection, deck synergy analytics report, and one-click card swap suggestions
+- AI features demo section on homepage, visible only to selected supervisor users
 
 ## [1.2.0] - 2026-02-18
 
