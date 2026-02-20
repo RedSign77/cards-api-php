@@ -617,8 +617,7 @@
     </div>
 </section>
 
-<!-- AI Features Section (Demo - Supervisors only) -->
-@auth
+<!-- AI Features Section -->
 <section class="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-4">
@@ -699,7 +698,6 @@
         </div>
     </div>
 </section>
-@endauth
 
 <!-- Footer -->
 <footer class="bg-slate-900 border-t border-slate-700">
