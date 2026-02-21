@@ -71,6 +71,13 @@ class EditDeck extends EditRecord
                     }
                 }),
 
+            Actions\Action::make('printPdf')
+                ->label('Printable PDF')
+                ->icon('heroicon-o-printer')
+                ->color('warning')
+                ->url(fn (): string => route('decks.pdf', $this->record))
+                ->openUrlInNewTab(),
+
             Actions\DeleteAction::make(),
         ];
     }

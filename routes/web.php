@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ChangelogController;
+use App\Http\Controllers\DeckPdfController;
 use App\Http\Controllers\MarketplaceController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -34,6 +35,11 @@ Route::domain(env('DOMAIN_MAIN', 'cards.test'))->group(function () {
     Route::get('/api/documentation', function () {
         return response()->file(public_path('api-documentation.html'));
     });
+
+    // Deck PDF export (auth-protected, serves binary outside Livewire)
+    Route::get('/decks/{deck}/pdf', [DeckPdfController::class, 'download'])
+        ->middleware(['auth'])
+        ->name('decks.pdf');
 
     // Email Verification Routes
     Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {

@@ -172,6 +172,12 @@ class DeckResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('printPdf')
+                    ->label('Printable PDF')
+                    ->icon('heroicon-o-printer')
+                    ->color('warning')
+                    ->url(fn (Deck $record): string => route('decks.pdf', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

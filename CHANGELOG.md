@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2026-02-21
+
+### Added
+- Printable PDF export for decks: generates an A4 print sheet with cards arranged in a 3×3 grid, respecting each card's quantity, with crop marks for physical cutting
+
 ## [1.3.0] - 2026-02-18
 
 ### Added
