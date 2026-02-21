@@ -22,10 +22,6 @@ if [ "$APP_ENV" = "production" ]; then
     git pull
 fi
 
-# Dump database schema before any changes
-echo "💾 Dumping database schema..."
-php artisan schema:dump
-
 # Install/update PHP dependencies
 echo "📦 Installing Composer dependencies..."
 
@@ -45,22 +41,6 @@ else
     fi
     echo "   Using development mode (with dev dependencies)"
     composer install --optimize-autoloader --no-interaction
-fi
-
-if [ "$APP_ENV" = "production" ]; then
-    # --- KRITIKUS RÉSZ A SYMLINK MIATT ---
-    # Biztosítjuk, hogy a storage mappa linkelve legyen a public-ba
-    echo "🔗 Ensuring storage link exists..."
-    php artisan storage:link || true
-
-    # Jogosultságok javítása (cPanel specifikus fix)
-    echo "chmod: Fixing storage permissions..."
-    chmod -R 775 storage bootstrap/cache
-
-    # Copy public_html contents to ../www
-    echo "📁 Copying public_html to ../www..."
-    cp -r public_html/* ../www/
-    # -------------------------------------
 fi
 
 # Run database migrations
