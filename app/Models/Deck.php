@@ -22,6 +22,8 @@ class Deck extends Model
         'deck_name',
         'deck_description',
         'deck_data',
+        'pdf_background',
+        'pdf_overlay',
     ];
 
     public function game()

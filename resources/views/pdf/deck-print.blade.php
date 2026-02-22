@@ -61,7 +61,7 @@
             border: 1px solid #000;
         }
 
-        /* Background image fills entire card */
+        /* Card background image (illustration or configured background) */
         .card-bg {
             position: absolute;
             top: 0;
@@ -76,14 +76,18 @@
             display: block;
         }
 
-        /* Semi-transparent overlay to dim the background */
+        /* Semi-transparent overlay */
         .card-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            @if(($overlayMode ?? 'dark') === 'light')
+            background: rgba(255, 255, 255, 0.70);
+            @else
             background: rgba(0, 0, 0, 0.70);
+            @endif
         }
 
         /* Foreground text layer */
@@ -97,6 +101,48 @@
             display: block;
         }
 
+        @if(($overlayMode ?? 'dark') === 'light')
+        .card-name {
+            font-size: 9.1pt;
+            font-weight: bold;
+            color: #111111;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.60);
+            padding: 1mm 2mm;
+            margin-bottom: 1.5mm;
+        }
+
+        .card-type {
+            font-size: 7.2pt;
+            color: #333333;
+            text-align: center;
+            margin-bottom: 2mm;
+        }
+
+        .card-text {
+            font-size: 6.5pt;
+            color: #222222;
+            text-align: left;
+            margin-bottom: 2mm;
+            line-height: 1.3;
+        }
+
+        .card-fields {
+            margin-top: 1mm;
+        }
+
+        .card-field {
+            font-size: 6.5pt;
+            color: #111111;
+            margin-bottom: 0.8mm;
+            line-height: 1.2;
+        }
+
+        .card-field-name {
+            font-weight: bold;
+            color: #8B4513;
+        }
+        @else
         .card-name {
             font-size: 9.1pt;
             font-weight: bold;
@@ -137,6 +183,7 @@
             font-weight: bold;
             color: #ffd700;
         }
+        @endif
 
         /* Crop marks */
         .crop-mark {
@@ -176,7 +223,7 @@
                         @endphp
                         <div class="grid-cell">
                             <div class="card-wrapper">
-                                {{-- Background image --}}
+                                {{-- Card background (illustration, or configured background/fallback) --}}
                                 <div class="card-bg">
                                     <img src="{{ $imgPath }}" alt="{{ $card->name }}">
                                 </div>
