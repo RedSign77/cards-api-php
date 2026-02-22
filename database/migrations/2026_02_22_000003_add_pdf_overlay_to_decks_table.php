@@ -1,0 +1,25 @@
+<?php
+/**
+ * Webtech-solutions 2025, All rights reserved.
+ */
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('decks', function (Blueprint $table) {
+            $table->string('pdf_overlay')->nullable()->default(null)->after('pdf_background');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('decks', function (Blueprint $table) {
+            $table->dropColumn('pdf_overlay');
+        });
+    }
+};

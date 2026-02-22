@@ -7,6 +7,7 @@ namespace App\Services;
 
 use App\Models\Card;
 use App\Models\Deck;
+use App\Models\WebsiteSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
@@ -61,19 +62,38 @@ class DeckPdfService
     }
 
     /**
-     * Resolve the filesystem path for a card image, falling back to the placeholder.
+     * Resolve the background image for the card layer:
+     * - If the card has its own illustration, use that.
+     * - Otherwise fall through: deck override → system default → built-in placeholder.
      */
-    protected function resolveImagePath(Card $card): string
+    protected function resolveImagePath(Card $card, Deck $deck): string
     {
-        $placeholder = public_path('images/cardsforge-back.png');
-
-        if (empty($card->image)) {
-            return $placeholder;
+        if (!empty($card->image)) {
+            $path = Storage::disk('public')->path($card->image);
+            if (file_exists($path)) {
+                return $path;
+            }
         }
 
-        $path = Storage::disk('public')->path($card->image);
+        // 1. Deck override
+        if (!empty($deck->pdf_background)) {
+            $path = Storage::disk('public')->path($deck->pdf_background);
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
 
-        return file_exists($path) ? $path : $placeholder;
+        // 2. System default
+        $setting = WebsiteSetting::get('card_pdf_background');
+        if (!empty($setting)) {
+            $path = Storage::disk('public')->path($setting);
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+
+        // 3. Built-in fallback
+        return public_path('images/cardsforge-back.png');
     }
 
     /**
@@ -88,13 +108,17 @@ class DeckPdfService
         $cardWidth  = $deck->game->card_width_mm  ?? 63.5;
         $cardHeight = $deck->game->card_height_mm ?? 88.9;
 
+        // Resolve overlay mode: deck → system default → 'dark'
+        $overlayMode = $deck->pdf_overlay
+            ?? WebsiteSetting::get('card_pdf_overlay', 'dark');
+
         $pagesData = [];
         foreach ($pages as $pageCards) {
             $pageItems = [];
             foreach ($pageCards as $card) {
                 $pageItems[] = [
                     'card'      => $card,
-                    'imagePath' => $this->resolveImagePath($card),
+                    'imagePath' => $this->resolveImagePath($card, $deck),
                 ];
             }
             $pagesData[] = $pageItems;
@@ -105,6 +129,7 @@ class DeckPdfService
             'pages'       => $pagesData,
             'cardWidth'   => $cardWidth,
             'cardHeight'  => $cardHeight,
+            'overlayMode' => $overlayMode,
         ])
         ->setPaper('a4', 'portrait')
         ->setOption('isHtml5ParserEnabled', true)

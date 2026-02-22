@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-02-22
+
+### Added
+- Configurable background frame for printed card PDFs: supervisors set a system-wide default, users can upload a personal override in their profile, with automatic fallback to the built-in card back image
+
 ## [1.4.0] - 2026-02-21
 
 ### Added

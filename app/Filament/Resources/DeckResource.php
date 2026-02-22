@@ -8,6 +8,8 @@ use App\Models\Card;
 use App\Models\Deck;
 use App\Models\Game;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -83,6 +85,30 @@ class DeckResource extends Resource
                             ->collapsible(),
                     ])
                 ->columns(2),
+                Forms\Components\Section::make('Print Settings')
+                    ->description('Customize how this deck looks when printed as a PDF')
+                    ->schema([
+                        FileUpload::make('pdf_background')
+                            ->label('Card Background Image')
+                            ->disk('public')
+                            ->directory('pdf-backgrounds')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(5120)
+                            ->helperText('Overrides the system default. Appears behind each card illustration in the printed PDF.')
+                            ->columnSpanFull(),
+                        Select::make('pdf_overlay')
+                            ->label('Overlay Style')
+                            ->options([
+                                'dark'  => 'Dark — dark overlay, light text',
+                                'light' => 'Light — light overlay, dark text',
+                            ])
+                            ->placeholder('Use system default')
+                            ->helperText('Overrides the system default overlay style for this deck only.')
+                            ->columnSpanFull(),
+                    ])
+                    ->collapsible(),
+
                 Forms\Components\Section::make('Cards in Deck')
                     ->description('There is the list of cards on this deck')
                     ->schema([
